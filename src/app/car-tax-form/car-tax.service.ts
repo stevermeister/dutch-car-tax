@@ -6,23 +6,23 @@ import { HttpClient } from '@angular/common/http';
 
 export type FuelTypes = string[];
 export type Provinces = {
-  key: string;
-  title: string;
+  'key': string;
+  'title': string;
 };
 
 export type Grid = {
-  DR: number[],
-  FL: string[],
-  FR: string[],
-  GL: string[],
-  GR: string[],
-  LI: string[],
-  NB: string[],
-  NH: string[],
-  OV: string[],
-  UT: string[],
-  ZL: string[],
-  ZH: string[]
+  'DR': string[],
+  'FL': string[],
+  'FR': string[],
+  'GL': string[],
+  'GR': string[],
+  'LI': string[],
+  'NB': string[],
+  'NH': string[],
+  'OV': string[],
+  'UT': string[],
+  'ZL': string[],
+  'ZH': string[]
 };
 
 
@@ -35,19 +35,19 @@ export class CarTaxService {
 
   getFuelTypes(): Observable<FuelTypes> {
 
-    return this._http.get<any>('./assets/json/fuelTypes.json');
+    return this._http.get<FuelTypes>('./assets/json/fuelTypes.json');
   }
 
 
-  getFuelProvinces() {
+  getProvinces(): Observable<Provinces[]> {
 
-    return this._http.get<any>('./assets/json/provinces.json');
+    return this._http.get<Provinces[]>('./assets/json/provinces.json');
   }
 
 
-  getTaxGrid() {
+  getTaxGrid(): Observable<Grid> {
 
-    return this._http.get<any>('./assets/json/grid.json');
+    return this._http.get<Grid>('./assets/json/grid.json');
   }
 
 

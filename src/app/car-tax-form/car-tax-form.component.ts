@@ -12,7 +12,7 @@ export class CarTaxFormComponent implements OnInit {
 
   public carTaxControl: FormGroup;
   public fuelTypes: FuelTypes;
-  public provinces: Provinces;
+  public provinces: Provinces[];
   public grid: Grid;
   public price = 0;
 
@@ -22,7 +22,7 @@ export class CarTaxFormComponent implements OnInit {
   ngOnInit() {
 
     this._carTaxService.getFuelTypes().subscribe((fuelTypes: FuelTypes) => this.fuelTypes = fuelTypes);
-    this._carTaxService.getFuelProvinces().subscribe((provinces: Provinces) => this.provinces = provinces);
+    this._carTaxService.getProvinces().subscribe((provinces: Provinces[]) => this.provinces = provinces);
     this._carTaxService.getTaxGrid().subscribe((taxGrid: Grid) => this.grid = taxGrid);
 
 
@@ -33,7 +33,7 @@ export class CarTaxFormComponent implements OnInit {
     });
 
 
-    this.carTaxControl.statusChanges.filter((status) => status === 'VALID').subscribe(() => {
+    this.carTaxControl.statusChanges.filter((status: string) => status === 'VALID').subscribe(() => {
 
       const value = this.carTaxControl.value;
       this.price = this.getPrice(value.provinceKey, value.fuelType, value.volume);
@@ -41,7 +41,7 @@ export class CarTaxFormComponent implements OnInit {
   }
 
 
-  getPrice(provinceKey, fuelType, volume) {
+  getPrice(provinceKey: string, fuelType: string, volume: number ) {
     const provinceGrid = this.grid[provinceKey];
     let i = 0;
     let ratevolume = provinceGrid[i].split('#')[0];
