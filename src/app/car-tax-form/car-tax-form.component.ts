@@ -57,4 +57,9 @@ export class CarTaxFormComponent implements OnInit {
     return price;
   }
 
+  reset() {
+    this.carTaxControl.reset();
+    this.price = 0;
+  }
+
 }
