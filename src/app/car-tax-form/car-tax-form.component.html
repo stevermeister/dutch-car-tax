@@ -1,29 +1,37 @@
 <div [formGroup]="carTaxControl">
 
 
-    <mat-form-field class="mat-form-field">
-      <mat-select placeholder="Seleсt province" name="province" formControlName="provinceKey">
-        <mat-option *ngFor="let province of provinces" [value]="province.key">
-          {{ province.title }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-  
-    <br>
-  
-    <label formControlName="fuelType" class="btn btn-sm btn-yellow waves-light" mdbRadio="Benzine">Benzine</label>
-    <label formControlName="fuelType" class="btn btn-sm btn-light-green waves-light" mdbRadio="Diesel">Diesel</label>
-    <label formControlName="fuelType" class="btn btn-sm btn-light-blue waves-light" mdbRadio="LPG">LPG</label>
-    <label formControlName="fuelType" class="btn btn-sm btn-light-blue waves-light" mdbRadio="LPG33">LPG33</label>
-  
-    <br>
-    <br>
-  
-    <mat-slider name="volume" formControlName="volume" min="1" max="5051" step="100" value="1600" thumbLabel tickInterval="1"></mat-slider>
-  
-    <br>
-    <br>
-  
-    <h1>{{price}}</h1>
-  
-  </div>
+  <mat-form-field class="mat-form-field">
+    <mat-select placeholder="Seleсt province" name="province" formControlName="provinceKey">
+      <mat-option *ngFor="let province of provinces" [value]="province.key">
+        {{ province.title }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <br>
+  <!--   
+    <label formControlName="fuelType" class="btn btn-sm btn-indigo waves-light" mdbRadio="Benzine">Benzine</label>
+    <label formControlName="fuelType" class="btn btn-sm btn-indigo waves-light" mdbRadio="Diesel">Diesel</label>
+    <label formControlName="fuelType" class="btn btn-sm btn-indigo waves-light" mdbRadio="LPG">LPG</label>
+    <label formControlName="fuelType" class="btn btn-sm btn-indigo waves-light" mdbRadio="LPG33">LPG33</label> -->
+  <!-- [ngClass]="{'aXw': true, 'T-KT': true, 'T-KT-Starred': letter.isStarred}" -->
+
+  <label formControlName="fuelType" [ngClass]="{'btn': true, 'btn-sm':true, 'active':true, 'btn-indigo':true,  'waves-light':true }" mdbRadio="Benzine">Benzine</label>
+  <label formControlName="fuelType" [ngClass]="{'btn': true, 'btn-sm':true, 'btn-indigo':true, 'waves-light':true }" mdbRadio="Diesel">Diesel</label>
+  <label formControlName="fuelType" [ngClass]="{'btn': true, 'btn-sm':true, 'btn-indigo':true, 'waves-light':true }" mdbRadio="LPG">LPG</label>
+  <label formControlName="fuelType" [ngClass]="{'btn': true, 'btn-sm':true, 'btn-indigo':true, 'waves-light':true }" mdbRadio="LPG33">LPG33</label>
+
+  <br>
+  <br>
+
+  <mat-slider name="volume" formControlName="volume" min="1" max="5051" step="100" value="1600" thumbLabel tickInterval="1"></mat-slider>
+
+  <br>
+  <br>
+
+  <h1>{{price}}</h1>
+
+
+
+</div>
