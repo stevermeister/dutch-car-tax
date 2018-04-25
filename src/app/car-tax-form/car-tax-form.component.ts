@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Observable } from 'rxjs/Observable';
 import { CarTaxService, FuelTypes, Grid, Provinces } from './car-tax.service';
+import 'rxjs/add/operator/filter';
 
 @Component({
   selector: 'app-car-tax-form',
@@ -32,6 +33,8 @@ export class CarTaxFormComponent implements OnInit {
       volume: new FormControl('', Validators.required)
     });
 
+    // this.carTaxControl.statusChanges.filter(Boolean).subscribe(console.log);
+    this.carTaxControl.valueChanges.subscribe(console.log);
 
     this.carTaxControl.statusChanges.filter((status: string) => status === 'VALID').subscribe(() => {
 
@@ -41,7 +44,7 @@ export class CarTaxFormComponent implements OnInit {
   }
 
 
-  getPrice(provinceKey: string, fuelType: string, volume: number ) {
+  getPrice(provinceKey: string, fuelType: string, volume: number) {
     const provinceGrid = this.grid[provinceKey];
     let i = 0;
     let ratevolume = provinceGrid[i].split('#')[0];
