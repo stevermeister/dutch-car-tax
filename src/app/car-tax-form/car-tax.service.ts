@@ -1,3 +1,4 @@
+
 import { FuelTypes } from './car-tax.service';
 import { Observable } from 'rxjs/Rx';
 import { Injectable } from '@angular/core';
@@ -28,14 +29,22 @@ export type Grid = {
 
 
 @Injectable()
+
 export class CarTaxService {
+
+  private _fuelTypes: FuelTypes = [
+    'Benzine',
+    'Diesel',
+    'LPG3',
+    'LPG'
+  ];
 
   constructor(private _http: HttpClient) {
   }
 
   getFuelTypes(): Observable<FuelTypes> {
 
-    return this._http.get<FuelTypes>('./assets/json/fuelTypes.json');
+    return Observable.of(this._fuelTypes);
   }
 
 
