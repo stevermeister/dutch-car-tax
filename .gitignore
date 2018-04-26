@@ -1,5 +1,11 @@
 # See http://help.github.com/ignore-files/ for more about ignoring files.
 
+# empty tests
+car-tax-form.component.spec.ts
+car-tax.service.spec.ts
+test.ts
+app.component.spec.ts
+
 # compiled output
 /dist
 /dist-server
