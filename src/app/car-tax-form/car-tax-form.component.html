@@ -1,4 +1,4 @@
-<div [formGroup]="carTaxControl">
+<div id="taxform" [formGroup]="carTaxControl">
 
   <mat-form-field class="mat-form-field">
     <mat-select placeholder="Seleсt province" name="province" formControlName="provinceKey">
@@ -30,14 +30,18 @@
 
   <br>
   <br>
+  <br>
 
   <mat-slider name="volume" formControlName="volume" min="1" max="5051" step="100" value="1600" thumbLabel tickInterval="1"></mat-slider>
 
   <br>
   <br>
 
-  <h1>{{price}}</h1>   <button (click)="reset()" mat-raised-button>Reset</button> 
-
+  <h1>{{price}} <i class="fas fa-euro-sign fa-xs"></i>
+  </h1>
+  <div id="resetButton">
+    <button (click)="reset()" mat-raised-button>Reset</button>
+  </div>
 
 
 </div>
