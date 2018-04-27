@@ -1,0 +1,47 @@
+<div id="taxform" [formGroup]="carTaxControl">
+
+  <mat-form-field class="mat-form-field">
+    <mat-select placeholder="Seleсt province" name="province" formControlName="provinceKey">
+      <mat-option *ngFor="let province of provinces" [value]="province.key">
+        {{ province.title }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <br>
+  <br>
+
+  <mat-button-toggle-group formControlName="fuelType">
+    <mat-button-toggle value="Benzine">
+      Benzine
+    </mat-button-toggle>
+    <br>
+    <mat-button-toggle value="Diesel">
+      Diesel
+    </mat-button-toggle>
+    <mat-button-toggle value="LPG3">
+      LPG3
+    </mat-button-toggle>
+    <mat-button-toggle value="LPG">
+      LPG
+    </mat-button-toggle>
+  </mat-button-toggle-group>
+
+
+  <br>
+  <br>
+  <br>
+
+  <mat-slider name="volume" formControlName="volume" min="1" max="5051" step="100" value="1600" thumbLabel tickInterval="1"></mat-slider>
+
+  <br>
+  <br>
+
+  <h1>{{price}} <i class="fas fa-euro-sign fa-xs"></i>
+  </h1>
+  <div id="resetButton">
+    <button (click)="reset()" mat-raised-button>Reset</button>
+  </div>
+
+
+</div>

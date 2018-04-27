@@ -1,0 +1,17 @@
+@import "~@angular/material/prebuilt-themes/indigo-pink.css";
+label {
+    margin-bottom: 0;
+}
+
+.mat-button-toggle-checked {
+    background-color: #ff4081 !important;
+}
+
+#taxform {
+    margin: 0 auto;
+    width: 350px;
+}
+
+#resetButton {
+    text-align: right;
+}
