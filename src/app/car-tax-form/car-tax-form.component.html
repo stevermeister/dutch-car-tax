@@ -11,29 +11,31 @@
 
       <br>
       <br>
+      <div style="text-align: center;">
+        <mat-button-toggle-group formControlName="fuelType">
+          <mat-button-toggle value="Benzine">
+            Benzine
+          </mat-button-toggle>
+          <br>
+          <mat-button-toggle value="Diesel">
+            Diesel
+          </mat-button-toggle>
+          <mat-button-toggle value="LPG3">
+            LPG3
+          </mat-button-toggle>
+          <mat-button-toggle value="LPG">
+            LPG
+          </mat-button-toggle>
+        </mat-button-toggle-group>
+      </div>
 
-      <mat-button-toggle-group formControlName="fuelType">
-        <mat-button-toggle value="Benzine">
-          Benzine
-        </mat-button-toggle>
-        <br>
-        <mat-button-toggle value="Diesel">
-          Diesel
-        </mat-button-toggle>
-        <mat-button-toggle value="LPG3">
-          LPG3
-        </mat-button-toggle>
-        <mat-button-toggle value="LPG">
-          LPG
-        </mat-button-toggle>
-      </mat-button-toggle-group>
 
 
       <br>
       <br>
       <br>
 
-      <mat-slider name="volume" formControlName="volume" min="1" max="5051" step="100" value="1600" thumbLabel tickInterval="1"></mat-slider>
+      <mat-slider #matslider formControlName="volume" min="1" max="5051" step="100" value="1160" thumbLabel tickInterval="1"></mat-slider>
 
       <br>
       <br>
@@ -43,23 +45,13 @@
         <i class="fas fa-euro-sign fa-xs"></i>
       </h1>
       <div id="resetButton">
-        <i [style.color]="" class="fas fa-truck"></i>
-        <button (click)="reset()" mat-raised-button>Reset</button>
+        <i [style.fontSize.px]="matslider.value > 1200 ? matslider.value / 35 : 1200 / 35" class="fas fa-truck"></i>
+        <button style="align-self: flex-end;" (click)="reset()" mat-raised-button>Reset</button>
       </div>
     </td>
     <td>
 
-      <!-- <mat-card>
-        Welcome to Dutch Car Tax Calculator.
-        <br> It estimates quarterly tax payments in the Netherlands.
-        <ul>
-          <li>Your Provinces:</li>
-          <li>Your gas type</li>
-          <li>Your Vehicle Weight:</li>
-          <li>Your quarterly tax payments:</li>
-        </ul>
 
-      </mat-card> -->
     </td>
   </tr>
 </table>
