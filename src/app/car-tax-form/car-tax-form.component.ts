@@ -51,6 +51,7 @@ export class CarTaxFormComponent implements OnInit {
 
     });
   }
+  
 
 
   getPrice(provinceKey: string, fuelType: string, volume: number) {

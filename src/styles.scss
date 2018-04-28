@@ -8,10 +8,15 @@ label {
 }
 
 #taxform {
-    margin: 0 auto;
-    width: 350px;
+    // margin: 0 auto;
+    // width: 350px;
 }
 
 #resetButton {
+    display:flex;
+    justify-content: space-between;
+}
+
+#priceHeader {
     text-align: right;
 }

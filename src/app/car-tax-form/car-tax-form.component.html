@@ -1,47 +1,65 @@
-<div id="taxform" [formGroup]="carTaxControl">
+<table id="taxform" [formGroup]="carTaxControl">
+  <tr>
+    <td>
+      <mat-form-field class="mat-form-field">
+        <mat-select placeholder="Seleсt province" name="province" formControlName="provinceKey">
+          <mat-option *ngFor="let province of provinces" [value]="province.key">
+            {{ province.title }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
 
-  <mat-form-field class="mat-form-field">
-    <mat-select placeholder="Seleсt province" name="province" formControlName="provinceKey">
-      <mat-option *ngFor="let province of provinces" [value]="province.key">
-        {{ province.title }}
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
+      <br>
+      <br>
 
-  <br>
-  <br>
-
-  <mat-button-toggle-group formControlName="fuelType">
-    <mat-button-toggle value="Benzine">
-      Benzine
-    </mat-button-toggle>
-    <br>
-    <mat-button-toggle value="Diesel">
-      Diesel
-    </mat-button-toggle>
-    <mat-button-toggle value="LPG3">
-      LPG3
-    </mat-button-toggle>
-    <mat-button-toggle value="LPG">
-      LPG
-    </mat-button-toggle>
-  </mat-button-toggle-group>
-
-
-  <br>
-  <br>
-  <br>
-
-  <mat-slider name="volume" formControlName="volume" min="1" max="5051" step="100" value="1600" thumbLabel tickInterval="1"></mat-slider>
-
-  <br>
-  <br>
-
-  <h1>{{price}} <i class="fas fa-euro-sign fa-xs"></i>
-  </h1>
-  <div id="resetButton">
-    <button (click)="reset()" mat-raised-button>Reset</button>
-  </div>
+      <mat-button-toggle-group formControlName="fuelType">
+        <mat-button-toggle value="Benzine">
+          Benzine
+        </mat-button-toggle>
+        <br>
+        <mat-button-toggle value="Diesel">
+          Diesel
+        </mat-button-toggle>
+        <mat-button-toggle value="LPG3">
+          LPG3
+        </mat-button-toggle>
+        <mat-button-toggle value="LPG">
+          LPG
+        </mat-button-toggle>
+      </mat-button-toggle-group>
 
 
-</div>
+      <br>
+      <br>
+      <br>
+
+      <mat-slider name="volume" formControlName="volume" min="1" max="5051" step="100" value="1600" thumbLabel tickInterval="1"></mat-slider>
+
+      <br>
+      <br>
+
+      <h1 id="priceHeader">
+        {{price}}
+        <i class="fas fa-euro-sign fa-xs"></i>
+      </h1>
+      <div id="resetButton">
+        <i [style.color]="" class="fas fa-truck"></i>
+        <button (click)="reset()" mat-raised-button>Reset</button>
+      </div>
+    </td>
+    <td>
+
+      <!-- <mat-card>
+        Welcome to Dutch Car Tax Calculator.
+        <br> It estimates quarterly tax payments in the Netherlands.
+        <ul>
+          <li>Your Provinces:</li>
+          <li>Your gas type</li>
+          <li>Your Vehicle Weight:</li>
+          <li>Your quarterly tax payments:</li>
+        </ul>
+
+      </mat-card> -->
+    </td>
+  </tr>
+</table>
