@@ -8,7 +8,8 @@
     "build": "ng build --prod",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "publish": "ng b -prod --base-href='https://maximsemenov.github.io/dutch-car-tax/'"
   },
   "private": true,
   "dependencies": {
