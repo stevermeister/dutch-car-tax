@@ -142,7 +142,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
-@angular/platform-browser@5.2.9
+@angular/platform-browser@5.2.10
 MIT
 MIT
 
@@ -206,6 +206,6 @@ MIT
 MIT
 MIT
 
-@angular/platform-browser-dynamic@5.2.9
+@angular/platform-browser-dynamic@5.2.10
 MIT
 MIT

@@ -9,7 +9,7 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "publish": "ng b -prod --base-href='https://maximsemenov.github.io/dutch-car-tax/'"
+    "publish": "ng b -prod --base-href='https://maximsemenov.github.io/dutch-car-tax/' && node ./publish.js"
   },
   "private": true,
   "dependencies": {
@@ -22,6 +22,8 @@
     "@angular/forms": "^5.2.0",
     "@angular/http": "^5.2.0",
     "@angular/material": "5.2.4",
+    "@angular/platform-browser": "^5.2.10",
+    "@angular/platform-browser-dynamic": "^5.2.10",
     "bootstrap-material-design": "^4.1.1",
     "chart.js": "^2.5.0",
     "core-js": "^2.4.1",
@@ -38,6 +40,7 @@
     "@types/jasminewd2": "~2.0.2",
     "@types/node": "~6.0.60",
     "codelyzer": "^4.0.1",
+    "gh-pages": "^1.1.0",
     "jasmine-core": "~2.8.0",
     "jasmine-spec-reporter": "~4.2.1",
     "karma": "~2.0.0",
