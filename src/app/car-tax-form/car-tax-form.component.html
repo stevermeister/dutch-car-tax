@@ -1,47 +1,57 @@
-<div id="taxform" [formGroup]="carTaxControl">
+<table id="taxform" [formGroup]="carTaxControl">
+  <tr>
+    <td>
+      <mat-form-field class="mat-form-field">
+        <mat-select placeholder="Seleсt province" name="province" formControlName="provinceKey">
+          <mat-option *ngFor="let province of provinces" [value]="province.key">
+            {{ province.title }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
 
-  <mat-form-field class="mat-form-field">
-    <mat-select placeholder="Seleсt province" name="province" formControlName="provinceKey">
-      <mat-option *ngFor="let province of provinces" [value]="province.key">
-        {{ province.title }}
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
-
-  <br>
-  <br>
-
-  <mat-button-toggle-group formControlName="fuelType">
-    <mat-button-toggle value="Benzine">
-      Benzine
-    </mat-button-toggle>
-    <br>
-    <mat-button-toggle value="Diesel">
-      Diesel
-    </mat-button-toggle>
-    <mat-button-toggle value="LPG3">
-      LPG3
-    </mat-button-toggle>
-    <mat-button-toggle value="LPG">
-      LPG
-    </mat-button-toggle>
-  </mat-button-toggle-group>
-
-
-  <br>
-  <br>
-  <br>
-
-  <mat-slider name="volume" formControlName="volume" min="1" max="5051" step="100" value="1600" thumbLabel tickInterval="1"></mat-slider>
-
-  <br>
-  <br>
-
-  <h1>{{price}} <i class="fas fa-euro-sign fa-xs"></i>
-  </h1>
-  <div id="resetButton">
-    <button (click)="reset()" mat-raised-button>Reset</button>
-  </div>
+      <br>
+      <br>
+      <div style="text-align: center;">
+        <mat-button-toggle-group formControlName="fuelType">
+          <mat-button-toggle value="Benzine">
+            Benzine
+          </mat-button-toggle>
+          <br>
+          <mat-button-toggle value="Diesel">
+            Diesel
+          </mat-button-toggle>
+          <mat-button-toggle value="LPG3">
+            LPG3
+          </mat-button-toggle>
+          <mat-button-toggle value="LPG">
+            LPG
+          </mat-button-toggle>
+        </mat-button-toggle-group>
+      </div>
 
 
-</div>
+
+      <br>
+      <br>
+      <br>
+
+      <mat-slider #matslider formControlName="volume" min="1" max="5051" step="100" value="1160" thumbLabel tickInterval="1"></mat-slider>
+
+      <br>
+      <br>
+
+      <h1 id="priceHeader">
+        {{price}}
+        <i class="fas fa-euro-sign fa-xs"></i>
+      </h1>
+      <div id="resetButton">
+        <i [style.fontSize.px]="matslider.value > 1200 ? matslider.value / 35 : 1200 / 35" class="fas fa-truck"></i>
+        <button style="align-self: flex-end;" (click)="reset()" mat-raised-button>Reset</button>
+      </div>
+    </td>
+    <td>
+
+
+    </td>
+  </tr>
+</table>

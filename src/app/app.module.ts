@@ -62,7 +62,8 @@ import { HttpClientModule } from '@angular/common/http';
     MatButtonToggleModule,
     FormsModule,
     MatIconModule,
-    MatButtonModule
+    MatButtonModule,
+    MatCardModule
   ],
 
   providers: [CarTaxService],
