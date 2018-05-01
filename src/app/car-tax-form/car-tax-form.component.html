@@ -41,11 +41,11 @@
       <br>
 
       <h1 id="priceHeader">
-        {{price}}
-        <i class="fas fa-euro-sign fa-xs"></i>
+        {{price}} 
+        <i class="fa fa-euro fa-xs"></i>
       </h1>
       <div id="resetButton">
-        <i [style.fontSize.px]="matslider.value > 1200 ? matslider.value / 35 : 1200 / 35" class="fas fa-truck"></i>
+        <i [style.fontSize.px]="matslider.value > 1200 ? matslider.value / 35 : 1200 / 35" class="fa fa-truck"></i>
         <button style="align-self: flex-end;" (click)="reset()" mat-raised-button>Reset</button>
       </div>
     </td>

@@ -31,6 +31,8 @@ export class CarTaxFormComponent implements OnInit {
 
   ngOnInit() {
 
+     console.dir(document.getElementsByClassName('mat-slider-thumb')[0]);
+
     this._carTaxService.getFuelTypes().subscribe((fuelTypes: FuelTypes) => this.fuelTypes = fuelTypes);
     this._carTaxService.getProvinces().subscribe((provinces: Provinces[]) => this.provinces = provinces);
     this._carTaxService.getTaxGrid().subscribe((taxGrid: Grid) => this.grid = taxGrid);
