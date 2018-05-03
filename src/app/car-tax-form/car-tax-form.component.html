@@ -29,20 +29,20 @@
         </mat-button-toggle-group>
       </div>
 
-
-
-      <br >
       <br>
       <br>
- 
-      <mat-slider  [volumeValue]="value" formControlName="volume" min="1" max="5051" step="100" (input)="setSliderValue($event.value)" thumbLabel tickInterval="1"></mat-slider>
+      <h3 style="text-align: center;">{{value}} kg</h3>
+
+      <mat-slider [volumeValue]="value" formControlName="volume" min="1" max="5051" step="100" (input)="setSliderValue($event.value)"
+        tickInterval="1">
+      </mat-slider>
 
       <br>
       <br>
-
+      <br>
 
       <h1 id="priceHeader">
-        {{price}} 
+        {{price}}
         <i class="fa fa-euro fa-xs"></i>
       </h1>
       <div id="resetButton">

@@ -34,7 +34,9 @@ label {
 
 .mat-slider-thumb:before {
     display: inline-block;
+    position: relative;
     content: "\f0d1" !important;
     transform: scale(-1, 1);
-    
+    left: -90%;
+
 }
