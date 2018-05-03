@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Directive, Component, OnInit, Input } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Observable } from 'rxjs/Observable';
 import { CarTaxService, FuelTypes, Grid, Provinces } from './car-tax.service';
 import 'rxjs/add/operator/filter';
+
 
 export type FormValue = {
   'provinceKey': string;
@@ -17,7 +18,6 @@ export type FormValue = {
   styleUrls: ['./car-tax-form.component.scss']
 })
 
-
 export class CarTaxFormComponent implements OnInit {
 
   public carTaxControl: FormGroup;
@@ -29,9 +29,11 @@ export class CarTaxFormComponent implements OnInit {
   constructor(private _carTaxService: CarTaxService) {
   }
 
+  public value: number;
+
   ngOnInit() {
 
-     console.dir(document.getElementsByClassName('mat-slider-thumb')[0]);
+    console.dir(document.getElementsByClassName('mat-slider-thumb')[0]);
 
     this._carTaxService.getFuelTypes().subscribe((fuelTypes: FuelTypes) => this.fuelTypes = fuelTypes);
     this._carTaxService.getProvinces().subscribe((provinces: Provinces[]) => this.provinces = provinces);
@@ -52,6 +54,10 @@ export class CarTaxFormComponent implements OnInit {
       });
 
     });
+  }
+
+  setSliderValue(value: number): void {
+    this.value = value;
   }
 
 

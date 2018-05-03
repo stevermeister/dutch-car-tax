@@ -26,18 +26,15 @@ label {
     font-weight: normal;
 }
 
-.mat-slider-thumb{
-    font: normal normal normal 54px/1 FontAwesome;
+.mat-slider-thumb {
+    display: flex;
+    align-items: center;
     background-color: transparent !important;
 }
 
 .mat-slider-thumb:before {
     display: inline-block;
-    position: relative;
     content: "\f0d1" !important;
-    bottom: 170%;
-    right: 170%;
     transform: scale(-1, 1);
-
- 
+    
 }

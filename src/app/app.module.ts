@@ -44,12 +44,14 @@ import { AppComponent } from './app.component';
 import { CarTaxFormComponent } from './car-tax-form/car-tax-form.component';
 import { CarTaxService } from './car-tax-form/car-tax.service';
 import { HttpClientModule } from '@angular/common/http';
+import { TruckIconDirective } from './car-tax-form/truck-icon.directive';
 
 
 @NgModule({
   declarations: [
     AppComponent,
-    CarTaxFormComponent
+    CarTaxFormComponent,
+    TruckIconDirective
   ],
   imports: [
 
