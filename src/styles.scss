@@ -25,3 +25,18 @@ label {
     text-align: right;
     font-weight: normal;
 }
+
+.mat-slider-thumb {
+    display: flex;
+    align-items: center;
+    background-color: transparent !important;
+}
+
+.mat-slider-thumb:before {
+    display: inline-block;
+    position: relative;
+    content: "\f0d1" !important;
+    transform: scale(-1, 1);
+    left: -90%;
+
+}
