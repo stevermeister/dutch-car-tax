@@ -2,7 +2,7 @@
   <tr>
     <td>
       <mat-form-field class="mat-form-field">
-        <mat-select placeholder="Seleсt province" name="province" formControlName="provinceKey">
+        <mat-select placeholder="Seleсt province:" name="province" formControlName="provinceKey">
           <mat-option *ngFor="let province of provinces" [value]="province.key">
             {{ province.title }}
           </mat-option>
@@ -10,7 +10,9 @@
       </mat-form-field>
 
       <br>
-      <br>
+
+      <h4 *ngIf="!selectedFuelType" class="mat-select-placeholder">Select fuel type:</h4>
+      <h4 *ngIf="selectedFuelType" class="mat-select-placeholder">Fuel type is {{selectedFuelType}}</h4>
       <div style="text-align: center;">
         <mat-button-toggle-group formControlName="fuelType">
           <mat-button-toggle value="Benzine">
@@ -30,10 +32,20 @@
       </div>
 
       <br>
-      <br>
-      <h3 style="text-align: center;">{{value}} kg</h3>
 
-      <mat-slider [volumeValue]="value" formControlName="volume" min="1" max="5051" step="100" (input)="setSliderValue($event.value)"
+      <h4 *ngIf="!value" class="mat-select-placeholder">Select car weight:</h4>
+      <h4 *ngIf="value" class="mat-select-placeholder" style="text-align: center;">
+        Weight
+      </h4>
+
+      <div id="sliderData">
+        <span>0
+          <span style="visibility: hidden;">000</span>
+        </span>
+        <span id="currentSliderValue">{{value}}</span>
+        <span>5051</span>
+      </div>
+      <mat-slider [volumeValue]="value" formControlName="volume" min="1" max="5051" step="50" (input)="setSliderValue($event.value)"
         tickInterval="1">
       </mat-slider>
 

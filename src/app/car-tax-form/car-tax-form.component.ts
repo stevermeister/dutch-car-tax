@@ -24,6 +24,7 @@ export class CarTaxFormComponent implements OnInit {
   public fuelTypes: FuelTypes;
   public provinces: Provinces[];
   public grid: Grid;
+  public selectedFuelType: string;
   public price = 0;
 
   constructor(private _carTaxService: CarTaxService) {
@@ -33,12 +34,9 @@ export class CarTaxFormComponent implements OnInit {
 
   ngOnInit() {
 
-    console.dir(document.getElementsByClassName('mat-slider-thumb')[0]);
-
     this._carTaxService.getFuelTypes().subscribe((fuelTypes: FuelTypes) => this.fuelTypes = fuelTypes);
     this._carTaxService.getProvinces().subscribe((provinces: Provinces[]) => this.provinces = provinces);
     this._carTaxService.getTaxGrid().subscribe((taxGrid: Grid) => this.grid = taxGrid);
-
 
     this.carTaxControl = new FormGroup({
       provinceKey: new FormControl('', Validators.required),
@@ -46,10 +44,15 @@ export class CarTaxFormComponent implements OnInit {
       volume: new FormControl('', Validators.required)
     });
 
+    this.carTaxControl.valueChanges.subscribe((value: FormValue) => {
+
+      this.selectedFuelType = value.fuelType;
+    });
 
     this.carTaxControl.statusChanges.filter((status: string) => status === 'VALID').subscribe(() => {
 
       this.carTaxControl.valueChanges.subscribe((value: FormValue) => {
+
         this.price = this.getPrice(value.provinceKey, value.fuelType, value.volume);
       });
 
