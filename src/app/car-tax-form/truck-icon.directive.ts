@@ -34,7 +34,7 @@ export class TruckIconDirective implements AfterViewInit, OnChanges {
     //   this.previousValue = value;
     // }
 
-    this._renderer.setStyle(this._el.nativeElement, 'font-size', 30 + value / 120 + 'px');
+    this._renderer.setStyle(this._el.nativeElement, 'font-size', 30 + value / 150 + 'px');
 
   }
 

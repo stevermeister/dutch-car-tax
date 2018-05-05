@@ -44,11 +44,13 @@ h4 {
 
 .mat-slider-thumb {
     display: flex;
+    visibility: hidden;
     align-items: center;
     background-color: transparent !important;
 }
 
 .mat-slider-thumb:before {
+    visibility: visible;
     display: inline-block;
     position: relative;
     content: "\f0d1" !important;
