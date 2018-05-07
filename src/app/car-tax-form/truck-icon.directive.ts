@@ -18,23 +18,12 @@ export class TruckIconDirective implements AfterViewInit, OnChanges {
 
   ngAfterViewInit() {
 
-    this._renderer.setStyle(this._el.nativeElement, 'font', 'normal normal normal 30px/1 FontAwesome');
+    this._renderer.setStyle(this._el.nativeElement, 'font', 'normal normal normal 26px/1 FontAwesome');
   }
 
   increaseIconSize(value: number): void {
 
-    // if (value > this.previousValue) {
-    //   this.carSize = this.carSize  +  0.5;
-    //   this._renderer.setStyle(this._el.nativeElement, 'font-size', this.carSize + 'px');
-    //   this.previousValue = value;
-    //   return;
-    // } else {
-    //   this.carSize = this.carSize  -  0.5;
-    //   this._renderer.setStyle(this._el.nativeElement, 'font-size', this.carSize + 'px');
-    //   this.previousValue = value;
-    // }
-
-    this._renderer.setStyle(this._el.nativeElement, 'font-size', 30 + value / 150 + 'px');
+    this._renderer.setStyle(this._el.nativeElement, 'font-size', 26 + value / 170 + 'px');
 
   }
 

@@ -9,6 +9,8 @@
         </mat-select>
       </mat-form-field>
 
+
+
       <br>
 
       <h4 *ngIf="!selectedFuelType" class="mat-select-placeholder">Select fuel type:</h4>
@@ -39,13 +41,9 @@
       </h4>
 
       <div id="sliderData">
-        <span>0
-          <span style="visibility: hidden;">000</span>
-        </span>
         <span id="currentSliderValue">{{value}}</span>
-        <span>5051</span>
       </div>
-    
+
       <mat-slider [volumeValue]="value" formControlName="volume" min="1" max="5051" step="50" (input)="setSliderValue($event.value)"
         tickInterval="1">
       </mat-slider>
@@ -58,10 +56,7 @@
         {{price}}
         <i class="fa fa-euro fa-xs"></i>
       </h1>
-      <div id="resetButton">
 
-        <button style="align-self: flex-end; margin-left: auto;" (click)="reset()" mat-raised-button>Reset</button>
-      </div>
     </td>
     <td>
 

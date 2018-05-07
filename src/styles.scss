@@ -29,7 +29,7 @@ h4 {
 }
 
 #priceHeader {
-    text-align: right;
+    text-align: center;
     font-weight: normal;
 }
 
@@ -39,7 +39,7 @@ h4 {
 
 #sliderData {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
 }
 
 .mat-slider-thumb {
@@ -53,7 +53,7 @@ h4 {
     visibility: visible;
     display: inline-block;
     position: relative;
-    content: "\f0d1" !important;
+    content: "\f1b9" !important;
     transform: scale(-1, 1);
     left: -75%;
 }

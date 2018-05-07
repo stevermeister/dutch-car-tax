@@ -44,10 +44,10 @@ export class CarTaxFormComponent implements OnInit {
       volume: new FormControl('', Validators.required)
     });
 
-    this.carTaxControl.valueChanges.subscribe((value: FormValue) => {
+    // this.carTaxControl.valueChanges.subscribe((value: FormValue) => {
 
-      this.selectedFuelType = value.fuelType;
-    });
+    //   this.selectedFuelType = value.fuelType;
+    // });
 
     this.carTaxControl.statusChanges.filter((status: string) => status === 'VALID').subscribe(() => {
 
