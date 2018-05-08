@@ -3,6 +3,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Observable } from 'rxjs/Observable';
 import { CarTaxService, FuelTypes, Grid, Provinces } from './car-tax.service';
 import 'rxjs/add/operator/filter';
+import 'rxjs/add/operator/switchMap';
 
 
 export type FormValue = {
@@ -25,7 +26,7 @@ export class CarTaxFormComponent implements OnInit {
   public provinces: Provinces[];
   public grid: Grid;
   public selectedFuelType: string;
-  public price = 0;
+  public price$;
 
   constructor(private _carTaxService: CarTaxService) {
   }
@@ -49,12 +50,10 @@ export class CarTaxFormComponent implements OnInit {
     //   this.selectedFuelType = value.fuelType;
     // });
 
-    this.carTaxControl.statusChanges.filter((status: string) => status === 'VALID').subscribe(() => {
+    this.price$ = this.carTaxControl.statusChanges.filter((status: string) => status === 'VALID').switchMap(() => {
 
-      this.carTaxControl.valueChanges.subscribe((value: FormValue) => {
-
-        this.price = this.getPrice(value.provinceKey, value.fuelType, value.volume);
-      });
+      return this.carTaxControl.valueChanges
+        .switchMap((value: FormValue) => Observable.of(this.getPrice(value.provinceKey, value.fuelType, value.volume)));
 
     });
   }
@@ -65,6 +64,7 @@ export class CarTaxFormComponent implements OnInit {
 
 
   getPrice(provinceKey: string, fuelType: string, volume: number) {
+    console.log(provinceKey, fuelType, volume);
     const provinceGrid = this.grid[provinceKey];
     let i = 0;
     let ratevolume = provinceGrid[i].split('#')[0];
@@ -74,12 +74,8 @@ export class CarTaxFormComponent implements OnInit {
       ratevolume = provinceGrid[i].split('#')[0];
       price = provinceGrid[i].split('#')[this.fuelTypes.indexOf(fuelType) + 1];
     }
+    console.log(price);
     return price;
-  }
-
-  reset() {
-    this.carTaxControl.reset();
-    this.price = 0;
   }
 
 }
