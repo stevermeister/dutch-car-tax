@@ -50,12 +50,16 @@ export class CarTaxFormComponent implements OnInit {
     //   this.selectedFuelType = value.fuelType;
     // });
 
-    this.price$ = this.carTaxControl.statusChanges.filter((status: string) => status === 'VALID').switchMap(() => {
+    this.price$ = this.carTaxControl.statusChanges.filter((status: string) => status === 'VALID')
 
-      return this.carTaxControl.valueChanges
-        .switchMap((value: FormValue) => Observable.of(this.getPrice(value.provinceKey, value.fuelType, value.volume)));
+      .switchMap(() => {
 
-    });
+        return this.carTaxControl.valueChanges
+          .switchMap((value: FormValue) => {
+            return Observable.of(this.getPrice(value.provinceKey, value.fuelType, value.volume));
+          });
+
+      });
   }
 
   setSliderValue(value: number): void {
