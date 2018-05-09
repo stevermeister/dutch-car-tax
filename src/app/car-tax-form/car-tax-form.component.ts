@@ -28,6 +28,7 @@ export class CarTaxFormComponent implements OnInit {
   public selectedFuelType: string;
   public price$;
 
+
   constructor(private _carTaxService: CarTaxService) {
   }
 
@@ -50,33 +51,28 @@ export class CarTaxFormComponent implements OnInit {
     //   this.selectedFuelType = value.fuelType;
     // });
 
-    this.price$ = this.carTaxControl.statusChanges.filter((status: string) => status === 'VALID')
-
-      .switchMap(() => {
-
-        return this.carTaxControl.valueChanges
-          .switchMap((value: FormValue) => {
-            return Observable.of(this.getPrice(value.provinceKey, value.fuelType, value.volume));
-          });
-
-      });
+    this.price$ = this.carTaxControl.valueChanges.switchMap((value: FormValue) => {
+      return Observable.of(this.getPrice(value));
+    });
   }
+
+
 
   setSliderValue(value: number): void {
     this.value = value;
   }
 
 
-  getPrice(provinceKey: string, fuelType: string, volume: number) {
-    console.log(provinceKey, fuelType, volume);
-    const provinceGrid = this.grid[provinceKey];
+  getPrice(value: FormValue) {
+
+    const provinceGrid = this.grid[value.provinceKey];
     let i = 0;
     let ratevolume = provinceGrid[i].split('#')[0];
-    let price = provinceGrid[i].split('#')[this.fuelTypes.indexOf(fuelType) + 1];
-    while (ratevolume < volume) {
+    let price = provinceGrid[i].split('#')[this.fuelTypes.indexOf(value.fuelType) + 1];
+    while (ratevolume < value.volume) {
       i++;
       ratevolume = provinceGrid[i].split('#')[0];
-      price = provinceGrid[i].split('#')[this.fuelTypes.indexOf(fuelType) + 1];
+      price = provinceGrid[i].split('#')[this.fuelTypes.indexOf(value.fuelType) + 1];
     }
     console.log(price);
     return price;
