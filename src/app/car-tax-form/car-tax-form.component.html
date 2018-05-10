@@ -3,7 +3,7 @@
     <td>
       <mat-form-field class="mat-form-field">
         <mat-select placeholder="Seleсt province:" name="province" formControlName="provinceKey"> 
-          <mat-option *ngFor="let province of provinces" [value]="province.key" selected>
+          <mat-option *ngFor="let province of provinces" [value]="province.key">
             {{ province.title }}
           </mat-option>
         </mat-select>
@@ -11,11 +11,10 @@
 
       <br>
 
-      <h4 *ngIf="!selectedFuelType" class="mat-select-placeholder">Select fuel type:</h4>
-      <h4 *ngIf="selectedFuelType" class="mat-select-placeholder">Fuel type is {{selectedFuelType}}</h4>
+      <h4 class="mat-select-placeholder">Select fuel type:</h4>
       <div style="text-align: center;">
-        <mat-button-toggle-group formControlName="fuelType" selected="Benzine">
-          <mat-button-toggle value="Benzine">
+        <mat-button-toggle-group formControlName="fuelType">
+          <mat-button-toggle value="Benzine" >
             Benzine
           </mat-button-toggle>
           <br>

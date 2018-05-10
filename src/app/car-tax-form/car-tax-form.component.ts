@@ -25,7 +25,6 @@ export class CarTaxFormComponent implements OnInit {
   public fuelTypes: FuelTypes;
   public provinces: Provinces[];
   public grid: Grid;
-  public selectedFuelType: string;
   public price$;
 
 
@@ -46,22 +45,17 @@ export class CarTaxFormComponent implements OnInit {
       volume: new FormControl('', Validators.required)
     });
 
-    // this.carTaxControl.valueChanges.subscribe((value: FormValue) => {
-
-    //   this.selectedFuelType = value.fuelType;
-    // });
+    this.carTaxControl.controls['provinceKey'].setValue('NH');
+    this.carTaxControl.controls['fuelType'].setValue('Benzine');
 
     this.price$ = this.carTaxControl.valueChanges.switchMap((value: FormValue) => {
       return Observable.of(this.getPrice(value));
     });
   }
 
-
-
   setSliderValue(value: number): void {
     this.value = value;
   }
-
 
   getPrice(value: FormValue) {
 
