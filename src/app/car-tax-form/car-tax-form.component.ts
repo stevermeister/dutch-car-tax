@@ -26,12 +26,10 @@ export class CarTaxFormComponent implements OnInit {
   public provinces: Provinces[];
   public grid: Grid;
   public price$;
-
+  public value: number;
 
   constructor(private _carTaxService: CarTaxService) {
   }
-
-  public value: number;
 
   ngOnInit() {
 
@@ -45,12 +43,14 @@ export class CarTaxFormComponent implements OnInit {
       volume: new FormControl('', Validators.required)
     });
 
-    this.carTaxControl.controls['provinceKey'].setValue('NH');
-    this.carTaxControl.controls['fuelType'].setValue('Benzine');
-
     this.price$ = this.carTaxControl.valueChanges.switchMap((value: FormValue) => {
       return Observable.of(this.getPrice(value));
     });
+
+    this.carTaxControl.controls['provinceKey'].setValue('NH');
+    this.carTaxControl.controls['fuelType'].setValue('Benzine');
+    this.carTaxControl.controls['volume'].setValue('1551');
+
   }
 
   setSliderValue(value: number): void {
