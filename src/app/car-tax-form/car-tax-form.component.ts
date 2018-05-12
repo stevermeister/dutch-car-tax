@@ -1,3 +1,4 @@
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Directive, Component, OnInit, Input } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Observable } from 'rxjs/Observable';
@@ -25,8 +26,7 @@ export class CarTaxFormComponent implements OnInit {
   public fuelTypes: FuelTypes;
   public provinces: Provinces[];
   public grid: Grid;
-  public price$;
-  public value: number;
+  public price$: BehaviorSubject<string> = new BehaviorSubject('222');
 
   constructor(private _carTaxService: CarTaxService) {
   }
@@ -43,13 +43,17 @@ export class CarTaxFormComponent implements OnInit {
       volume: new FormControl('', Validators.required)
     });
 
-    this.price$ = this.carTaxControl.valueChanges.switchMap((value: FormValue) => {
-      return Observable.of(this.getPrice(value));
-    });
+    // this.price$ = this.carTaxControl.valueChanges.switchMap((value: FormValue) => {
+    //   return Observable.of(this.getPrice(value));
+    // });
 
     this.carTaxControl.controls['provinceKey'].setValue('NH');
     this.carTaxControl.controls['fuelType'].setValue('Benzine');
     this.carTaxControl.controls['volume'].setValue('1551');
+
+    this.carTaxControl.valueChanges.subscribe((value: FormValue) => {
+      this.price$.next((this.getPrice(value)));
+    });
 
   }
 

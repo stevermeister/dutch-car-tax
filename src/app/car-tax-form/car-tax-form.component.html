@@ -1,4 +1,4 @@
-<table id="taxform" [formGroup]="carTaxControl">
+<table id="taxform" [formGroup]="carTaxControl" #f="ngForm">
   <tr>
     <td>
       <mat-form-field class="mat-form-field">
@@ -8,10 +8,11 @@
           </mat-option>
         </mat-select>
       </mat-form-field>
-
+      
+      <br>
+      <br>
       <br>
 
-      <h4 class="mat-select-placeholder">Select fuel type:</h4>
       <!-- <div style="text-align: center;">
         <mat-button-toggle-group formControlName="fuelType" (change)="abc(icon)">
           <mat-button-toggle value="Benzine">
@@ -41,17 +42,16 @@
             {{fuel}}
           </mat-button-toggle>
         </mat-button-toggle-group>
+
+  
       </div>
 
       <br>
-
-      <h4 *ngIf="!value" class="mat-select-placeholder">Select car weight:</h4>
-      <h4 *ngIf="value" class="mat-select-placeholder" style="text-align: center;">
-        Weight
-      </h4>
+      <br>
+      <br>
 
       <div id="sliderData">
-        <span id="currentSliderValue">{{value}}</span>
+        <span id="currentSliderValue">{{f.value.volume}} kg</span>
       </div>
 
       <mat-slider [volumeValue]="value" formControlName="volume" min="1" max="5051" step="50" (input)="setSliderValue($event.value)"
