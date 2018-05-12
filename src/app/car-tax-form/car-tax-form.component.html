@@ -54,9 +54,9 @@
         <span id="currentSliderValue">{{f.value.volume}} kg</span>
       </div>
 
-      <mat-slider formControlName="volume" min="1" max="5051" step="50" tickInterval="1">
+      <mat-slider [volumeValue]="f.value.volume" formControlName="volume" min="1" max="5051" step="50" tickInterval="1">
       </mat-slider>
-
+    
       <br>
       <br>
       <br>
