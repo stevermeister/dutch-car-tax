@@ -56,11 +56,7 @@ export class CarTaxFormComponent implements OnInit {
     });
 
   }
-
-  setSliderValue(value: number): void {
-    this.value = value;
-  }
-
+  
   getPrice(value: FormValue) {
 
     const provinceGrid = this.grid[value.provinceKey];
