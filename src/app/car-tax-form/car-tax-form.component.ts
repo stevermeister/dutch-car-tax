@@ -56,7 +56,7 @@ export class CarTaxFormComponent implements OnInit {
     });
 
   }
-  
+
   getPrice(value: FormValue) {
 
     const provinceGrid = this.grid[value.provinceKey];
