@@ -1,4 +1,5 @@
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
+@import url("./assets/css/fontawesome-all.css");
 body {
     font-family: 'Roboto', 'Helvetica Neue', sans-serif;
 }
@@ -54,6 +55,8 @@ h4 {
     visibility: hidden;
     align-items: center;
     background-color: transparent !important;
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
 }
 
 .mat-slider-thumb:before {
@@ -64,4 +67,17 @@ h4 {
     transform: scale(-1, 1);
     left: -75%;
 }
+.motorcycle .mat-slider-wrapper .mat-slider-thumb-container .mat-slider-thumb:before {
+    content: "\f21c" !important;
+    width: 20px;
+}
 
+.lightTruck .mat-slider-wrapper .mat-slider-thumb-container .mat-slider-thumb:before {
+    content: "\f0d1" !important;
+    width: 20px;
+}
+
+.heavyTruck .mat-slider-wrapper .mat-slider-thumb-container .mat-slider-thumb:before {
+    content: "\f4df" !important;
+    width: 20px;
+}
