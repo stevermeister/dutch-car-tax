@@ -61,11 +61,13 @@ export class CarTaxFormComponent implements OnInit {
 
     const provinceGrid = this.grid[value.provinceKey];
     let i = 0;
-    let ratevolume = provinceGrid[i].split('#')[0];
+    let rangeStart = provinceGrid[i].split('#')[0];
+    let rangeStop = provinceGrid[i + 1].split('#')[0];
     let price = provinceGrid[i].split('#')[this.fuelTypes.indexOf(value.fuelType) + 1];
-    while (ratevolume < value.volume) {
+    while (rangeStart < value.volume && rangeStop <= value.volume) {
       i++;
-      ratevolume = provinceGrid[i].split('#')[0];
+      rangeStart = provinceGrid[i].split('#')[0];
+      rangeStop = provinceGrid[i + 1].split('#')[0];
       price = provinceGrid[i].split('#')[this.fuelTypes.indexOf(value.fuelType) + 1];
     }
     console.log(price);
