@@ -32,7 +32,7 @@
         <span id="currentSliderValue">{{f.value.volume}} kg</span>
       </div>
 
-      <mat-slider [ngClass]="{'motorcycle': f.value.volume < 701, 'lightTruck': f.value.volume > 3500, 'heavyTruck': f.value.volume > 4500}"
+      <mat-slider [ngClass]="{'motorcycle': f.value.volume < _motorcycleWeight, 'lightTruck': f.value.volume > _lightTruckWeight, 'heavyTruck': f.value.volume > _heavyTruckWeight}"
         [volumeValue]="f.value.volume" formControlName="volume" min="1" max="5051" step="50" tickInterval="1" (input)="f.value.volume = $event.value">
       </mat-slider>
 

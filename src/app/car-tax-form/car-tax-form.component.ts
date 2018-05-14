@@ -26,6 +26,9 @@ export class CarTaxFormComponent implements OnInit {
   public fuelTypes: FuelTypes;
   public provinces: Provinces[];
   public grid: Grid;
+  private _motorcycleWeight = 701;
+  private _lightTruckWeight = 3500;
+  private _heavyTruckWeight = 4500;
   private _price$: BehaviorSubject<string> = new BehaviorSubject('222');
 
   constructor(private _carTaxService: CarTaxService) {
