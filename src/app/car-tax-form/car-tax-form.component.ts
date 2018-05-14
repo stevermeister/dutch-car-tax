@@ -43,10 +43,6 @@ export class CarTaxFormComponent implements OnInit {
       volume: new FormControl('', Validators.required)
     });
 
-    // this.price$ = this.carTaxControl.valueChanges.switchMap((value: FormValue) => {
-    //   return Observable.of(this.getPrice(value));
-    // });
-
     this.carTaxControl.controls['provinceKey'].setValue('NH');
     this.carTaxControl.controls['fuelType'].setValue('Benzine');
     this.carTaxControl.controls['volume'].setValue('1551');
@@ -70,7 +66,7 @@ export class CarTaxFormComponent implements OnInit {
       rangeStop = provinceGrid[i + 1].split('#')[0];
       price = provinceGrid[i].split('#')[this.fuelTypes.indexOf(value.fuelType) + 1];
     }
-    console.log(price);
+
     return price;
   }
 
