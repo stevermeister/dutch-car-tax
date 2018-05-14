@@ -64,7 +64,6 @@ h4 {
     display: inline-block;
     position: relative;
     content: "\f1b9" !important;
-    transform: scale(-1, 1);
     left: -75%;
 }
 .motorcycle .mat-slider-wrapper .mat-slider-thumb-container .mat-slider-thumb:before {
@@ -75,9 +74,11 @@ h4 {
 .lightTruck .mat-slider-wrapper .mat-slider-thumb-container .mat-slider-thumb:before {
     content: "\f0d1" !important;
     width: 20px;
+    left: -75%;
 }
 
 .heavyTruck .mat-slider-wrapper .mat-slider-thumb-container .mat-slider-thumb:before {
     content: "\f4df" !important;
     width: 20px;
+    left: -75%;
 }
