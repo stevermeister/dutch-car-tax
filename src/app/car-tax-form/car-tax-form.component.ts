@@ -26,7 +26,7 @@ export class CarTaxFormComponent implements OnInit {
   public fuelTypes: FuelTypes;
   public provinces: Provinces[];
   public grid: Grid;
-  public price$: BehaviorSubject<string> = new BehaviorSubject('222');
+  private _price$: BehaviorSubject<string> = new BehaviorSubject('222');
 
   constructor(private _carTaxService: CarTaxService) {
   }
@@ -48,7 +48,7 @@ export class CarTaxFormComponent implements OnInit {
     this.carTaxControl.controls['volume'].setValue('1551');
 
     this.carTaxControl.valueChanges.subscribe((value: FormValue) => {
-      this.price$.next((this.getPrice(value)));
+      this._price$.next((this.getPrice(value)));
     });
 
   }
