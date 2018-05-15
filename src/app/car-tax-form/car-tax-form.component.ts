@@ -26,12 +26,12 @@ export class CarTaxFormComponent implements OnInit {
   public fuelTypes: FuelTypes;
   public provinces: Provinces[];
   public grid: Grid;
-  private _motorcycleWeight = 701;
-  private _lightTruckWeight = 3500;
-  private _heavyTruckWeight = 4500;
-  private _price$: BehaviorSubject<string> = new BehaviorSubject('222');
+  public motorcycleWeight = 701;
+  public lightTruckWeight = 3500;
+  public heavyTruckWeight = 4500;
+  public price$: BehaviorSubject<string> = new BehaviorSubject('222');
 
-  constructor(private _carTaxService: CarTaxService) {
+  constructor(public _carTaxService: CarTaxService) {
   }
 
   ngOnInit() {
@@ -51,7 +51,7 @@ export class CarTaxFormComponent implements OnInit {
     this.carTaxControl.controls['volume'].setValue('1551');
 
     this.carTaxControl.valueChanges.subscribe((value: FormValue) => {
-      this._price$.next((this.getPrice(value)));
+      this.price$.next((this.getPrice(value)));
     });
 
   }

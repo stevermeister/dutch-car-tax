@@ -23,7 +23,7 @@ export class TruckIconDirective implements AfterViewInit, OnChanges {
 
   increaseIconSize(value: number): void {
 
-    this._renderer.setStyle(this._el.nativeElement, 'font-size', 26 + value / 170 + 'px');
+    this._renderer.setStyle(this._el.nativeElement, 'font-size', Math.round(26 + value / 170) + 'px');
 
   }
 

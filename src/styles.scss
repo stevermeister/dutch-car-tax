@@ -57,6 +57,7 @@ h4 {
     background-color: transparent !important;
     font-family: "Font Awesome 5 Free";
     font-weight: 900;
+    width: 20px;
 }
 
 .mat-slider-thumb:before {
@@ -64,21 +65,16 @@ h4 {
     display: inline-block;
     position: relative;
     content: "\f1b9" !important;
-    left: -75%;
+    width: 20px;
 }
 .motorcycle .mat-slider-wrapper .mat-slider-thumb-container .mat-slider-thumb:before {
     content: "\f21c" !important;
-    width: 20px;
 }
 
 .lightTruck .mat-slider-wrapper .mat-slider-thumb-container .mat-slider-thumb:before {
     content: "\f0d1" !important;
-    width: 20px;
-    left: -75%;
 }
 
 .heavyTruck .mat-slider-wrapper .mat-slider-thumb-container .mat-slider-thumb:before {
     content: "\f4df" !important;
-    width: 20px;
-    left: -75%;
 }
