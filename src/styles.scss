@@ -66,6 +66,7 @@ h4 {
     position: relative;
     content: "\f1b9" !important;
     width: 20px;
+    -webkit-transform: translate3d(0,0,0); // Chrome bug fix that prevents cutting off SVG icons;
 }
 .motorcycle .mat-slider-wrapper .mat-slider-thumb-container .mat-slider-thumb:before {
     content: "\f21c" !important;
