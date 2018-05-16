@@ -1,8 +1,10 @@
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Directive, Component, OnInit, Input } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Observable } from 'rxjs/Observable';
 import { CarTaxService, FuelTypes, Grid, Provinces } from './car-tax.service';
 import 'rxjs/add/operator/filter';
+import 'rxjs/add/operator/switchMap';
 
 
 export type FormValue = {
@@ -24,21 +26,19 @@ export class CarTaxFormComponent implements OnInit {
   public fuelTypes: FuelTypes;
   public provinces: Provinces[];
   public grid: Grid;
-  public price = 0;
+  public motorcycleWeight = 701;
+  public lightTruckWeight = 3500;
+  public heavyTruckWeight = 4500;
+  public price$: BehaviorSubject<string> = new BehaviorSubject('222');
 
-  constructor(private _carTaxService: CarTaxService) {
+  constructor(public _carTaxService: CarTaxService) {
   }
 
-  public value: number;
-
   ngOnInit() {
-
-    console.dir(document.getElementsByClassName('mat-slider-thumb')[0]);
 
     this._carTaxService.getFuelTypes().subscribe((fuelTypes: FuelTypes) => this.fuelTypes = fuelTypes);
     this._carTaxService.getProvinces().subscribe((provinces: Provinces[]) => this.provinces = provinces);
     this._carTaxService.getTaxGrid().subscribe((taxGrid: Grid) => this.grid = taxGrid);
-
 
     this.carTaxControl = new FormGroup({
       provinceKey: new FormControl('', Validators.required),
@@ -46,37 +46,31 @@ export class CarTaxFormComponent implements OnInit {
       volume: new FormControl('', Validators.required)
     });
 
+    this.carTaxControl.controls['provinceKey'].setValue('NH');
+    this.carTaxControl.controls['fuelType'].setValue('Benzine');
+    this.carTaxControl.controls['volume'].setValue('1551');
 
-    this.carTaxControl.statusChanges.filter((status: string) => status === 'VALID').subscribe(() => {
-
-      this.carTaxControl.valueChanges.subscribe((value: FormValue) => {
-        this.price = this.getPrice(value.provinceKey, value.fuelType, value.volume);
-      });
-
+    this.carTaxControl.valueChanges.subscribe((value: FormValue) => {
+      this.price$.next((this.getPrice(value)));
     });
+
   }
 
-  setSliderValue(value: number): void {
-    this.value = value;
-  }
+  getPrice(value: FormValue) {
 
-
-  getPrice(provinceKey: string, fuelType: string, volume: number) {
-    const provinceGrid = this.grid[provinceKey];
-    let i = 0;
-    let ratevolume = provinceGrid[i].split('#')[0];
-    let price = provinceGrid[i].split('#')[this.fuelTypes.indexOf(fuelType) + 1];
-    while (ratevolume < volume) {
-      i++;
-      ratevolume = provinceGrid[i].split('#')[0];
-      price = provinceGrid[i].split('#')[this.fuelTypes.indexOf(fuelType) + 1];
+    if (value.volume < 551) {
+      return this.grid[value.provinceKey][0].split('#')[this.fuelTypes.indexOf(value.fuelType) + 1];
     }
-    return price;
+    const provinceGrid = this.grid[value.provinceKey];
+    const index = Math.floor(value.volume / 100 - 4);
+    const weight = provinceGrid[index].split('#')[0];
+
+    if (value.volume < weight) {
+      return provinceGrid[index - 1].split('#')[this.fuelTypes.indexOf(value.fuelType) + 1];
+    }
+
+    return provinceGrid[index].split('#')[this.fuelTypes.indexOf(value.fuelType) + 1];
   }
 
-  reset() {
-    this.carTaxControl.reset();
-    this.price = 0;
-  }
 
 }

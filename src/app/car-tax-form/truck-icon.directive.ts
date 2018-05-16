@@ -6,6 +6,8 @@ import { Directive, Renderer2, ElementRef, AfterViewInit, OnChanges, Input } fro
 export class TruckIconDirective implements AfterViewInit, OnChanges {
 
   @Input() volumeValue: number;
+  private previousValue: number;
+  private carSize = 30;
 
   constructor(private _el: ElementRef, private _renderer: Renderer2, ) {
   }
@@ -16,17 +18,12 @@ export class TruckIconDirective implements AfterViewInit, OnChanges {
 
   ngAfterViewInit() {
 
-    this._renderer.setStyle(this._el.nativeElement, 'font', 'normal normal normal 54px/1 FontAwesome');
+    this._renderer.setStyle(this._el.nativeElement, 'font', 'normal normal normal 26px/1 FontAwesome');
   }
 
   increaseIconSize(value: number): void {
 
-
-
-    if (value < 1200) {
-      return;
-    }
-    this._renderer.setStyle(this._el.nativeElement, 'font-size', value / 30 + 'px');
+    this._renderer.setStyle(this._el.nativeElement, 'font-size', 26 + value / 170 + 'px');
 
   }
 

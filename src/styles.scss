@@ -1,10 +1,18 @@
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
+@import url("./assets/css/fontawesome-all.css");
 body {
-    font-family: 'Roboto', serif;
+    font-family: 'Roboto', 'Helvetica Neue', sans-serif;
 }
 
 label {
     margin-bottom: 0;
+}
+
+h1,
+h2,
+h3,
+h4 {
+    font-weight: 100;
 }
 
 .mat-button-toggle-checked {
@@ -22,21 +30,53 @@ label {
 }
 
 #priceHeader {
-    text-align: right;
+    text-align: center;
     font-weight: normal;
+}
+
+#priceHeader span {
+    display: block;
+    font-weight: 100;
+    font-size: 0.4em;
+}
+
+#currentSliderValue {
+    color: #ff4081;
+    font-size: 1.2em;
+}
+
+#sliderData {
+    display: flex;
+    justify-content: center;
 }
 
 .mat-slider-thumb {
     display: flex;
+    visibility: hidden;
     align-items: center;
     background-color: transparent !important;
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    width: 20px;
+    transform: initial !important;
 }
 
 .mat-slider-thumb:before {
+    visibility: visible;
     display: inline-block;
     position: relative;
-    content: "\f0d1" !important;
-    transform: scale(-1, 1);
-    left: -90%;
+    content: "\f1b9" !important;
+    width: 20px;
+    -webkit-transform: translate3d(0,0,0); // Chrome bug fix that prevents cutting off SVG icons;
+}
+.motorcycle .mat-slider-wrapper .mat-slider-thumb-container .mat-slider-thumb:before {
+    content: "\f21c" !important;
+}
 
+.lightTruck .mat-slider-wrapper .mat-slider-thumb-container .mat-slider-thumb:before {
+    content: "\f0d1" !important;
+}
+
+.heavyTruck .mat-slider-wrapper .mat-slider-thumb-container .mat-slider-thumb:before {
+    content: "\f4df" !important;
 }
