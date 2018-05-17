@@ -30,11 +30,12 @@
       <br>
 
       <div id="sliderData">
-        <span id="currentSliderValue">{{f.value.volume}} kg</span>
+        <span id="currentSliderValue" title="Weight Class">{{f.value.volume}} - {{+f.value.volume + (volumeControl.step - 1)}} kg</span>
       </div>
 
       <mat-slider [ngClass]="{'motorcycle': f.value.volume < motorcycleWeight, 'lightTruck': f.value.volume > lightTruckWeight, 'heavyTruck': f.value.volume > heavyTruckWeight}"
-        [volumeValue]="f.value.volume" formControlName="volume" min="1" max="5051" step="50" tickInterval="1" (input)="f.value.volume = $event.value">
+        [volumeValue]="f.value.volume" formControlName="volume" min="1" max="5051" step="50" tickInterval="1" (input)="f.value.volume = $event.value"
+        #volumeControl>
       </mat-slider>
 
       <br>
