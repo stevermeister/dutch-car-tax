@@ -5,6 +5,7 @@ import { Observable } from 'rxjs/Observable';
 import { CarTaxService, FuelTypes, Grid, Provinces } from './car-tax.service';
 import 'rxjs/add/operator/filter';
 import 'rxjs/add/operator/switchMap';
+import { ActivatedRoute } from '@angular/router';
 
 
 export type FormValue = {
@@ -31,7 +32,7 @@ export class CarTaxFormComponent implements OnInit {
   public heavyTruckWeight = 4500;
   public price$: BehaviorSubject<string> = new BehaviorSubject('222');
 
-  constructor(public _carTaxService: CarTaxService) {
+  constructor(public _carTaxService: CarTaxService, private _activatedRoute: ActivatedRoute) {
   }
 
   ngOnInit() {

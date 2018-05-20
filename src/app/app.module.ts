@@ -49,6 +49,7 @@ import { TruckIconDirective } from './car-tax-form/truck-icon.directive';
 
 const routes: Routes = [
   { path: '', component: CarTaxFormComponent }
+  // { path: ':city', component: CarTaxFormComponent }
 ];
 
 

@@ -4,7 +4,7 @@
     <td>
       <mat-form-field class="mat-form-field">
         <mat-select placeholder="Seleсt province:" name="province" formControlName="provinceKey">
-          <mat-option *ngFor="let province of provinces" [value]="province.key">
+          <mat-option *ngFor="let province of provinces" [value]="province.key" routerLink [queryParams]="{province: province.title }">
             {{ province.title }}
           </mat-option>
         </mat-select>
