@@ -4,7 +4,8 @@
     <td>
       <mat-form-field class="mat-form-field">
         <mat-select placeholder="Seleсt province:" name="province" formControlName="provinceKey">
-          <mat-option *ngFor="let province of provinces" [value]="province.key" routerLink [queryParams]="{province: province.title }">
+          <mat-option *ngFor="let province of provinces" [value]="province.key" routerLink [queryParams]="{province: province.key }"
+            queryParamsHandling="merge">
             {{ province.title }}
           </mat-option>
         </mat-select>
@@ -16,7 +17,7 @@
 
       <div style="text-align: center;">
         <mat-button-toggle-group formControlName="fuelType">
-          <mat-button-toggle *ngFor="let fuel of fuelTypes" [value]="fuel" #b>
+          <mat-button-toggle *ngFor="let fuel of fuelTypes" [value]="fuel" #b routerLink [queryParams]="{fuelType:fuel}" queryParamsHandling="merge">
             <i [ngClass]="{'fas':b.checked, 'fa-gas-pump':b.checked, 'fa-lg': b.checked}"></i>
             {{fuel}}
           </mat-button-toggle>
@@ -35,7 +36,7 @@
 
       <mat-slider [ngClass]="{'motorcycle': f.value.volume < motorcycleWeight, 'lightTruck': f.value.volume > lightTruckWeight, 'heavyTruck': f.value.volume > heavyTruckWeight}"
         [volumeValue]="f.value.volume" formControlName="volume" min="1" max="5051" step="50" tickInterval="1" (input)="f.value.volume = $event.value"
-        #volumeControl>
+        #volumeControl routerLink [queryParams]="{volume:f.value.volume}" queryParamsHandling="merge">
       </mat-slider>
 
       <br>
