@@ -1,4 +1,23 @@
 <br>
+<button mat-icon-button [matMenuTriggerFor]="menu">
+<!-- <button mat-icon-button> -->
+  <mat-icon>more_vert</mat-icon>
+</button>
+<mat-menu #menu="matMenu">
+  <button mat-menu-item>
+    <mat-icon>dialpad</mat-icon>
+    <span>Redial</span>
+  </button>
+  <button mat-menu-item disabled>
+    <mat-icon>voicemail</mat-icon>
+    <span>Check voicemail</span>
+  </button>
+  <button mat-menu-item>
+    <mat-icon>notifications_off</mat-icon>
+    <span>Disable alerts</span>
+  </button>
+</mat-menu>
+<br>
 <table id="taxform" [formGroup]="carTaxControl" #f="ngForm">
   <tr>
     <td>
@@ -19,7 +38,7 @@
         <mat-button-toggle-group formControlName="fuelType">
           <mat-button-toggle *ngFor="let fuel of fuelTypes" [value]="fuel" #b routerLink [queryParams]="{fuelType:fuel}" queryParamsHandling="merge">
             <i [ngClass]="{'fas':b.checked, 'fa-gas-pump':b.checked, 'fa-lg': b.checked}"></i>
-            {{fuel}}
+            {{fuel | translate}}
           </mat-button-toggle>
         </mat-button-toggle-group>
 

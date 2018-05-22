@@ -19,7 +19,7 @@ import {
   MatIconModule,
   MatInputModule,
   MatListModule,
-  MatMenuModule,
+  // MatMenuModule,
   MatNativeDateModule,
   MatPaginatorModule,
   MatProgressBarModule,
@@ -46,6 +46,9 @@ import { CarTaxFormComponent } from './car-tax-form/car-tax-form.component';
 import { CarTaxService } from './car-tax-form/car-tax.service';
 import { HttpClientModule } from '@angular/common/http';
 import { TruckIconDirective } from './car-tax-form/truck-icon.directive';
+import { TranslatePipe } from './translate.pipe';
+import { TranslationService } from './translation.service';
+import {MatMenuModule} from '@angular/material/menu';
 
 const routes: Routes = [
   { path: '', component: CarTaxFormComponent }
@@ -57,7 +60,8 @@ const routes: Routes = [
   declarations: [
     AppComponent,
     CarTaxFormComponent,
-    TruckIconDirective
+    TruckIconDirective,
+    TranslatePipe
   ],
   imports: [
 
@@ -72,10 +76,11 @@ const routes: Routes = [
     MatIconModule,
     MatButtonModule,
     MatCardModule,
+    MatMenuModule,
     RouterModule.forRoot(routes)
   ],
 
-  providers: [CarTaxService],
+  providers: [CarTaxService, TranslationService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

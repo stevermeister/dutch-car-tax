@@ -51,14 +51,14 @@ export class CarTaxFormComponent implements OnInit {
     this.carTaxControl.controls['fuelType'].setValue('Benzine');
     this.carTaxControl.controls['volume'].setValue('1551');
 
-    // this._activatedRoute.queryParams.filter(Boolean).subscribe(queryParams => {
+    this._activatedRoute.queryParams.filter(Boolean).subscribe(queryParams => {
 
-    //   this.carTaxControl.controls['provinceKey'].setValue(queryParams.province);
-    //   this.carTaxControl.controls['fuelType'].setValue(queryParams.fuelType);
-    //   this.carTaxControl.controls['volume'].setValue(queryParams.volume);
-    //   // console.log(queryParams);
-    //   // console.log('Hello');
-    // });
+      this.carTaxControl.controls['provinceKey'].setValue(queryParams.province);
+      this.carTaxControl.controls['fuelType'].setValue(queryParams.fuelType);
+      this.carTaxControl.controls['volume'].setValue(queryParams.volume);
+      // console.log(queryParams);
+      // console.log('Hello');
+    });
 
 
     // this._activatedRoute.
