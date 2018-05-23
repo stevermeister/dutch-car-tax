@@ -26,17 +26,19 @@ mat-button-toggle-group mat-button-toggle:nth-child(2) {
 
 mat-button-toggle-group mat-button-toggle:first-child {
     border-radius: 15px 0 0 15px;
-    border-right: 1px solid #ffffff; 
-    // box-shadow: 0 10px 6px -6px rgba(0, 0, 0, .2), 0 2px 2px 0 rgba(0, 0, 0, .14), 0 1px 5px 0 rgba(0, 0, 0, .12);
+    border-right: 1px solid #ffffff; // box-shadow: 0 10px 6px -6px rgba(0, 0, 0, .2), 0 2px 2px 0 rgba(0, 0, 0, .14), 0 1px 5px 0 rgba(0, 0, 0, .12);
 }
 
 mat-button-toggle-group mat-button-toggle:last-child {
     border-radius: 0 15px 15px 0;
-    border-left: 1px solid #ffffff; 
-    //box-shadow: 0 10px 6px -6px rgba(0, 0, 0, .2), 0 2px 2px 0 rgba(0, 0, 0, .14), 0 1px 5px 0 rgba(0, 0, 0, .12);
+    border-left: 1px solid #ffffff; //box-shadow: 0 10px 6px -6px rgba(0, 0, 0, .2), 0 2px 2px 0 rgba(0, 0, 0, .14), 0 1px 5px 0 rgba(0, 0, 0, .12);
 }
 
 mat-button-toggle {
     color: #ffffff;
 }
 
+.mat-icon-button {
+    width: 24px;
+    height: 16px;
+}

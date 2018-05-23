@@ -16,7 +16,7 @@ import {
   MatDividerModule,
   MatExpansionModule,
   MatGridListModule,
-  MatIconModule,
+  // MatIconModule,
   MatInputModule,
   MatListModule,
   // MatMenuModule,
@@ -48,7 +48,8 @@ import { HttpClientModule } from '@angular/common/http';
 import { TruckIconDirective } from './car-tax-form/truck-icon.directive';
 import { TranslatePipe } from './translate.pipe';
 import { TranslationService } from './translation.service';
-import {MatMenuModule} from '@angular/material/menu';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatIconModule } from '@angular/material/icon';
 
 const routes: Routes = [
   { path: '', component: CarTaxFormComponent }

@@ -1,24 +1,41 @@
-<br>
-<button mat-icon-button [matMenuTriggerFor]="menu">
-<!-- <button mat-icon-button> -->
-  <mat-icon>more_vert</mat-icon>
-</button>
-<mat-menu #menu="matMenu">
-  <button mat-menu-item>
-    <mat-icon>dialpad</mat-icon>
-    <span>Redial</span>
-  </button>
-  <button mat-menu-item disabled>
-    <mat-icon>voicemail</mat-icon>
-    <span>Check voicemail</span>
-  </button>
-  <button mat-menu-item>
-    <mat-icon>notifications_off</mat-icon>
-    <span>Disable alerts</span>
-  </button>
-</mat-menu>
-<br>
 <table id="taxform" [formGroup]="carTaxControl" #f="ngForm">
+
+  <tr>
+    <td style="text-align: right;">
+      <button mat-icon-button [matMenuTriggerFor]="menu">
+        <mat-icon class="flag-icon flag-icon-gb"></mat-icon>
+      </button>
+      <mat-menu #menu="matMenu" [overlapTrigger]="false">
+        <button mat-menu-item>
+          <mat-icon class="flag-icon flag-icon-nl"></mat-icon>
+          <span>Dutch</span>
+        </button>
+        <button mat-menu-item>
+          <mat-icon class="flag-icon flag-icon-gb"></mat-icon>
+          <span>English</span>
+        </button>
+        <button mat-menu-item>
+          <mat-icon class="flag-icon flag-icon-fr"></mat-icon>
+          <span>French</span>
+        </button>
+        <button mat-menu-item>
+          <mat-icon class="flag-icon flag-icon-de"></mat-icon>
+          <span>German</span>
+        </button>
+        <button mat-menu-item>
+          <mat-icon class="flag-icon flag-icon-ru"></mat-icon>
+          <span>Russian</span>
+        </button>
+        <button mat-menu-item>
+            <mat-icon class="flag-icon flag-icon-es"></mat-icon>
+            <span>Spanish</span>
+          </button>
+
+      </mat-menu>
+
+    </td>
+  </tr>
+
   <tr>
     <td>
       <mat-form-field class="mat-form-field">
@@ -29,11 +46,14 @@
           </mat-option>
         </mat-select>
       </mat-form-field>
-
-      <br>
       <br>
       <br>
 
+    </td>
+  </tr>
+
+  <tr>
+    <td>
       <div style="text-align: center;">
         <mat-button-toggle-group formControlName="fuelType">
           <mat-button-toggle *ngFor="let fuel of fuelTypes" [value]="fuel" #b routerLink [queryParams]="{fuelType:fuel}" queryParamsHandling="merge">
@@ -41,14 +61,15 @@
             {{fuel | translate}}
           </mat-button-toggle>
         </mat-button-toggle-group>
-
-
       </div>
+      <br>
+      <br>
+      <br>
+    </td>
+  </tr>
 
-      <br>
-      <br>
-      <br>
-
+  <tr>
+    <td>
       <div id="sliderData">
         <span id="currentSliderValue" title="Weight Class">{{f.value.volume}} - {{+f.value.volume + (volumeControl.step - 1)}} kg</span>
       </div>
@@ -57,21 +78,22 @@
         [volumeValue]="f.value.volume" formControlName="volume" min="1" max="5051" step="50" tickInterval="1" (input)="f.value.volume = $event.value"
         #volumeControl routerLink [queryParams]="{volume:f.value.volume}" queryParamsHandling="merge">
       </mat-slider>
-
       <br>
       <br>
       <br>
 
+
+    </td>
+  </tr>
+
+  <tr>
+    <td>
       <h1 id="priceHeader">
-
         {{price$ | async}}
         <i class="fas fa-euro-sign fa-xs"></i>
         <span>per quarter</span>
       </h1>
-
-    </td>
-    <td>
-
     </td>
   </tr>
+
 </table>
