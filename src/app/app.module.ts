@@ -16,10 +16,8 @@ import {
   MatDividerModule,
   MatExpansionModule,
   MatGridListModule,
-  // MatIconModule,
   MatInputModule,
   MatListModule,
-  // MatMenuModule,
   MatNativeDateModule,
   MatPaginatorModule,
   MatProgressBarModule,
@@ -52,8 +50,8 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
 
 const routes: Routes = [
-  { path: '', component: CarTaxFormComponent }
-  // { path: ':city', component: CarTaxFormComponent }
+  { path: '', component: CarTaxFormComponent },
+  { path: ':language', component: CarTaxFormComponent }
 ];
 
 

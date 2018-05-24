@@ -3,34 +3,45 @@
   <tr>
     <td style="text-align: right;">
       <button mat-icon-button [matMenuTriggerFor]="menu">
-        <mat-icon class="flag-icon flag-icon-gb"></mat-icon>
+        <mat-icon [class]="" title="Click to select language"></mat-icon>
       </button>
-      <mat-menu #menu="matMenu" [overlapTrigger]="false">
-        <button mat-menu-item>
-          <mat-icon class="flag-icon flag-icon-nl"></mat-icon>
-          <span>Dutch</span>
-        </button>
-        <button mat-menu-item>
-          <mat-icon class="flag-icon flag-icon-gb"></mat-icon>
-          <span>English</span>
-        </button>
-        <button mat-menu-item>
-          <mat-icon class="flag-icon flag-icon-fr"></mat-icon>
-          <span>French</span>
-        </button>
-        <button mat-menu-item>
-          <mat-icon class="flag-icon flag-icon-de"></mat-icon>
-          <span>German</span>
-        </button>
-        <button mat-menu-item>
-          <mat-icon class="flag-icon flag-icon-ru"></mat-icon>
-          <span>Russian</span>
-        </button>
-        <button mat-menu-item>
+      <mat-menu #menu="matMenu">
+        <a class="language-menu-item" routerLink="/nl">
+          <button mat-menu-item>
+            <mat-icon class="flag-icon flag-icon-nl"></mat-icon>
+            <span>Dutch</span>
+          </button>
+        </a>
+        <a class="language-menu-item" routerLink="/eng">
+          <button mat-menu-item>
+            <mat-icon class="flag-icon flag-icon-gb"></mat-icon>
+            <span>English</span>
+          </button>
+        </a>
+        <a class="language-menu-item" routerLink="/fr">
+          <button mat-menu-item>
+            <mat-icon class="flag-icon flag-icon-fr"></mat-icon>
+            <span>French</span>
+          </button>
+        </a>
+        <a class="language-menu-item" routerLink="/de">
+          <button mat-menu-item>
+            <mat-icon class="flag-icon flag-icon-de"></mat-icon>
+            <span>German</span>
+          </button>
+        </a>
+        <a class="language-menu-item" routerLink="/ru">
+          <button mat-menu-item>
+            <mat-icon class="flag-icon flag-icon-ru"></mat-icon>
+            <span>Russian</span>
+          </button>
+        </a>
+        <a class="language-menu-item" routerLink="/es">
+          <button mat-menu-item>
             <mat-icon class="flag-icon flag-icon-es"></mat-icon>
             <span>Spanish</span>
           </button>
-
+        </a>
       </mat-menu>
 
     </td>

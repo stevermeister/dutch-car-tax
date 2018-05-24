@@ -1,3 +1,4 @@
+import { TranslationService } from './../translation.service';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Directive, Component, OnInit, Input } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
@@ -5,6 +6,7 @@ import { Observable } from 'rxjs/Observable';
 import { CarTaxService, FuelTypes, Grid, Provinces } from './car-tax.service';
 import 'rxjs/add/operator/filter';
 import 'rxjs/add/operator/switchMap';
+import 'rxjs/add/operator/take';
 import { ActivatedRoute } from '@angular/router';
 
 
@@ -32,7 +34,11 @@ export class CarTaxFormComponent implements OnInit {
   public heavyTruckWeight = 4500;
   public price$: BehaviorSubject<string> = new BehaviorSubject('222');
 
-  constructor(public _carTaxService: CarTaxService, private _activatedRoute: ActivatedRoute) {
+
+  constructor(
+    public _carTaxService: CarTaxService,
+    private _activatedRoute: ActivatedRoute,
+    private _translationService: TranslationService) {
   }
 
   ngOnInit() {
@@ -51,17 +57,19 @@ export class CarTaxFormComponent implements OnInit {
     this.carTaxControl.controls['fuelType'].setValue('Benzine');
     this.carTaxControl.controls['volume'].setValue('1551');
 
-    this._activatedRoute.queryParams.filter(Boolean).subscribe(queryParams => {
+    // this._activatedRoute.queryParams.filter(Boolean).take(1).subscribe(queryParams => {
 
-      this.carTaxControl.controls['provinceKey'].setValue(queryParams.province);
-      this.carTaxControl.controls['fuelType'].setValue(queryParams.fuelType);
-      this.carTaxControl.controls['volume'].setValue(queryParams.volume);
-      // console.log(queryParams);
-      // console.log('Hello');
+    //   this.carTaxControl.controls['provinceKey'].setValue(queryParams.province);
+    //   this.carTaxControl.controls['fuelType'].setValue(queryParams.fuelType);
+    //   this.carTaxControl.controls['volume'].setValue(queryParams.volume);
+    //   this.carTaxControl.updateValueAndValidity();
+    // });
+
+    this._activatedRoute.params.pluck('language').filter(Boolean).subscribe((language: string) => {
+
+      this._translationService.switchLanguage(language);
     });
 
-
-    // this._activatedRoute.
 
 
     this.carTaxControl.valueChanges.subscribe((value: FormValue) => {

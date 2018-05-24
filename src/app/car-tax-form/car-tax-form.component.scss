@@ -42,3 +42,12 @@ mat-button-toggle {
     width: 24px;
     height: 16px;
 }
+
+.language-menu-item {
+    text-decoration: none;
+    color: initial;
+}
+
+::ng-deep .cdk-overlay-pane {
+    left: 820px !important;
+}

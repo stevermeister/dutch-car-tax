@@ -3,10 +3,19 @@ import { Injectable } from '@angular/core';
 @Injectable()
 export class TranslationService {
 
-  public language = 'rus';
-  private _languages = ['eng', 'nl', 'rus', 'fr'];
+  public language = 'eng';
+  private _languages = ['eng', 'nl', 'ru', 'fr'];
   public dictionary = {
 
+    'eng': {
+      language: 'english',
+      values: {
+        'Benzine': 'Benzine',
+        'Diesel': 'Diesel',
+        'LPG3': 'LPG3',
+        'LPG': 'LPG'
+      }
+    },
     'fr': {
       language: 'french',
       values: {
@@ -16,7 +25,7 @@ export class TranslationService {
         'LPG': 'GPL3'
       }
     },
-    'rus': {
+    'ru': {
       language: 'russian',
       values: {
         'Benzine': 'Бензин',
@@ -30,13 +39,14 @@ export class TranslationService {
 
   constructor() { }
 
+  switchLanguage(value): void {
 
+    this.language = value;
+  }
 
   translate(key: string): string {
-    //console.log(this.dictionary);
-    return this.dictionary[this.language].values[key];
-    //return;
 
+    return this.dictionary[this.language].values[key];
   }
 }
 
