@@ -3,12 +3,11 @@ import { Injectable } from '@angular/core';
 @Injectable()
 export class TranslationService {
 
-  public language = 'eng';
-  private _languages = ['eng', 'nl', 'ru', 'fr'];
-  public dictionary = {
+  public currentLanguage = 'gb';
+  private _dictionary = {
 
-    'eng': {
-      language: 'english',
+    'gb': {
+      flagIconClass: 'flag-icon-gb',
       values: {
         'Benzine': 'Benzine',
         'Diesel': 'Diesel',
@@ -17,7 +16,7 @@ export class TranslationService {
       }
     },
     'fr': {
-      language: 'french',
+      flagIconClass: 'flag-icon-fr',
       values: {
         'Benzine': 'Essence',
         'Diesel': 'Diesel',
@@ -26,14 +25,42 @@ export class TranslationService {
       }
     },
     'ru': {
-      language: 'russian',
+      flagIconClass: 'flag-icon-ru',
       values: {
         'Benzine': 'Бензин',
         'Diesel': 'Дизель',
         'LPG3': 'Газ 3',
         'LPG': 'Газ'
       }
+    },
+    'de': {
+      flagIconClass: 'flag-icon-de',
+      values: {
+        'Benzine': 'Benzine',
+        'Diesel': 'Diesel',
+        'LPG3': 'LPG3',
+        'LPG': 'LPG'
+      }
+    },
+    'es': {
+      flagIconClass: 'flag-icon-es',
+      values: {
+        'Benzine': 'Benzine',
+        'Diesel': 'Diesel',
+        'LPG3': 'LPG3',
+        'LPG': 'LPG'
+      }
+    },
+    'nl': {
+      flagIconClass: 'flag-icon-nl',
+      values: {
+        'Benzine': 'Benzine',
+        'Diesel': 'Diesel',
+        'LPG3': 'LPG3',
+        'LPG': 'LPG'
+      }
     }
+
 
   };
 
@@ -41,12 +68,17 @@ export class TranslationService {
 
   switchLanguage(value): void {
 
-    this.language = value;
+    this.currentLanguage = value;
+  }
+
+  getLanguageIconClass(language: string): string {
+
+    return this._dictionary[this.currentLanguage].flagIconClass;
   }
 
   translate(key: string): string {
 
-    return this.dictionary[this.language].values[key];
+    return this._dictionary[this.currentLanguage].values[key];
   }
 }
 

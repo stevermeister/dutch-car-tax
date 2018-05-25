@@ -33,7 +33,7 @@ export class CarTaxFormComponent implements OnInit {
   public lightTruckWeight = 3500;
   public heavyTruckWeight = 4500;
   public price$: BehaviorSubject<string> = new BehaviorSubject('222');
-
+  public selectedLanguageClassIcon = 'flag-icon-gb';
 
   constructor(
     public _carTaxService: CarTaxService,
@@ -68,6 +68,7 @@ export class CarTaxFormComponent implements OnInit {
     this._activatedRoute.params.pluck('language').filter(Boolean).subscribe((language: string) => {
 
       this._translationService.switchLanguage(language);
+      this.selectedLanguageClassIcon = this._translationService.getLanguageIconClass(language);
     });
 
 
@@ -75,6 +76,8 @@ export class CarTaxFormComponent implements OnInit {
     this.carTaxControl.valueChanges.subscribe((value: FormValue) => {
       this.price$.next((this.getPrice(value)));
     });
+
+
 
   }
 
