@@ -50,7 +50,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
 
 const routes: Routes = [
-  { path: '', component: CarTaxFormComponent },
+  { path: '', redirectTo: 'gb', pathMatch: 'full' },
   { path: ':language', component: CarTaxFormComponent }
 ];
 
