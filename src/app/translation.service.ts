@@ -9,7 +9,7 @@ export class TranslationService {
     'gb': {
       flagIconClass: 'flag-icon-gb',
       values: {
-        'Benzine': 'Benzine',
+        'Benzine': 'Petrol',
         'Diesel': 'Diesel',
         'LPG3': 'LPG3',
         'LPG': 'LPG'
@@ -19,7 +19,7 @@ export class TranslationService {
       flagIconClass: 'flag-icon-fr',
       values: {
         'Benzine': 'Essence',
-        'Diesel': 'Diesel',
+        'Diesel': 'Diésel',
         'LPG3': 'GPL3',
         'LPG': 'GPL3'
       }
@@ -36,19 +36,19 @@ export class TranslationService {
     'de': {
       flagIconClass: 'flag-icon-de',
       values: {
-        'Benzine': 'Benzine',
+        'Benzine': 'Motorenbenzin',
         'Diesel': 'Diesel',
-        'LPG3': 'LPG3',
-        'LPG': 'LPG'
+        'LPG3': 'Flüssiggas3',
+        'LPG': 'Flüssiggas'
       }
     },
     'es': {
       flagIconClass: 'flag-icon-es',
       values: {
-        'Benzine': 'Benzine',
-        'Diesel': 'Diesel',
-        'LPG3': 'LPG3',
-        'LPG': 'LPG'
+        'Benzine': 'Gasolina',
+        'Diesel': 'Diésel',
+        'LPG3': 'GPL3',
+        'LPG': 'GLP'
       }
     },
     'nl': {
