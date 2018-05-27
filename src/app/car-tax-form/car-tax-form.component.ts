@@ -32,7 +32,8 @@ export class CarTaxFormComponent implements OnInit {
   public motorcycleWeight = 701;
   public lightTruckWeight = 3500;
   public heavyTruckWeight = 4500;
-  public price$: BehaviorSubject<string> = new BehaviorSubject('222');
+  //public price$: BehaviorSubject<string> = new BehaviorSubject('222');
+  public price$;
   public selectedLanguageClassIcon = 'flag-icon-gb';
 
   constructor(
@@ -43,27 +44,64 @@ export class CarTaxFormComponent implements OnInit {
 
   ngOnInit() {
 
-    this._carTaxService.getFuelTypes().subscribe((fuelTypes: FuelTypes) => this.fuelTypes = fuelTypes);
-    this._carTaxService.getProvinces().subscribe((provinces: Provinces[]) => this.provinces = provinces);
-    this._carTaxService.getTaxGrid().subscribe((taxGrid: Grid) => this.grid = taxGrid);
-
     this.carTaxControl = new FormGroup({
       provinceKey: new FormControl('', Validators.required),
       fuelType: new FormControl('', Validators.required),
       volume: new FormControl('', Validators.required)
     });
 
+
     this.carTaxControl.controls['provinceKey'].setValue('NH');
     this.carTaxControl.controls['fuelType'].setValue('Benzine');
     this.carTaxControl.controls['volume'].setValue('1551');
 
-    // this._activatedRoute.queryParams.filter(Boolean).take(1).subscribe(queryParams => {
 
-    //   this.carTaxControl.controls['provinceKey'].setValue(queryParams.province);
-    //   this.carTaxControl.controls['fuelType'].setValue(queryParams.fuelType);
-    //   this.carTaxControl.controls['volume'].setValue(queryParams.volume);
-    //   this.carTaxControl.updateValueAndValidity();
-    // });
+    Observable.combineLatest(
+      this._carTaxService.getFuelTypes(),
+      this._carTaxService.getProvinces(),
+      this._carTaxService.getTaxGrid(),
+
+      (fuelTypes, provinces, taxGrid) => {
+
+        this.fuelTypes = fuelTypes;
+        this.provinces = provinces;
+        this.grid = taxGrid;
+      }
+    ).switchMap(() => {
+
+      return this.carTaxControl.valueChanges
+        .merge(this._activatedRoute.queryParams.take(1)
+          .map(queryParams => {
+
+            const values = {};
+            Object.keys(this.carTaxControl.value).forEach(key => {
+
+              if (!queryParams[key]) {
+                values[key] = this.carTaxControl.value[key];
+              } else {
+                values[key] = queryParams[key];
+              }
+            });
+
+            return values;
+
+          }).do(values => {
+            this.carTaxControl.controls['provinceKey'].setValue(values['provinceKey'], { emitEvent: false });
+            this.carTaxControl.controls['fuelType'].setValue(values['fuelType'], { emitEvent: false });
+            this.carTaxControl.controls['volume'].setValue(values['volume'], { emitEvent: false });
+
+            return values;
+
+          }));
+    }).map(value => {
+
+      return this.getPrice(value);
+
+    }).subscribe((price: number) => {
+
+      this.price$ = price;
+    });
+
 
     this._activatedRoute.params.pluck('language').filter(Boolean).subscribe((language: string) => {
 
@@ -71,17 +109,10 @@ export class CarTaxFormComponent implements OnInit {
       this.selectedLanguageClassIcon = this._translationService.getLanguageIconClass(language);
     });
 
-
-
-    this.carTaxControl.valueChanges.subscribe((value: FormValue) => {
-      this.price$.next((this.getPrice(value)));
-    });
-
-
-
   }
 
-  getPrice(value: FormValue) {
+
+  getPrice(value: any) {
 
     if (value.volume < 551) {
       return this.grid[value.provinceKey][0].split('#')[this.fuelTypes.indexOf(value.fuelType) + 1];
@@ -96,6 +127,8 @@ export class CarTaxFormComponent implements OnInit {
 
     return provinceGrid[index].split('#')[this.fuelTypes.indexOf(value.fuelType) + 1];
   }
+
+
 
 
 }
