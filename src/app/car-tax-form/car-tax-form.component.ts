@@ -1,5 +1,4 @@
 import { TranslationService } from './../translation.service';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Directive, Component, OnInit, Input } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Observable } from 'rxjs/Observable';
@@ -43,11 +42,6 @@ export class CarTaxFormComponent implements OnInit {
 
   ngOnInit() {
 
-    this._carTaxService.getFuelTypes().subscribe((fuelTypes: FuelTypes) => this.fuelTypes = fuelTypes);
-    this._carTaxService.getProvinces().subscribe((provinces: Provinces[]) => this.provinces = provinces);
-    this._carTaxService.getTaxGrid().subscribe((taxGrid: Grid) => this.grid = taxGrid);
-
-
     this.carTaxControl = new FormGroup({
       provinceKey: new FormControl('', Validators.required),
       fuelType: new FormControl('', Validators.required),
@@ -89,26 +83,22 @@ export class CarTaxFormComponent implements OnInit {
 
             return values;
 
-          }).do(values => {
+          }).do((mappedQueryParams: FormValue) => {
 
             this.carTaxControl.setValue({
-              'provinceKey': values['provinceKey'],
-              'fuelType': values['fuelType'],
-              'volume': values['volume']
+              'provinceKey': mappedQueryParams['provinceKey'],
+              'fuelType': mappedQueryParams['fuelType'],
+              'volume': mappedQueryParams['volume']
             }, { emitEvent: false });
 
-            return values;
-
+            return mappedQueryParams;
           }));
-    }).map(value => {
 
-      return this.getPrice(value);
+    }).map((values: FormValue) => {
 
+      return this.getPrice(values);
     });
-    // .subscribe((price: number) => {
 
-    //   this.price$ = price;
-    // });
 
 
     this._activatedRoute.params.pluck('language').filter(Boolean).subscribe((language: string) => {
@@ -120,7 +110,7 @@ export class CarTaxFormComponent implements OnInit {
   }
 
 
-  getPrice(value: any) {
+  getPrice(value: FormValue): number {
 
     if (value.volume < 551) {
       return this.grid[value.provinceKey][0].split('#')[this.fuelTypes.indexOf(value.fuelType) + 1];
