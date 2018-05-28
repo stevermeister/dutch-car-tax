@@ -76,7 +76,7 @@ const routes: Routes = [
     MatButtonModule,
     MatCardModule,
     MatMenuModule,
-    RouterModule.forRoot(routes)
+    RouterModule.forRoot(routes, { useHash: true })
   ],
 
   providers: [CarTaxService, TranslationService],

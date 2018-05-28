@@ -44,17 +44,22 @@ export class CarTaxFormComponent implements OnInit {
 
   ngOnInit() {
 
+    this._carTaxService.getFuelTypes().subscribe((fuelTypes: FuelTypes) => this.fuelTypes = fuelTypes);
+    this._carTaxService.getProvinces().subscribe((provinces: Provinces[]) => this.provinces = provinces);
+    this._carTaxService.getTaxGrid().subscribe((taxGrid: Grid) => this.grid = taxGrid);
+
+
     this.carTaxControl = new FormGroup({
       provinceKey: new FormControl('', Validators.required),
       fuelType: new FormControl('', Validators.required),
       volume: new FormControl('', Validators.required)
     });
 
-
-    this.carTaxControl.controls['provinceKey'].setValue('NH');
-    this.carTaxControl.controls['fuelType'].setValue('Benzine');
-    this.carTaxControl.controls['volume'].setValue('1551');
-
+    this.carTaxControl.setValue({
+      'provinceKey': 'NH',
+      'fuelType': 'Benzine',
+      'volume': '1551'
+    });
 
     Observable.combineLatest(
       this._carTaxService.getFuelTypes(),
@@ -86,9 +91,12 @@ export class CarTaxFormComponent implements OnInit {
             return values;
 
           }).do(values => {
-            this.carTaxControl.controls['provinceKey'].setValue(values['provinceKey'], { emitEvent: false });
-            this.carTaxControl.controls['fuelType'].setValue(values['fuelType'], { emitEvent: false });
-            this.carTaxControl.controls['volume'].setValue(values['volume'], { emitEvent: false });
+
+            this.carTaxControl.setValue({
+              'provinceKey': values['provinceKey'],
+              'fuelType': values['fuelType'],
+              'volume': values['volume']
+            }, { emitEvent: false });
 
             return values;
 
