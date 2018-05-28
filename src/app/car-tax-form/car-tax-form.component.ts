@@ -32,7 +32,6 @@ export class CarTaxFormComponent implements OnInit {
   public motorcycleWeight = 701;
   public lightTruckWeight = 3500;
   public heavyTruckWeight = 4500;
-  //public price$: BehaviorSubject<string> = new BehaviorSubject('222');
   public price$;
   public selectedLanguageClassIcon = 'flag-icon-gb';
 
@@ -61,7 +60,7 @@ export class CarTaxFormComponent implements OnInit {
       'volume': '1551'
     });
 
-    Observable.combineLatest(
+    this.price$ = Observable.combineLatest(
       this._carTaxService.getFuelTypes(),
       this._carTaxService.getProvinces(),
       this._carTaxService.getTaxGrid(),
@@ -105,10 +104,11 @@ export class CarTaxFormComponent implements OnInit {
 
       return this.getPrice(value);
 
-    }).subscribe((price: number) => {
-
-      this.price$ = price;
     });
+    // .subscribe((price: number) => {
+
+    //   this.price$ = price;
+    // });
 
 
     this._activatedRoute.params.pluck('language').filter(Boolean).subscribe((language: string) => {
