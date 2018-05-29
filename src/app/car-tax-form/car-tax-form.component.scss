@@ -48,6 +48,18 @@ mat-button-toggle {
     color: initial;
 }
 
-::ng-deep .cdk-overlay-pane {
-    left: 820px !important;
-}
+// .mat-menu-panel {
+//     transform: translateX(-80%) !important; 
+//     left: 100px !important;
+
+// }
+
+// ::ng-deep .cdk-overlay-pane {
+//     transform: translateX(-80%);
+//     min-width: 345px; // position: relative; 
+//     // left: 100px !important;
+// }
+
+// .abc {
+//     transform: translateX(80%) !important;
+// }

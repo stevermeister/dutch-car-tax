@@ -24,6 +24,7 @@ export type FormValue = {
 
 export class CarTaxFormComponent implements OnInit {
 
+
   public carTaxControl: FormGroup;
   public fuelTypes: FuelTypes;
   public provinces: Provinces[];

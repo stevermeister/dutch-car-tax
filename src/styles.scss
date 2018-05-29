@@ -67,8 +67,9 @@ h4 {
     position: relative;
     content: "\f1b9" !important;
     width: 20px;
-    -webkit-transform: translate3d(0,0,0); // Chrome bug fix that prevents cutting off SVG icons;
+    -webkit-transform: translate3d(0, 0, 0); // Chrome bug fix that prevents cutting off SVG icons;
 }
+
 .motorcycle .mat-slider-wrapper .mat-slider-thumb-container .mat-slider-thumb:before {
     content: "\f21c" !important;
 }
@@ -79,4 +80,20 @@ h4 {
 
 .heavyTruck .mat-slider-wrapper .mat-slider-thumb-container .mat-slider-thumb:before {
     content: "\f4df" !important;
+}
+
+.cdk-overlay-pane {
+    .mat-menu-panel {
+        position: relative;
+        left: -20% !important;
+    }
+}
+
+@media screen and (min-width: 540px) {
+    .cdk-overlay-pane {
+        .mat-menu-panel {
+            position: relative;
+            left: -100% !important;
+        }
+    }
 }
