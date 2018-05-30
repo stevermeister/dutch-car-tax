@@ -13,7 +13,8 @@ export class TranslationService {
         'Diesel': 'Diesel',
         'LPG3': 'LPG3',
         'LPG': 'LPG',
-        'timePeriod': 'per quarter'
+        'timePeriod': 'per quarter',
+        'selectProvincePlaceholder': 'Select Province'
       }
     },
     'fr': {
@@ -23,7 +24,8 @@ export class TranslationService {
         'Diesel': 'Diésel',
         'LPG3': 'GPL3',
         'LPG': 'GPL3',
-        'timePeriod': 'pour le trimestre'
+        'timePeriod': 'pour le trimestre',
+        'selectProvincePlaceholder': 'Selectionnez Province'
       }
     },
     'ru': {
@@ -33,7 +35,8 @@ export class TranslationService {
         'Diesel': 'Дизель',
         'LPG3': 'Газ 3',
         'LPG': 'Газ',
-        'timePeriod': 'за квартал'
+        'timePeriod': 'за квартал',
+        'selectProvincePlaceholder': 'Выберите провинцию'
       }
     },
     'de': {
@@ -43,7 +46,8 @@ export class TranslationService {
         'Diesel': 'Diesel',
         'LPG3': 'Flüssiggas3',
         'LPG': 'Flüssiggas',
-        'timePeriod': 'pro Quartal'
+        'timePeriod': 'pro Quartal',
+        'selectProvincePlaceholder': 'Wählen Provinz'
       }
     },
     'es': {
@@ -53,7 +57,8 @@ export class TranslationService {
         'Diesel': 'Diésel',
         'LPG3': 'GPL3',
         'LPG': 'GLP',
-        'timePeriod': 'por trimestre'
+        'timePeriod': 'por trimestre',
+        'selectProvincePlaceholder': 'Seleccione Provincia'
       }
 
     },
@@ -64,7 +69,8 @@ export class TranslationService {
         'Diesel': 'Diesel',
         'LPG3': 'LPG3',
         'LPG': 'LPG',
-        'timePeriod': 'per tijdvak van 3 maanden'
+        'timePeriod': 'per tijdvak van 3 maanden',
+        'selectProvincePlaceholder': 'Selecteer Provincie'
       }
     }
 

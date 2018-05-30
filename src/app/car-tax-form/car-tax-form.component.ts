@@ -35,6 +35,7 @@ export class CarTaxFormComponent implements OnInit {
   public price$;
   public selectedLanguageClassIcon = 'flag-icon-gb';
   public timePeriod = 'timePeriod';
+  public selectProvincePlaceholder = 'selectProvincePlaceholder';
 
   constructor(
     public _carTaxService: CarTaxService,
