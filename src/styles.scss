@@ -21,7 +21,7 @@ h4 {
 
 #taxform {
     margin: 0 auto;
-    width: 350px;
+    min-width: 350px;
 }
 
 #resetButton {
@@ -89,7 +89,7 @@ h4 {
     }
 }
 
-@media screen and (min-width: 540px) {
+@media screen and (min-width: 550px) {
     .cdk-overlay-pane {
         .mat-menu-panel {
             position: relative;

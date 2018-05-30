@@ -1,5 +1,9 @@
 mat-slider {
-    width: 345px;
+    width: 100%;
+}
+
+.mat-form-field {
+    width: 100%;
 }
 
 .mat-select .mat-option {
@@ -9,7 +13,7 @@ mat-slider {
 
 mat-form-field.mat-form-field {
     font-size: 1.2em;
-    width: 345px;
+    min-width: 345px;
 }
 
 mat-button-toggle-group {
@@ -26,12 +30,12 @@ mat-button-toggle-group mat-button-toggle:nth-child(2) {
 
 mat-button-toggle-group mat-button-toggle:first-child {
     border-radius: 15px 0 0 15px;
-    border-right: 1px solid #ffffff; // box-shadow: 0 10px 6px -6px rgba(0, 0, 0, .2), 0 2px 2px 0 rgba(0, 0, 0, .14), 0 1px 5px 0 rgba(0, 0, 0, .12);
+    border-right: 1px solid #ffffff;
 }
 
 mat-button-toggle-group mat-button-toggle:last-child {
     border-radius: 0 15px 15px 0;
-    border-left: 1px solid #ffffff; //box-shadow: 0 10px 6px -6px rgba(0, 0, 0, .2), 0 2px 2px 0 rgba(0, 0, 0, .14), 0 1px 5px 0 rgba(0, 0, 0, .12);
+    border-left: 1px solid #ffffff;
 }
 
 mat-button-toggle {
@@ -47,19 +51,3 @@ mat-button-toggle {
     text-decoration: none;
     color: initial;
 }
-
-// .mat-menu-panel {
-//     transform: translateX(-80%) !important; 
-//     left: 100px !important;
-
-// }
-
-// ::ng-deep .cdk-overlay-pane {
-//     transform: translateX(-80%);
-//     min-width: 345px; // position: relative; 
-//     // left: 100px !important;
-// }
-
-// .abc {
-//     transform: translateX(80%) !important;
-// }
