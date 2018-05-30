@@ -12,7 +12,8 @@ export class TranslationService {
         'Benzine': 'Petrol',
         'Diesel': 'Diesel',
         'LPG3': 'LPG3',
-        'LPG': 'LPG'
+        'LPG': 'LPG',
+        'timePeriod': 'per quarter'
       }
     },
     'fr': {
@@ -21,7 +22,8 @@ export class TranslationService {
         'Benzine': 'Essence',
         'Diesel': 'Diésel',
         'LPG3': 'GPL3',
-        'LPG': 'GPL3'
+        'LPG': 'GPL3',
+        'timePeriod': 'pour le trimestre'
       }
     },
     'ru': {
@@ -30,7 +32,8 @@ export class TranslationService {
         'Benzine': 'Бензин',
         'Diesel': 'Дизель',
         'LPG3': 'Газ 3',
-        'LPG': 'Газ'
+        'LPG': 'Газ',
+        'timePeriod': 'за квартал'
       }
     },
     'de': {
@@ -39,7 +42,8 @@ export class TranslationService {
         'Benzine': 'Motorenbenzin',
         'Diesel': 'Diesel',
         'LPG3': 'Flüssiggas3',
-        'LPG': 'Flüssiggas'
+        'LPG': 'Flüssiggas',
+        'timePeriod': 'pro Quartal'
       }
     },
     'es': {
@@ -48,8 +52,10 @@ export class TranslationService {
         'Benzine': 'Gasolina',
         'Diesel': 'Diésel',
         'LPG3': 'GPL3',
-        'LPG': 'GLP'
+        'LPG': 'GLP',
+        'timePeriod': 'por trimestre'
       }
+
     },
     'nl': {
       flagIconClass: 'flag-icon-nl',
@@ -57,7 +63,8 @@ export class TranslationService {
         'Benzine': 'Benzine',
         'Diesel': 'Diesel',
         'LPG3': 'LPG3',
-        'LPG': 'LPG'
+        'LPG': 'LPG',
+        'timePeriod': 'per tijdvak van 3 maanden'
       }
     }
 
@@ -77,7 +84,7 @@ export class TranslationService {
   }
 
   translate(key: string): string {
-
+    console.log('key', key);
     return this._dictionary[this.currentLanguage].values[key];
   }
 }

@@ -34,6 +34,7 @@ export class CarTaxFormComponent implements OnInit {
   public heavyTruckWeight = 4500;
   public price$;
   public selectedLanguageClassIcon = 'flag-icon-gb';
+  public timePeriod = 'timePeriod';
 
   constructor(
     public _carTaxService: CarTaxService,
