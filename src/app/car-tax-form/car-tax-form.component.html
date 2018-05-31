@@ -1,56 +1,110 @@
-<br>
 <table id="taxform" [formGroup]="carTaxControl" #f="ngForm">
+
+  <tr> 
+    <td style="text-align: right;">
+      <button mat-icon-button [matMenuTriggerFor]="menu" [disableRipple]="true">
+        <mat-icon [class]="'flag-icon '+ selectedLanguageClassIcon" title="Click to select language"></mat-icon>
+      </button>
+      <mat-menu #menu="matMenu">
+        <a class="language-menu-item" routerLink="/nl">
+          <button mat-menu-item>
+            <mat-icon class="flag-icon flag-icon-nl"></mat-icon>
+            <span>Dutch</span>
+          </button>
+        </a>
+        <a class="language-menu-item" routerLink="/gb">
+          <button mat-menu-item>
+            <mat-icon class="flag-icon flag-icon-gb"></mat-icon>
+            <span>English</span>
+          </button>
+        </a>
+        <a class="language-menu-item" routerLink="/fr">
+          <button mat-menu-item>
+            <mat-icon class="flag-icon flag-icon-fr"></mat-icon>
+            <span>French</span>
+          </button>
+        </a>
+        <a class="language-menu-item" routerLink="/de">
+          <button mat-menu-item>
+            <mat-icon class="flag-icon flag-icon-de"></mat-icon>
+            <span>German</span>
+          </button>
+        </a>
+        <a class="language-menu-item" routerLink="/ru">
+          <button mat-menu-item>
+            <mat-icon class="flag-icon flag-icon-ru"></mat-icon>
+            <span>Russian</span>
+          </button>
+        </a>
+        <a class="language-menu-item" routerLink="/es">
+          <button mat-menu-item>
+            <mat-icon class="flag-icon flag-icon-es"></mat-icon>
+            <span>Spanish</span>
+          </button>
+        </a>
+      </mat-menu>
+
+    </td>
+  </tr>
+
   <tr>
     <td>
       <mat-form-field class="mat-form-field">
-        <mat-select placeholder="Seleсt province:" name="province" formControlName="provinceKey">
-          <mat-option *ngFor="let province of provinces" [value]="province.key">
+        <mat-select [placeholder]="selectProvincePlaceholder | translate" name="province" formControlName="provinceKey">
+          <mat-option *ngFor="let province of provinces" [value]="province.key" routerLink="./" [queryParams]="{provinceKey: province.key }"
+            queryParamsHandling="merge">
             {{ province.title }}
           </mat-option>
         </mat-select>
       </mat-form-field>
-
       <br>
       <br>
-      <br>
-
-      <div style="text-align: center;">
-        <mat-button-toggle-group formControlName="fuelType">
-          <mat-button-toggle *ngFor="let fuel of fuelTypes" [value]="fuel" #b>
-            <i [ngClass]="{'fas':b.checked, 'fa-gas-pump':b.checked, 'fa-lg': b.checked}"></i>
-            {{fuel}}
-          </mat-button-toggle>
-        </mat-button-toggle-group>
-
-
-      </div>
-
-      <br>
-      <br>
-      <br>
-
-      <div id="sliderData">
-        <span id="currentSliderValue">{{f.value.volume}} kg</span>
-      </div>
-
-      <mat-slider [ngClass]="{'motorcycle': f.value.volume < motorcycleWeight, 'lightTruck': f.value.volume > lightTruckWeight, 'heavyTruck': f.value.volume > heavyTruckWeight}"
-        [volumeValue]="f.value.volume" formControlName="volume" min="1" max="5051" step="50" tickInterval="1" (input)="f.value.volume = $event.value">
-      </mat-slider>
-
-      <br>
-      <br>
-      <br>
-
-      <h1 id="priceHeader">
-
-        {{price$ | async}}
-        <i class="fas fa-euro-sign fa-xs"></i>
-        <span>per quarter</span>
-      </h1>
-
-    </td>
-    <td>
 
     </td>
   </tr>
+
+  <tr>
+    <td>
+      <div style="text-align: center;">
+        <mat-button-toggle-group formControlName="fuelType">
+          <mat-button-toggle *ngFor="let fuel of fuelTypes" [value]="fuel" #b routerLink="./" [queryParams]="{fuelType:fuel}" queryParamsHandling="merge">
+            <i [ngClass]="{'fas':b.checked, 'fa-gas-pump':b.checked, 'fa-lg': b.checked}"></i>
+            {{fuel | translate}}
+          </mat-button-toggle>
+        </mat-button-toggle-group>
+      </div>
+      <br>
+      <br>
+      <br>
+    </td>
+  </tr>
+
+  <tr>
+    <td>
+      <div id="sliderData">
+        <span id="currentSliderValue" title="Weight Class">{{f.value.volume}} - {{+f.value.volume + (volumeControl.step - 1)}} kg</span>
+      </div>
+
+      <mat-slider [ngClass]="{'motorcycle': f.value.volume < motorcycleWeight, 'lightTruck': f.value.volume > lightTruckWeight, 'heavyTruck': f.value.volume > heavyTruckWeight}"
+        [volumeValue]="f.value.volume" formControlName="volume" min="1" max="5051" step="50" tickInterval="1" (input)="f.value.volume = $event.value"
+        #volumeControl routerLink="./" [queryParams]="{volume:f.value.volume}" queryParamsHandling="merge">
+      </mat-slider>
+      <br>
+      <br>
+      <br>
+
+
+    </td>
+  </tr>
+
+  <tr>
+    <td>
+      <h1 id="priceHeader">
+        {{price$ | async}}
+        <i class="fas fa-euro-sign fa-xs"></i>
+        <span>{{timePeriod | translate}}</span>
+      </h1>
+    </td>
+  </tr>
+
 </table>

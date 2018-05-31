@@ -1,8 +1,9 @@
 
+import { RouterModule, Routes } from '@angular/router';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
-import {CdkTableModule} from '@angular/cdk/table';
+import { CdkTableModule } from '@angular/cdk/table';
 import {
   MatAutocompleteModule,
   MatButtonModule,
@@ -15,10 +16,8 @@ import {
   MatDividerModule,
   MatExpansionModule,
   MatGridListModule,
-  MatIconModule,
   MatInputModule,
   MatListModule,
-  MatMenuModule,
   MatNativeDateModule,
   MatPaginatorModule,
   MatProgressBarModule,
@@ -39,19 +38,29 @@ import {
 
 } from '@angular/material';
 
-import { NgModule } from '@angular/core';
+import { NgModule, Component } from '@angular/core';
 import { AppComponent } from './app.component';
 import { CarTaxFormComponent } from './car-tax-form/car-tax-form.component';
 import { CarTaxService } from './car-tax-form/car-tax.service';
 import { HttpClientModule } from '@angular/common/http';
 import { TruckIconDirective } from './car-tax-form/truck-icon.directive';
+import { TranslatePipe } from './translate.pipe';
+import { TranslationService } from './translation.service';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatIconModule } from '@angular/material/icon';
+
+const routes: Routes = [
+  { path: '', redirectTo: 'gb', pathMatch: 'full' },
+  { path: ':language', component: CarTaxFormComponent }
+];
 
 
 @NgModule({
   declarations: [
     AppComponent,
     CarTaxFormComponent,
-    TruckIconDirective
+    TruckIconDirective,
+    TranslatePipe
   ],
   imports: [
 
@@ -65,10 +74,12 @@ import { TruckIconDirective } from './car-tax-form/truck-icon.directive';
     FormsModule,
     MatIconModule,
     MatButtonModule,
-    MatCardModule
+    MatCardModule,
+    MatMenuModule,
+    RouterModule.forRoot(routes, { useHash: true })
   ],
 
-  providers: [CarTaxService],
+  providers: [CarTaxService, TranslationService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
