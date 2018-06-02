@@ -32,7 +32,7 @@ export class CarTaxFormComponent implements OnInit {
   public motorcycleWeight = 701;
   public lightTruckWeight = 3500;
   public heavyTruckWeight = 4500;
-  public price$;
+  public price$: Observable<number>;
   public selectedLanguageClassIcon = 'flag-icon-gb';
   public timePeriod = 'timePeriod';
   public selectProvincePlaceholder = 'selectProvincePlaceholder';
@@ -97,9 +97,9 @@ export class CarTaxFormComponent implements OnInit {
             return mappedQueryParams;
           }));
 
-    }).map((values: FormValue) => {
+    }).map((vehicleValues: FormValue) => {
 
-      return this.getPrice(values);
+      return this.getPrice(vehicleValues);
     });
 
 
