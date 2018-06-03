@@ -3,10 +3,14 @@ import { Directive, Component, OnInit, Input } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Observable } from 'rxjs/Observable';
 import { CarTaxService, FuelTypes, Grid, Provinces } from './car-tax.service';
+import { ActivatedRoute } from '@angular/router';
 import 'rxjs/add/operator/filter';
 import 'rxjs/add/operator/switchMap';
 import 'rxjs/add/operator/take';
-import { ActivatedRoute } from '@angular/router';
+import 'rxjs/add/operator/do';
+import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/pluck';
+import 'rxjs/add/operator/merge';
 
 
 export type FormValue = {
@@ -41,67 +45,52 @@ export class CarTaxFormComponent implements OnInit {
     public _carTaxService: CarTaxService,
     private _activatedRoute: ActivatedRoute,
     private _translationService: TranslationService) {
+
+    this.fuelTypes = this._carTaxService.getFuelTypes();
+    this.provinces = this._carTaxService.getProvinces();
+    this.grid = this._carTaxService.getTaxGrid();
+
   }
 
   ngOnInit() {
 
     this.carTaxControl = new FormGroup({
-      provinceKey: new FormControl('', Validators.required),
-      fuelType: new FormControl('', Validators.required),
-      volume: new FormControl('', Validators.required)
+      provinceKey: new FormControl('NH', Validators.required),
+      fuelType: new FormControl('Benzine', Validators.required),
+      volume: new FormControl('1551', Validators.required)
     });
 
-    this.carTaxControl.setValue({
-      'provinceKey': 'NH',
-      'fuelType': 'Benzine',
-      'volume': '1551'
-    });
+    this._activatedRoute.queryParams
+      .take(1)
+      .subscribe((queryParams) => {
+        ['provinceKey', 'fuelType', 'volume'].forEach((item) => {
+          if (queryParams[item]) {
+            this.carTaxControl.controls[item].setValue(queryParams[item]);
+          }
+        });
+      });
 
-    this.price$ = Observable.combineLatest(
-      this._carTaxService.getFuelTypes(),
-      this._carTaxService.getProvinces(),
-      this._carTaxService.getTaxGrid(),
+    this.price$ = this.carTaxControl.valueChanges
+      .merge(this._activatedRoute.queryParams
+        .take(1)
+        .map(queryParams => {
 
-      (fuelTypes, provinces, taxGrid) => {
+          const values = {};
+          Object.keys(this.carTaxControl.value).forEach(key => {
 
-        this.fuelTypes = fuelTypes;
-        this.provinces = provinces;
-        this.grid = taxGrid;
-      }
-    ).switchMap(() => {
+            if (!queryParams[key]) {
+              values[key] = this.carTaxControl.value[key];
+            } else {
+              values[key] = queryParams[key];
+            }
+          });
 
-      return this.carTaxControl.valueChanges
-        .merge(this._activatedRoute.queryParams.take(1)
-          .map(queryParams => {
+          return values;
+        }))
+      .map((vehicleValues: FormValue) => {
 
-            const values = {};
-            Object.keys(this.carTaxControl.value).forEach(key => {
-
-              if (!queryParams[key]) {
-                values[key] = this.carTaxControl.value[key];
-              } else {
-                values[key] = queryParams[key];
-              }
-            });
-
-            return values;
-
-          }).do((mappedQueryParams: FormValue) => {
-
-            this.carTaxControl.setValue({
-              'provinceKey': mappedQueryParams['provinceKey'],
-              'fuelType': mappedQueryParams['fuelType'],
-              'volume': mappedQueryParams['volume']
-            }, { emitEvent: false });
-
-            return mappedQueryParams;
-          }));
-
-    }).map((vehicleValues: FormValue) => {
-
-      return this.getPrice(vehicleValues);
-    });
-
+        return this.getPrice(vehicleValues);
+      });
 
 
     this._activatedRoute.params.pluck('language').filter(Boolean).subscribe((language: string) => {

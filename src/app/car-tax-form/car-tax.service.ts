@@ -3,6 +3,8 @@ import { FuelTypes } from './car-tax.service';
 import { Observable } from 'rxjs/Rx';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { PROVINCES } from '../../assets/data/provinces';
+import { GRID } from '../../assets/data/grid';
 
 
 export type FuelTypes = string[];
@@ -42,21 +44,21 @@ export class CarTaxService {
   constructor(private _http: HttpClient) {
   }
 
-  getFuelTypes(): Observable<FuelTypes> {
+  getFuelTypes(): FuelTypes {
 
-    return Observable.of(this._fuelTypes);
+    return this._fuelTypes;
   }
 
 
-  getProvinces(): Observable<Provinces[]> {
+  getProvinces(): Provinces[] {
 
-    return this._http.get<Provinces[]>('./assets/json/provinces.json');
+    return PROVINCES;
   }
 
 
-  getTaxGrid(): Observable<Grid> {
+  getTaxGrid(): Grid {
 
-    return this._http.get<Grid>('./assets/json/grid.json');
+    return GRID;
   }
 
 
