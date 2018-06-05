@@ -3,14 +3,13 @@ import { Directive, Component, OnInit, Input } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Observable } from 'rxjs/Observable';
 import { CarTaxService, FuelTypes, Grid, Provinces } from './car-tax.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import 'rxjs/add/operator/filter';
-import 'rxjs/add/operator/switchMap';
 import 'rxjs/add/operator/take';
-import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/pluck';
-import 'rxjs/add/operator/merge';
+import 'rxjs/add/observable/concat';
+import 'rxjs/add/operator/delay';
 
 
 export type FormValue = {
@@ -40,11 +39,15 @@ export class CarTaxFormComponent implements OnInit {
   public selectedLanguageClassIcon = 'flag-icon-gb';
   public timePeriod = 'timePeriod';
   public selectProvincePlaceholder = 'selectProvincePlaceholder';
+  public ObservableQueryParams;
+  public ObservableValueChanges;
+
 
   constructor(
     public _carTaxService: CarTaxService,
     private _activatedRoute: ActivatedRoute,
-    private _translationService: TranslationService) {
+    private _translationService: TranslationService,
+    private _router: Router) {
 
     this.fuelTypes = this._carTaxService.getFuelTypes();
     this.provinces = this._carTaxService.getProvinces();
@@ -62,36 +65,38 @@ export class CarTaxFormComponent implements OnInit {
 
     this._activatedRoute.queryParams
       .take(1)
+      .filter(queryParams => !Boolean(Object.keys(queryParams).length))
       .subscribe((queryParams) => {
-        ['provinceKey', 'fuelType', 'volume'].forEach((item) => {
-          if (queryParams[item]) {
-            this.carTaxControl.controls[item].setValue(queryParams[item]);
-          }
-        });
+
+        this._router.navigate([''], { queryParams: this.carTaxControl.value });
       });
 
-    this.price$ = this.carTaxControl.valueChanges
-      .merge(this._activatedRoute.queryParams
-        .take(1)
-        .map(queryParams => {
+    this.ObservableQueryParams = this._activatedRoute.queryParams
+      .take(1)
+      .delay(100)
+      .map((queryParams) => {
 
-          const values = {};
-          Object.keys(this.carTaxControl.value).forEach(key => {
+        const vehicleValues = {};
 
-            if (!queryParams[key]) {
-              values[key] = this.carTaxControl.value[key];
-            } else {
-              values[key] = queryParams[key];
-            }
-          });
+        Object.keys(this.carTaxControl.value).forEach((controlName) => {
+          if (queryParams[controlName]) {
+            this.carTaxControl.controls[controlName].setValue(queryParams[controlName]);
+            vehicleValues[controlName] = queryParams[controlName];
+          } else {
+            vehicleValues[controlName] = this.carTaxControl.controls[controlName].value;
+          }
+        });
 
-          return values;
-        }))
+        return this.getPrice(vehicleValues as FormValue);
+      });
+
+    this.ObservableValueChanges = this.carTaxControl.valueChanges
       .map((vehicleValues: FormValue) => {
 
         return this.getPrice(vehicleValues);
       });
 
+    this.price$ = Observable.concat(this.ObservableQueryParams, this.ObservableValueChanges);
 
     this._activatedRoute.params.pluck('language').filter(Boolean).subscribe((language: string) => {
 
