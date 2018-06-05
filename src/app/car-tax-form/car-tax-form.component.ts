@@ -107,7 +107,7 @@ export class CarTaxFormComponent implements OnInit {
   }
 
 
-  getPrice(value: FormValue | any): number {
+  getPrice(value: FormValue): number {
 
     if (value.volume < 551) {
       return this.grid[value.provinceKey][0].split('#')[this.fuelTypes.indexOf(value.fuelType) + 1];
