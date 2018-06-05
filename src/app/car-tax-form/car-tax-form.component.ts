@@ -87,7 +87,7 @@ export class CarTaxFormComponent implements OnInit {
           }
         });
 
-        return this.getPrice(vehicleValues);
+        return this.getPrice(vehicleValues as FormValue);
       });
 
     this.ObservableValueChanges = this.carTaxControl.valueChanges
