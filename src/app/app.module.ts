@@ -51,7 +51,6 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
 
 const routes: Routes = [
-  { path: '', redirectTo: 'de', pathMatch: 'full' },
   { path: ':language', component: CarTaxFormComponent }
 ];
 

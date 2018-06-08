@@ -22,9 +22,7 @@ export class CookieService {
     return matches ? decodeURIComponent(matches[1]) : undefined;
   }
 
-  deleteCookie() {
-
-  }
-
 
 }
+
+

@@ -80,13 +80,18 @@ export class TranslationService {
   constructor() { }
 
   switchLanguage(value): void {
-    console.log('switch', value);
+
     this.currentLanguage = value;
   }
 
   getLanguageIconClass(language: string): string {
 
     return this._dictionary[this.currentLanguage].flagIconClass;
+  }
+
+  getCurrentLanguage() {
+
+    return this.currentLanguage;
   }
 
   translate(key: string): string {
