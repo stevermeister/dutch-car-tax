@@ -80,7 +80,7 @@ export class TranslationService {
   constructor() { }
 
   switchLanguage(value): void {
-
+    console.log('switch', value);
     this.currentLanguage = value;
   }
 
@@ -90,7 +90,7 @@ export class TranslationService {
   }
 
   translate(key: string): string {
-    console.log('key', key);
+
     return this._dictionary[this.currentLanguage].values[key];
   }
 }

@@ -1,3 +1,4 @@
+import { CookieService } from './../cookie.service';
 import { TranslationService } from './../translation.service';
 import { Directive, Component, OnInit, Input } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
@@ -8,6 +9,7 @@ import 'rxjs/add/operator/filter';
 import 'rxjs/add/operator/take';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/pluck';
+import 'rxjs/add/operator/skip';
 import 'rxjs/add/observable/concat';
 import 'rxjs/add/operator/delay';
 
@@ -47,7 +49,8 @@ export class CarTaxFormComponent implements OnInit {
     public _carTaxService: CarTaxService,
     private _activatedRoute: ActivatedRoute,
     private _translationService: TranslationService,
-    private _router: Router) {
+    private _router: Router,
+    private _cookieService: CookieService) {
 
     this.fuelTypes = this._carTaxService.getFuelTypes();
     this.provinces = this._carTaxService.getProvinces();
@@ -68,12 +71,12 @@ export class CarTaxFormComponent implements OnInit {
       .filter(queryParams => !Boolean(Object.keys(queryParams).length))
       .subscribe((queryParams) => {
 
-        this._router.navigate([''], { queryParams: this.carTaxControl.value });
+        this._router.navigate([], { relativeTo: this._activatedRoute, queryParams: this.carTaxControl.value });
       });
 
     this.ObservableQueryParams = this._activatedRoute.queryParams
       .take(1)
-      .delay(100)
+      .delay(1)
       .map((queryParams) => {
 
         const vehicleValues = {};
@@ -99,12 +102,14 @@ export class CarTaxFormComponent implements OnInit {
     this.price$ = Observable.concat(this.ObservableQueryParams, this.ObservableValueChanges);
 
     this._activatedRoute.params.pluck('language').filter(Boolean).subscribe((language: string) => {
-
       this._translationService.switchLanguage(language);
       this.selectedLanguageClassIcon = this._translationService.getLanguageIconClass(language);
+      this._cookieService.setCookie('language', language, 365);
     });
 
   }
+
+
 
 
   getPrice(value: FormValue): number {
