@@ -18,9 +18,9 @@ export class AppComponent implements OnInit {
 
     let language = this._cookieService.getCookie('language');
 
-    if (!language) {
-      language = this._translationService.getCurrentLanguage();
-    }
+    // if (!language) {
+    //   language = this._translationService.getCurrentLanguage();
+    // }
 
     this._translationService.switchLanguage(language);
     this._router.config.push({ path: '', redirectTo: language, pathMatch: 'full' }, );

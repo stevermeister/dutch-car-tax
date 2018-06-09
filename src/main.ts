@@ -12,10 +12,12 @@ if (environment.production) {
 // declare const require;
 // const translations = require(`raw-loader!./locale/messages.fr.xlf`);
 
-// platformBrowserDynamic().bootstrapModule(AppModule, {
+platformBrowserDynamic().bootstrapModule(AppModule
+//   , {
 //   providers: [
 //     { provide: TRANSLATIONS, useValue: translations },
 //     { provide: TRANSLATIONS_FORMAT, useValue: 'xlf' }
 //   ]
-// })
-//   .catch(err => console.log(err));
+// }
+)
+  .catch(err => console.log(err));
