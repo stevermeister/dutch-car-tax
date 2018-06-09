@@ -1,3 +1,4 @@
+import { CookieService } from './cookie.service';
 
 import { RouterModule, Routes } from '@angular/router';
 import { BrowserModule } from '@angular/platform-browser';
@@ -38,7 +39,7 @@ import {
 
 } from '@angular/material';
 
-import { NgModule } from '@angular/core';
+import { LOCALE_ID, NgModule } from '@angular/core';
 import { AppComponent } from './app.component';
 import { CarTaxFormComponent } from './car-tax-form/car-tax-form.component';
 import { CarTaxService } from './car-tax-form/car-tax.service';
@@ -50,7 +51,6 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
 
 const routes: Routes = [
-  { path: '', redirectTo: 'gb', pathMatch: 'full' },
   { path: ':language', component: CarTaxFormComponent }
 ];
 
@@ -79,7 +79,7 @@ const routes: Routes = [
     RouterModule.forRoot(routes, { useHash: true })
   ],
 
-  providers: [CarTaxService, TranslationService],
+  providers: [{ provide: LOCALE_ID, useValue: 'ru' }, CarTaxService, TranslationService, CookieService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

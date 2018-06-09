@@ -3,11 +3,11 @@ import { Injectable } from '@angular/core';
 @Injectable()
 export class TranslationService {
 
-  public currentLanguage = 'gb';
+  public currentLanguage = 'en';
   private _dictionary = {
 
-    'gb': {
-      flagIconClass: 'flag-icon-gb',
+    'en': {
+      flagIconClass: 'flag-icon-en',
       values: {
         'Benzine': 'Petrol',
         'Diesel': 'Diesel',
@@ -89,8 +89,17 @@ export class TranslationService {
     return this._dictionary[this.currentLanguage].flagIconClass;
   }
 
+  getCurrentLanguage() {
+
+    return this.currentLanguage;
+  }
+
   translate(key: string): string {
-    console.log('key', key);
+
+    if (!this._dictionary[this.currentLanguage]) {
+      this.currentLanguage = 'en';
+    }
+
     return this._dictionary[this.currentLanguage].values[key];
   }
 }
