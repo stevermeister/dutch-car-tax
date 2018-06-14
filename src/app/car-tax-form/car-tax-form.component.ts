@@ -1,7 +1,7 @@
 import { CookieService } from './../cookie.service';
 import { TranslationService } from './../translation.service';
-import { Directive, Component, OnInit, Input } from '@angular/core';
-import { FormControl, FormGroup, Validators, FormBuilder } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { FormGroup, FormBuilder } from '@angular/forms';
 import { Observable } from 'rxjs/Observable';
 import { CarTaxService, FuelTypes, Grid, Provinces } from './car-tax.service';
 import { ActivatedRoute, Router } from '@angular/router';
