@@ -1,7 +1,7 @@
 import { CookieService } from './../cookie.service';
 import { TranslationService } from './../translation.service';
-import { Directive, Component, OnInit, Input } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { FormGroup, FormBuilder } from '@angular/forms';
 import { Observable } from 'rxjs/Observable';
 import { CarTaxService, FuelTypes, Grid, Provinces } from './car-tax.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -46,6 +46,7 @@ export class CarTaxFormComponent implements OnInit {
 
 
   constructor(
+    public _formBuilder: FormBuilder,
     public _carTaxService: CarTaxService,
     private _activatedRoute: ActivatedRoute,
     private _translationService: TranslationService,
@@ -60,10 +61,10 @@ export class CarTaxFormComponent implements OnInit {
 
   ngOnInit() {
 
-    this.carTaxControl = new FormGroup({
-      provinceKey: new FormControl('NH', Validators.required),
-      fuelType: new FormControl('Benzine', Validators.required),
-      volume: new FormControl('1551', Validators.required)
+    this.carTaxControl = this._formBuilder.group({
+      provinceKey: 'NH',
+      fuelType: 'Benzine',
+      volume: '1551'
     });
 
     this._activatedRoute.queryParams
