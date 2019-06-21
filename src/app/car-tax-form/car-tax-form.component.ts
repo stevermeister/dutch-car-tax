@@ -1,18 +1,13 @@
+
+import {concat,  Observable } from 'rxjs';
+
+import {pluck, map, delay, filter, take} from 'rxjs/operators';
 import { CookieService } from './../cookie.service';
 import { TranslationService } from './../translation.service';
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
-import { Observable } from 'rxjs/Observable';
 import { CarTaxService, FuelTypes, Grid, Provinces } from './car-tax.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import 'rxjs/add/operator/filter';
-import 'rxjs/add/operator/take';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/pluck';
-import 'rxjs/add/operator/skip';
-import 'rxjs/add/observable/concat';
-import 'rxjs/add/operator/delay';
-
 
 export type FormValue = {
   'provinceKey': string;
@@ -41,8 +36,8 @@ export class CarTaxFormComponent implements OnInit {
   public selectedLanguageClassIcon = 'flag-icon-gb';
   public timePeriod = 'timePeriod';
   public selectProvincePlaceholder = 'selectProvincePlaceholder';
-  public ObservableQueryParams;
-  public ObservableValueChanges;
+  public ObservableQueryParams: Observable<number>;
+  public ObservableValueChanges: Observable<number>;
 
 
   constructor(
@@ -67,18 +62,18 @@ export class CarTaxFormComponent implements OnInit {
       volume: '1551'
     });
 
-    this._activatedRoute.queryParams
-      .take(1)
-      .filter(queryParams => !Boolean(Object.keys(queryParams).length))
+    this._activatedRoute.queryParams.pipe(
+      take(1),
+      filter(queryParams => !Boolean(Object.keys(queryParams).length)),)
       .subscribe((queryParams) => {
 
         this._router.navigate([], { relativeTo: this._activatedRoute, queryParams: this.carTaxControl.value });
       });
 
-    this.ObservableQueryParams = this._activatedRoute.queryParams
-      .take(1)
-      .delay(1)
-      .map((queryParams) => {
+    this.ObservableQueryParams = this._activatedRoute.queryParams.pipe(
+      take(1),
+      delay(1),
+      map((queryParams) => {
 
         const vehicleValues = {};
 
@@ -92,17 +87,17 @@ export class CarTaxFormComponent implements OnInit {
         });
 
         return this.getPrice(vehicleValues as FormValue);
-      });
+      }),);
 
-    this.ObservableValueChanges = this.carTaxControl.valueChanges
-      .map((vehicleValues: FormValue) => {
+    this.ObservableValueChanges = this.carTaxControl.valueChanges.pipe(
+      map((vehicleValues: FormValue) => {
 
         return this.getPrice(vehicleValues);
-      });
+      }));
 
-    this.price$ = Observable.concat(this.ObservableQueryParams, this.ObservableValueChanges);
+    this.price$ = concat(this.ObservableQueryParams, this.ObservableValueChanges);
 
-    this._activatedRoute.params.pluck('language').filter(Boolean).subscribe((language: string) => {
+    this._activatedRoute.params.pipe(pluck('language'),filter(Boolean),).subscribe((language: string) => {
       this._translationService.switchLanguage(language);
       this.selectedLanguageClassIcon = this._translationService.getLanguageIconClass(language);
       this._cookieService.setCookie('language', language, 365);
