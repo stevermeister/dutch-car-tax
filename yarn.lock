@@ -1289,12 +1289,12 @@ chardet@^0.7.0:
   version "0.7.0"
   resolved "https://registry.yarnpkg.com/chardet/-/chardet-0.7.0.tgz#90094849f0937f2eedc2425d0d28a9e5f0cbad9e"
 
-chart.js@~2.5.0:
-  version "2.5.0"
-  resolved "https://registry.yarnpkg.com/chart.js/-/chart.js-2.5.0.tgz#fe6e751a893769f56e72bee5ad91207e1c592957"
+chart.js@~2.9.4:
+  version "2.9.4"
+  resolved "https://registry.yarnpkg.com/chart.js/-/chart.js-2.9.4.tgz#0827f9563faffb2dc5c06562f8eb10337d5b9684"
   dependencies:
-    chartjs-color "^2.0.0"
-    moment "^2.10.6"
+    chartjs-color "^2.1.0"
+    moment "^2.10.2"
 
 chartjs-color-string@^0.6.0:
   version "0.6.0"
@@ -1302,7 +1302,7 @@ chartjs-color-string@^0.6.0:
   dependencies:
     color-name "^1.0.0"
 
-chartjs-color@^2.0.0:
+chartjs-color@^2.1.0:
   version "2.4.1"
   resolved "https://registry.yarnpkg.com/chartjs-color/-/chartjs-color-2.4.1.tgz#6118bba202fe1ea79dd7f7c0f9da93467296c3b0"
   dependencies:
@@ -3994,9 +3994,9 @@ mkdirp@0.5.x, "mkdirp@>=0.5 0", mkdirp@^0.5.0, mkdirp@^0.5.1, mkdirp@~0.5.0:
   dependencies:
     minimist "^1.2.5"
 
-moment@^2.10.6:
-  version "2.24.0"
-  resolved "https://registry.yarnpkg.com/moment/-/moment-2.24.0.tgz#0d055d53f5052aa653c9f6eb68bb5d12bf5c2b5b"
+moment@^2.10.2:
+  version "2.29.1"
+  resolved "https://registry.yarnpkg.com/moment/-/moment-2.29.1.tgz#b2be769fa31940be9eeea6469c075e35006fa3d3"
 
 move-concurrently@^1.0.1:
   version "1.0.1"
