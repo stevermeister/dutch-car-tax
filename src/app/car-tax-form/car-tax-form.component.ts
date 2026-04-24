@@ -1,6 +1,7 @@
 import { concat, Observable, BehaviorSubject, combineLatest } from 'rxjs';
 import { map, delay, filter, take, debounceTime, shareReplay } from 'rxjs/operators';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { MatSelect } from '@angular/material/select';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { CarTaxService, FuelTypes, Grid, Provinces } from './car-tax.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -42,6 +43,9 @@ export class CarTaxFormComponent implements OnInit {
   public pricePeriod: 'monthly' | 'quarterly' | 'yearly' = 'quarterly';
   private pricePeriodSubject = new BehaviorSubject<'monthly' | 'quarterly' | 'yearly'>('quarterly');
   public detectedProvinceName: string | null = null;
+  public isEditingProvince = false;
+
+  @ViewChild('provinceSelect') provinceSelect?: MatSelect;
 
   private readonly FUEL_LABELS: Record<string, string> = {
     'Benzine':    'Petrol',
@@ -119,9 +123,15 @@ export class CarTaxFormComponent implements OnInit {
     this.carTaxControl.valueChanges.pipe(
       debounceTime(50)
     ).subscribe(values => {
+      const fuelMatches = !this.detectedFuelType || values.fuelType === this.detectedFuelType;
+      const weightMatches = !this.detectedWeight || +values.volume === this.detectedWeight;
+      const plate = (this.vehicleInfo && fuelMatches && weightMatches)
+        ? this.plateInput.trim().toUpperCase()
+        : null;
+
       this._router.navigate([], {
         relativeTo: this._activatedRoute,
-        queryParams: values,
+        queryParams: { ...values, plate },
         queryParamsHandling: 'merge'
       });
     });
@@ -140,6 +150,16 @@ export class CarTaxFormComponent implements OnInit {
         this.detectedProvinceName = province?.title || key;
       }
     });
+  }
+
+  get currentProvinceName(): string {
+    const key = this.carTaxControl?.get('provinceKey')?.value;
+    return this.provinces.find(p => p.key === key)?.title ?? key ?? '';
+  }
+
+  openProvinceEdit(): void {
+    this.isEditingProvince = true;
+    Promise.resolve().then(() => this.provinceSelect?.open());
   }
 
   getFuelLabel(fuel: string): string {

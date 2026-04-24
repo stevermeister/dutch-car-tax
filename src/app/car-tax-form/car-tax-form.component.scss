@@ -114,122 +114,58 @@
   mat-icon { font-size: 18px; height: 18px; width: 18px; }
 }
 
-// ── Vehicle card ──────────────────────────────────────────
-.vehicle-card {
-  margin-top: 16px;
-  border-radius: 12px !important;
-  background: #ffffff !important;
-  border: 1px solid #e8eaf6 !important;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06) !important;
-  overflow: hidden;
-}
-
-.vehicle-header {
+// ── Vehicle banner ────────────────────────────────────────
+.vehicle-banner {
   display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  margin-bottom: 10px;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+  padding: 10px 14px;
+  background: #f8f9ff;
+  border: 1px solid #e8eaf6;
+  border-radius: 10px;
 }
 
 .vehicle-plate-badge {
   background: #f0cc00;
   color: #003082;
   font-weight: 800;
-  font-size: 12px;
+  font-size: 11px;
   font-family: 'Roboto Mono', monospace;
   letter-spacing: 1px;
-  padding: 3px 8px;
+  padding: 3px 7px;
   border-radius: 5px;
   flex-shrink: 0;
-  margin-top: 3px;
 }
 
-.vehicle-title {
+.vehicle-summary {
   flex: 1;
+  min-width: 0;
+}
+
+.vehicle-name {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
 }
 
 .vehicle-make {
-  font-size: 0.75rem;
+  font-size: 0.68rem;
   color: #9e9e9e;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 0.8px;
 }
 
 .vehicle-model {
-  font-size: 1.1rem;
+  font-size: 0.95rem;
   font-weight: 600;
-  line-height: 1.2;
   color: #1a237e;
 }
 
-.vehicle-color-dot {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  border: 2px solid #e0e0e0;
-  flex-shrink: 0;
-  margin-top: 4px;
-}
-
-.vehicle-meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 5px;
-  margin-bottom: 12px;
-}
-
-.meta-chip {
-  background: #f5f5f5;
-  border-radius: 20px;
-  padding: 2px 9px;
-  font-size: 0.75rem;
-  color: #616161;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-
-  i { font-size: 10px; }
-}
-
-.vehicle-specs {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-  margin-bottom: 12px;
-}
-
-.spec {
-  background: #f8f9fa;
-  border-radius: 6px;
-  padding: 6px 10px;
-}
-
-.spec-label {
-  font-size: 0.65rem;
-  color: #bdbdbd;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: 2px;
-}
-
-.spec-value {
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: #212121;
-}
-
-.autofill-notice {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 0.8rem;
-  color: #43a047;
-
-  mat-icon {
-    font-size: 15px;
-    height: 15px;
-    width: 15px;
-  }
+.vehicle-stats {
+  font-size: 0.74rem;
+  color: #9e9e9e;
+  margin-top: 2px;
 }
 
 // ── Form section ──────────────────────────────────────────
@@ -248,24 +184,20 @@
 }
 
 mat-button-toggle-group {
-  box-shadow: none;
-  display: flex !important;
-  flex-wrap: wrap;
+  display: grid !important;
+  grid-template-columns: 1fr 1fr 1fr;
   width: 100%;
   border-radius: 10px;
   overflow: hidden;
   border: 1px solid #e0e0e0 !important;
-  background: #fafafa;
+  background: #e0e0e0;
+  gap: 1px;
 }
 
 mat-button-toggle-group mat-button-toggle {
-  flex: 0 0 33.33%;
-  box-sizing: border-box;
-  background-color: transparent;
+  background-color: #fafafa;
   color: #616161;
   border: none !important;
-  border-right: 1px solid #e0e0e0 !important;
-  border-bottom: 1px solid #e0e0e0 !important;
   border-radius: 0 !important;
   font-size: 0.8rem;
 }
@@ -297,30 +229,40 @@ mat-slider {
   width: 100%;
 }
 
-// ── Province detected ─────────────────────────────────────
-.province-detected {
+// ── Province display ──────────────────────────────────────
+.province-display {
   display: flex;
   align-items: center;
-  gap: 5px;
-  font-size: 0.8rem;
+  gap: 6px;
+  padding: 6px 2px;
+  cursor: pointer;
   color: #3949ab;
-  margin-top: -6px;
-  margin-bottom: 4px;
+  font-size: 0.9rem;
+  user-select: none;
 
-  mat-icon { font-size: 15px; height: 15px; width: 15px; }
+  mat-icon { font-size: 18px; height: 18px; width: 18px; }
+
+  .province-name { font-weight: 500; flex: 1; }
+
+  .province-chevron {
+    font-size: 20px;
+    height: 20px;
+    width: 20px;
+    color: #9e9e9e;
+  }
+
+  &:hover .province-chevron { color: #3949ab; }
 }
 
-// ── Price card ────────────────────────────────────────────
-.price-card {
+// ── Price section ─────────────────────────────────────────
+.price-section {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
-  margin-top: 24px;
-  padding: 20px;
-  background: linear-gradient(135deg, #e8eaf6 0%, #ede7f6 100%);
-  border-radius: 14px;
-  border: 1px solid #c5cae9;
+  gap: 6px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #e8eaf6;
 }
 
 .period-toggle {

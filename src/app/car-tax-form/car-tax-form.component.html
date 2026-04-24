@@ -31,74 +31,37 @@
       <mat-icon>warning</mat-icon> No vehicle found for this plate number.
     </div>
 
-    <mat-card *ngIf="vehicleInfo" class="vehicle-card" appearance="outlined">
-      <mat-card-content>
-        <div class="vehicle-header">
-          <div class="vehicle-plate-badge">{{vehicleInfo.kenteken}}</div>
-          <div class="vehicle-title">
-            <div class="vehicle-make">{{vehicleInfo.merk}}</div>
-            <div class="vehicle-model">{{getVehicleModel(vehicleInfo)}}</div>
-          </div>
-          <div class="vehicle-color-dot" [style.background]="getColorHex(vehicleInfo.eerste_kleur)" title="{{vehicleInfo.eerste_kleur}}"></div>
+    <div *ngIf="vehicleInfo" class="vehicle-banner">
+      <span class="vehicle-plate-badge">{{vehicleInfo.kenteken}}</span>
+      <div class="vehicle-summary">
+        <div class="vehicle-name">
+          <span class="vehicle-make">{{vehicleInfo.merk}}</span>
+          <span class="vehicle-model">{{getVehicleModel(vehicleInfo)}}</span>
         </div>
-        <div class="vehicle-meta">
-          <span class="meta-chip">
-            <i class="fas fa-calendar-alt"></i>
-            {{getVehicleYear(vehicleInfo)}}
-          </span>
-          <span class="meta-chip">
-            <i class="fas fa-car"></i>
-            {{vehicleInfo.inrichting}}
-          </span>
-          <span class="meta-chip">
-            <i class="fas fa-palette"></i>
-            {{getColorName(vehicleInfo.eerste_kleur)}}
-          </span>
+        <div class="vehicle-stats">
+          {{getVehicleYear(vehicleInfo)}}<ng-container *ngIf="detectedFuelType"> · {{getFuelLabel(detectedFuelType)}}</ng-container><ng-container *ngIf="detectedWeight"> · {{detectedWeight}} kg</ng-container> · {{getColorName(vehicleInfo.eerste_kleur)}}
         </div>
-        <div class="vehicle-specs">
-          <div class="spec" *ngIf="+vehicleInfo.cilinderinhoud > 0">
-            <div class="spec-label">Engine</div>
-            <div class="spec-value">{{vehicleInfo.aantal_cilinders}} cyl · {{vehicleInfo.cilinderinhoud}} cc</div>
-          </div>
-          <div class="spec">
-            <div class="spec-label">Kerb weight</div>
-            <div class="spec-value">{{vehicleInfo.massa_rijklaar}} kg</div>
-          </div>
-          <div class="spec">
-            <div class="spec-label">Seats / Doors</div>
-            <div class="spec-value">{{vehicleInfo.aantal_zitplaatsen}} / {{vehicleInfo.aantal_deuren}}</div>
-          </div>
-          <div class="spec" *ngIf="vehicleInfo.catalogusprijs">
-            <div class="spec-label">Catalog price</div>
-            <div class="spec-value">€ {{formatPrice(vehicleInfo.catalogusprijs)}}</div>
-          </div>
-        </div>
-        <div class="autofill-notice">
-          <mat-icon>check_circle</mat-icon>
-          Auto-set: weight <strong>{{detectedWeight}} kg</strong>
-          <ng-container *ngIf="detectedFuelType">
-            · fuel <strong>{{getFuelLabel(detectedFuelType)}}</strong>
-          </ng-container>
-        </div>
-      </mat-card-content>
-    </mat-card>
+      </div>
+    </div>
   </div>
 
   <!-- Tax form -->
   <div class="form-section" [formGroup]="carTaxControl">
 
-    <mat-form-field class="full-width">
-      <mat-label>Select Province</mat-label>
-      <mat-select name="province" formControlName="provinceKey">
+    <div *ngIf="!isEditingProvince" class="province-display" (click)="openProvinceEdit()">
+      <mat-icon>{{detectedProvinceName ? 'my_location' : 'place'}}</mat-icon>
+      <span class="province-name">{{currentProvinceName}}</span>
+      <mat-icon class="province-chevron">expand_more</mat-icon>
+    </div>
+
+    <mat-form-field *ngIf="isEditingProvince" class="full-width" appearance="outline">
+      <mat-label>Province</mat-label>
+      <mat-select #provinceSelect formControlName="provinceKey" (closed)="isEditingProvince = false">
         <mat-option *ngFor="let province of provinces" [value]="province.key">
           {{ province.title }}
         </mat-option>
       </mat-select>
     </mat-form-field>
-    <div *ngIf="detectedProvinceName" class="province-detected">
-      <mat-icon>my_location</mat-icon>
-      Auto-detected: <strong>{{detectedProvinceName}}</strong>
-    </div>
 
     <div class="fuel-row">
       <mat-button-toggle-group formControlName="fuelType" hideSingleSelectionIndicator>
@@ -122,7 +85,7 @@
       </mat-slider>
     </div>
 
-    <div class="price-card">
+    <div class="price-section">
       <div class="period-toggle">
         <button class="period-btn" [class.active]="pricePeriod === 'monthly'" (click)="setPricePeriod('monthly')">Monthly</button>
         <button class="period-btn" [class.active]="pricePeriod === 'quarterly'" (click)="setPricePeriod('quarterly')">Quarterly</button>
