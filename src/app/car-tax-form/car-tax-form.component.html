@@ -1,110 +1,140 @@
-<table id="taxform" [formGroup]="carTaxControl" #f="ngForm">
+<div class="tax-calculator">
 
-  <tr>
-    <td style="text-align: right;">
-      <button mat-icon-button [matMenuTriggerFor]="menu" [disableRipple]="true">
-        <mat-icon [class]="'flag-icon '+ selectedLanguageClassIcon" title="Click to select language"></mat-icon>
+  <!-- Page title -->
+  <div class="page-title">
+    <i class="fas fa-car"></i>
+    <h2>Dutch Road Tax Calculator</h2>
+  </div>
+
+  <!-- Plate lookup -->
+  <div class="plate-section">
+    <div class="plate-search-row">
+      <div class="plate-wrapper">
+        <span class="plate-country">NL</span>
+        <input
+          class="plate-input"
+          [(ngModel)]="plateInput"
+          placeholder="AA-123-B"
+          (keyup.enter)="searchVehicle()"
+          maxlength="9"
+          autocomplete="off"
+          spellcheck="false">
+      </div>
+      <button mat-raised-button color="primary" class="search-btn" (click)="searchVehicle()" [disabled]="isLoadingVehicle || !plateInput.trim()">
+        <mat-spinner *ngIf="isLoadingVehicle" [diameter]="18" class="btn-spinner"></mat-spinner>
+        <mat-icon *ngIf="!isLoadingVehicle">search</mat-icon>
+        Search
       </button>
-      <mat-menu #menu="matMenu">
-        <a class="language-menu-item" routerLink="/nl">
-          <button mat-menu-item>
-            <mat-icon class="flag-icon flag-icon-nl"></mat-icon>
-            <span>Dutch</span>
-          </button>
-        </a>
-        <a class="language-menu-item" routerLink="/en">
-          <button mat-menu-item>
-            <mat-icon class="flag-icon flag-icon-en"></mat-icon>
-            <span>English</span>
-          </button>
-        </a>
-        <a class="language-menu-item" routerLink="/fr">
-          <button mat-menu-item>
-            <mat-icon class="flag-icon flag-icon-fr"></mat-icon>
-            <span>French</span>
-          </button>
-        </a>
-        <a class="language-menu-item" routerLink="/de">
-          <button mat-menu-item>
-            <mat-icon class="flag-icon flag-icon-de"></mat-icon>
-            <span>German</span>
-          </button>
-        </a>
-        <a class="language-menu-item" routerLink="/ru">
-          <button mat-menu-item>
-            <mat-icon class="flag-icon flag-icon-ru"></mat-icon>
-            <span>Russian</span>
-          </button>
-        </a>
-        <a class="language-menu-item" routerLink="/es">
-          <button mat-menu-item>
-            <mat-icon class="flag-icon flag-icon-es"></mat-icon>
-            <span>Spanish</span>
-          </button>
-        </a>
-      </mat-menu>
+    </div>
 
-    </td>
-  </tr>
+    <div *ngIf="vehicleNotFound" class="not-found">
+      <mat-icon>warning</mat-icon> No vehicle found for this plate number.
+    </div>
 
-  <tr>
-    <td>
-      <mat-form-field class="mat-form-field">
-        <mat-select [placeholder]="selectProvincePlaceholder | translate" name="province" formControlName="provinceKey">
-          <mat-option *ngFor="let province of provinces" [value]="province.key" routerLink="./" [queryParams]="{provinceKey: province.key }"
-            queryParamsHandling="merge">
-            {{ province.title }}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-      <br>
-      <br>
+    <mat-card *ngIf="vehicleInfo" class="vehicle-card" appearance="outlined">
+      <mat-card-content>
+        <div class="vehicle-header">
+          <div class="vehicle-plate-badge">{{vehicleInfo.kenteken}}</div>
+          <div class="vehicle-title">
+            <div class="vehicle-make">{{vehicleInfo.merk}}</div>
+            <div class="vehicle-model">{{getVehicleModel(vehicleInfo)}}</div>
+          </div>
+          <div class="vehicle-color-dot" [style.background]="getColorHex(vehicleInfo.eerste_kleur)" title="{{vehicleInfo.eerste_kleur}}"></div>
+        </div>
+        <div class="vehicle-meta">
+          <span class="meta-chip">
+            <i class="fas fa-calendar-alt"></i>
+            {{getVehicleYear(vehicleInfo)}}
+          </span>
+          <span class="meta-chip">
+            <i class="fas fa-car"></i>
+            {{vehicleInfo.inrichting}}
+          </span>
+          <span class="meta-chip">
+            <i class="fas fa-palette"></i>
+            {{getColorName(vehicleInfo.eerste_kleur)}}
+          </span>
+        </div>
+        <div class="vehicle-specs">
+          <div class="spec" *ngIf="+vehicleInfo.cilinderinhoud > 0">
+            <div class="spec-label">Engine</div>
+            <div class="spec-value">{{vehicleInfo.aantal_cilinders}} cyl · {{vehicleInfo.cilinderinhoud}} cc</div>
+          </div>
+          <div class="spec">
+            <div class="spec-label">Kerb weight</div>
+            <div class="spec-value">{{vehicleInfo.massa_rijklaar}} kg</div>
+          </div>
+          <div class="spec">
+            <div class="spec-label">Seats / Doors</div>
+            <div class="spec-value">{{vehicleInfo.aantal_zitplaatsen}} / {{vehicleInfo.aantal_deuren}}</div>
+          </div>
+          <div class="spec" *ngIf="vehicleInfo.catalogusprijs">
+            <div class="spec-label">Catalog price</div>
+            <div class="spec-value">€ {{formatPrice(vehicleInfo.catalogusprijs)}}</div>
+          </div>
+        </div>
+        <div class="autofill-notice">
+          <mat-icon>check_circle</mat-icon>
+          Auto-set: weight <strong>{{detectedWeight}} kg</strong>
+          <ng-container *ngIf="detectedFuelType">
+            · fuel <strong>{{getFuelLabel(detectedFuelType)}}</strong>
+          </ng-container>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
 
-    </td>
-  </tr>
+  <!-- Tax form -->
+  <div class="form-section" [formGroup]="carTaxControl">
 
-  <tr>
-    <td>
-      <div style="text-align: center;">
-        <mat-button-toggle-group formControlName="fuelType">
-          <mat-button-toggle *ngFor="let fuel of fuelTypes" [value]="fuel" #b routerLink="./" [queryParams]="{fuelType:fuel}" queryParamsHandling="merge">
-            <i [ngClass]="{'fas':b.checked, 'fa-gas-pump':b.checked, 'fa-lg': b.checked}"></i>
-            {{fuel | translate}}
-          </mat-button-toggle>
-        </mat-button-toggle-group>
+    <mat-form-field class="full-width">
+      <mat-label>Select Province</mat-label>
+      <mat-select name="province" formControlName="provinceKey">
+        <mat-option *ngFor="let province of provinces" [value]="province.key">
+          {{ province.title }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <div *ngIf="detectedProvinceName" class="province-detected">
+      <mat-icon>my_location</mat-icon>
+      Auto-detected: <strong>{{detectedProvinceName}}</strong>
+    </div>
+
+    <div class="fuel-row">
+      <mat-button-toggle-group formControlName="fuelType" hideSingleSelectionIndicator>
+        <mat-button-toggle *ngFor="let fuel of fuelTypes" [value]="fuel" #b>
+          <i class="fas" [ngClass]="[getFuelIcon(fuel), b.checked ? 'fa-lg' : '']"></i>
+          {{getFuelLabel(fuel)}}
+        </mat-button-toggle>
+      </mat-button-toggle-group>
+    </div>
+
+    <div class="weight-section">
+      <div class="weight-label">
+        <span class="weight-range">{{sliderValue}} kg</span>
+        <span class="weight-hint">Vehicle weight</span>
       </div>
-      <br>
-      <br>
-      <br>
-    </td>
-  </tr>
-
-  <tr>
-    <td>
-      <div id="sliderData">
-        <span id="currentSliderValue" title="Weight Class">{{f.value.volume}} - {{+f.value.volume + (volumeControl.step - 1)}} kg</span>
-      </div>
-
-      <mat-slider [ngClass]="{'motorcycle': f.value.volume < motorcycleWeight, 'lightTruck': f.value.volume > lightTruckWeight, 'heavyTruck': f.value.volume > heavyTruckWeight}"
-        [volumeValue]="f.value.volume" formControlName="volume" min="1" max="5051" step="50" tickInterval="1" (input)="f.value.volume = $event.value"
-        #volumeControl routerLink="./" [queryParams]="{volume:f.value.volume}" queryParamsHandling="merge">
+      <mat-slider
+        [ngClass]="{'motorcycle': sliderValue < motorcycleWeight, 'lightTruck': sliderValue > lightTruckWeight, 'heavyTruck': sliderValue > heavyTruckWeight}"
+        [volumeValue]="sliderValue"
+        min="1" max="5051" step="50">
+        <input matSliderThumb formControlName="volume">
       </mat-slider>
-      <br>
-      <br>
-      <br>
+    </div>
 
+    <div class="price-card">
+      <div class="period-toggle">
+        <button class="period-btn" [class.active]="pricePeriod === 'monthly'" (click)="setPricePeriod('monthly')">Monthly</button>
+        <button class="period-btn" [class.active]="pricePeriod === 'quarterly'" (click)="setPricePeriod('quarterly')">Quarterly</button>
+        <button class="period-btn" [class.active]="pricePeriod === 'yearly'" (click)="setPricePeriod('yearly')">Yearly</button>
+      </div>
+      <div class="price-row">
+        <div class="price-currency"><i class="fas fa-euro-sign"></i></div>
+        <div class="price-amount">{{displayPrice$ | async}}</div>
+      </div>
+      <div class="price-period">{{periodLabel}}</div>
+    </div>
 
-    </td>
-  </tr>
+  </div>
 
-  <tr>
-    <td>
-      <h1 id="priceHeader">
-        {{price$ | async}}
-        <i class="fas fa-euro-sign fa-xs"></i>
-        <span>{{timePeriod | translate}}</span>
-      </h1>
-    </td>
-  </tr>
-
-</table>
+</div>

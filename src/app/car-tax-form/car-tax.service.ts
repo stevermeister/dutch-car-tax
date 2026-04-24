@@ -1,6 +1,3 @@
-
-import { FuelTypes } from './car-tax.service';
-import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { PROVINCES } from '../../assets/data/provinces';
@@ -38,7 +35,9 @@ export class CarTaxService {
     'Benzine',
     'Diesel',
     'LPG3',
-    'LPG'
+    'LPG',
+    'Elektrisch',
+    'Hybride'
   ];
 
   constructor(private _http: HttpClient) {
