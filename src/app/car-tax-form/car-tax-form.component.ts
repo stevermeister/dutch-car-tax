@@ -50,10 +50,9 @@ export class CarTaxFormComponent implements OnInit {
   private readonly FUEL_LABELS: Record<string, string> = {
     'Benzine':    'Petrol',
     'Diesel':     'Diesel',
+    'Elektrisch': 'Electric',
     'LPG3':       'LPG3',
     'LPG':        'LPG',
-    'Elektrisch': 'Electric',
-    'Hybride':    'Hybrid',
   };
 
   constructor(
@@ -94,7 +93,9 @@ export class CarTaxFormComponent implements OnInit {
         const vehicleValues = {};
         Object.keys(this.carTaxControl.value).forEach((controlName) => {
           if (queryParams[controlName]) {
-            this.carTaxControl.controls[controlName].setValue(queryParams[controlName]);
+            const val = controlName === 'fuelType' && queryParams[controlName] === 'Hybride'
+              ? 'Benzine' : queryParams[controlName];
+            this.carTaxControl.controls[controlName].setValue(val);
             vehicleValues[controlName] = queryParams[controlName];
           } else {
             vehicleValues[controlName] = this.carTaxControl.controls[controlName].value;
@@ -162,6 +163,18 @@ export class CarTaxFormComponent implements OnInit {
     Promise.resolve().then(() => this.provinceSelect?.open());
   }
 
+  clearVehicle(): void {
+    this.vehicleInfo = null;
+    this.detectedFuelType = null;
+    this.detectedWeight = null;
+    this.vehicleNotFound = false;
+    this._router.navigate([], {
+      relativeTo: this._activatedRoute,
+      queryParams: { plate: null },
+      queryParamsHandling: 'merge'
+    });
+  }
+
   getFuelLabel(fuel: string): string {
     return this.FUEL_LABELS[fuel] ?? fuel;
   }
@@ -169,11 +182,6 @@ export class CarTaxFormComponent implements OnInit {
   setPricePeriod(period: 'monthly' | 'quarterly' | 'yearly'): void {
     this.pricePeriod = period;
     this.pricePeriodSubject.next(period);
-  }
-
-  get periodLabel(): string {
-    const labels = { monthly: 'per month', quarterly: 'per quarter', yearly: 'per year' };
-    return labels[this.pricePeriod];
   }
 
   searchVehicle(): void {
@@ -215,10 +223,9 @@ export class CarTaxFormComponent implements OnInit {
     if (!fuels || fuels.length === 0) return null;
     const hasElectric = fuels.includes('Elektriciteit');
     const hasNonElectric = fuels.some(f => f !== 'Elektriciteit');
-    if (hasElectric && hasNonElectric) return 'Hybride';
-    // Self-charging hybrids (e.g. Lexus IS300H) can appear as Elektriciteit-only in RDW
-    // but they have engine displacement — they can't be purely electric
-    if (hasElectric && vehicle?.cilinderinhoud && +vehicle.cilinderinhoud > 0) return 'Hybride';
+    // Hybrid (incl. self-charging) → same rate as Benzine since 2026, map to Benzine
+    if (hasElectric && hasNonElectric) return 'Benzine';
+    if (hasElectric && vehicle?.cilinderinhoud && +vehicle.cilinderinhoud > 0) return 'Benzine';
     if (hasElectric) return 'Elektrisch';
     if (fuels.includes('Benzine')) return 'Benzine';
     if (fuels.includes('Diesel')) return 'Diesel';
@@ -259,20 +266,19 @@ export class CarTaxFormComponent implements OnInit {
   private readonly FUEL_CONFIG: Record<string, { col: number; multiplier: number }> = {
     'Benzine':    { col: 1, multiplier: 1.00 },
     'Diesel':     { col: 2, multiplier: 1.00 },
+    'Elektrisch': { col: 1, multiplier: 0.70 },
     'LPG3':       { col: 3, multiplier: 1.00 },
     'LPG':        { col: 4, multiplier: 1.00 },
-    'Elektrisch': { col: 1, multiplier: 0.70 },
-    'Hybride':    { col: 1, multiplier: 1.00 },
+    'Hybride':    { col: 1, multiplier: 1.00 }, // legacy URL compat → same as Benzine
   };
 
   getFuelIcon(fuel: string): string {
     const icons: Record<string, string> = {
       'Benzine':    'fa-gas-pump',
       'Diesel':     'fa-tint',
+      'Elektrisch': 'fa-bolt',
       'LPG3':       'fa-fire',
       'LPG':        'fa-fire',
-      'Elektrisch': 'fa-bolt',
-      'Hybride':    'fa-leaf',
     };
     return icons[fuel] ?? 'fa-gas-pump';
   }

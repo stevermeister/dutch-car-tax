@@ -34,10 +34,9 @@ export class CarTaxService {
   private _fuelTypes: FuelTypes = [
     'Benzine',
     'Diesel',
+    'Elektrisch',
     'LPG3',
     'LPG',
-    'Elektrisch',
-    'Hybride'
   ];
 
   constructor(private _http: HttpClient) {

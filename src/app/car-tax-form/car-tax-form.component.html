@@ -8,7 +8,7 @@
 
   <!-- Plate lookup -->
   <div class="plate-section">
-    <div class="plate-search-row">
+    <div *ngIf="!vehicleInfo" class="plate-search-row">
       <div class="plate-wrapper">
         <span class="plate-country">NL</span>
         <input
@@ -27,7 +27,7 @@
       </button>
     </div>
 
-    <div *ngIf="vehicleNotFound" class="not-found">
+    <div *ngIf="vehicleNotFound && !vehicleInfo" class="not-found">
       <mat-icon>warning</mat-icon> No vehicle found for this plate number.
     </div>
 
@@ -42,6 +42,9 @@
           {{getVehicleYear(vehicleInfo)}}<ng-container *ngIf="detectedFuelType"> · {{getFuelLabel(detectedFuelType)}}</ng-container><ng-container *ngIf="detectedWeight"> · {{detectedWeight}} kg</ng-container> · {{getColorName(vehicleInfo.eerste_kleur)}}
         </div>
       </div>
+      <button class="clear-vehicle-btn" (click)="clearVehicle()" title="Clear">
+        <mat-icon>close</mat-icon>
+      </button>
     </div>
   </div>
 
@@ -86,16 +89,15 @@
     </div>
 
     <div class="price-section">
+      <div class="price-row">
+        <div class="price-currency"><i class="fas fa-euro-sign"></i></div>
+        <div class="price-amount">{{displayPrice$ | async}}</div>
+      </div>
       <div class="period-toggle">
         <button class="period-btn" [class.active]="pricePeriod === 'monthly'" (click)="setPricePeriod('monthly')">Monthly</button>
         <button class="period-btn" [class.active]="pricePeriod === 'quarterly'" (click)="setPricePeriod('quarterly')">Quarterly</button>
         <button class="period-btn" [class.active]="pricePeriod === 'yearly'" (click)="setPricePeriod('yearly')">Yearly</button>
       </div>
-      <div class="price-row">
-        <div class="price-currency"><i class="fas fa-euro-sign"></i></div>
-        <div class="price-amount">{{displayPrice$ | async}}</div>
-      </div>
-      <div class="price-period">{{periodLabel}}</div>
     </div>
 
   </div>
