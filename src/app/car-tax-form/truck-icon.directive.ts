@@ -1,30 +1,19 @@
-import { Directive, Renderer2, ElementRef, AfterViewInit, OnChanges, Input } from '@angular/core';
+import { Directive, ElementRef, OnChanges, Input } from '@angular/core';
 
 @Directive({
+  standalone: false,
   selector: 'mat-slider'
 })
-export class TruckIconDirective implements AfterViewInit, OnChanges {
+export class TruckIconDirective implements OnChanges {
 
   @Input() volumeValue: number;
-  private previousValue: number;
-  private carSize = 30;
 
-  constructor(private _el: ElementRef, private _renderer: Renderer2, ) {
-  }
+  constructor(private _el: ElementRef) {}
 
   ngOnChanges() {
-    this.increaseIconSize(this.volumeValue);
+    if (this.volumeValue) {
+      const fontSize = 26 + this.volumeValue / 170;
+      this._el.nativeElement.style.setProperty('--thumb-icon-size', `${fontSize}px`);
+    }
   }
-
-  ngAfterViewInit() {
-
-    this._renderer.setStyle(this._el.nativeElement, 'font', 'normal normal normal 26px/1 FontAwesome');
-  }
-
-  increaseIconSize(value: number): void {
-
-    this._renderer.setStyle(this._el.nativeElement, 'font-size', 26 + value / 170 + 'px');
-
-  }
-
 }

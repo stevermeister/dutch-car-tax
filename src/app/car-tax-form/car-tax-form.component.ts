@@ -1,13 +1,11 @@
-
-import {concat,  Observable } from 'rxjs';
-
-import {pluck, map, delay, filter, take} from 'rxjs/operators';
-import { CookieService } from './../cookie.service';
-import { TranslationService } from './../translation.service';
-import { Component, OnInit } from '@angular/core';
+import { concat, Observable, BehaviorSubject, combineLatest } from 'rxjs';
+import { map, delay, filter, take, debounceTime, shareReplay } from 'rxjs/operators';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { MatSelect } from '@angular/material/select';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { CarTaxService, FuelTypes, Grid, Provinces } from './car-tax.service';
 import { ActivatedRoute, Router } from '@angular/router';
+import { RdwService, RdwVehicle } from './rdw.service';
 
 export type FormValue = {
   'provinceKey': string;
@@ -15,15 +13,13 @@ export type FormValue = {
   'volume': number;
 };
 
-
 @Component({
+  standalone: false,
   selector: 'app-car-tax-form',
   templateUrl: './car-tax-form.component.html',
   styleUrls: ['./car-tax-form.component.scss']
 })
-
 export class CarTaxFormComponent implements OnInit {
-
 
   public carTaxControl: FormGroup;
   public fuelTypes: FuelTypes;
@@ -33,25 +29,42 @@ export class CarTaxFormComponent implements OnInit {
   public lightTruckWeight = 3500;
   public heavyTruckWeight = 4500;
   public price$: Observable<number>;
-  public selectedLanguageClassIcon = 'flag-icon-gb';
-  public timePeriod = 'timePeriod';
-  public selectProvincePlaceholder = 'selectProvincePlaceholder';
+  public sliderValue = 1551;
   public ObservableQueryParams: Observable<number>;
   public ObservableValueChanges: Observable<number>;
 
+  public vehicleInfo: RdwVehicle | null = null;
+  public detectedFuelType: string | null = null;
+  public detectedWeight: number | null = null;
+  public plateInput = '';
+  public isLoadingVehicle = false;
+  public vehicleNotFound = false;
+  public displayPrice$: Observable<number>;
+  public pricePeriod: 'monthly' | 'quarterly' | 'yearly' = 'quarterly';
+  private pricePeriodSubject = new BehaviorSubject<'monthly' | 'quarterly' | 'yearly'>('quarterly');
+  public detectedProvinceName: string | null = null;
+  public isEditingProvince = false;
+
+  @ViewChild('provinceSelect') provinceSelect?: MatSelect;
+
+  private readonly FUEL_LABELS: Record<string, string> = {
+    'Benzine':    'Petrol',
+    'Diesel':     'Diesel',
+    'Elektrisch': 'Electric',
+    'LPG3':       'LPG3',
+    'LPG':        'LPG',
+  };
 
   constructor(
     public _formBuilder: FormBuilder,
     public _carTaxService: CarTaxService,
     private _activatedRoute: ActivatedRoute,
-    private _translationService: TranslationService,
     private _router: Router,
-    private _cookieService: CookieService) {
+    private _rdwService: RdwService) {
 
     this.fuelTypes = this._carTaxService.getFuelTypes();
     this.provinces = this._carTaxService.getProvinces();
     this.grid = this._carTaxService.getTaxGrid();
-
   }
 
   ngOnInit() {
@@ -59,14 +72,17 @@ export class CarTaxFormComponent implements OnInit {
     this.carTaxControl = this._formBuilder.group({
       provinceKey: 'NH',
       fuelType: 'Benzine',
-      volume: '1551'
+      volume: this.sliderValue
+    });
+
+    this.carTaxControl.get('volume')!.valueChanges.subscribe(v => {
+      this.sliderValue = +v;
     });
 
     this._activatedRoute.queryParams.pipe(
       take(1),
-      filter(queryParams => !Boolean(Object.keys(queryParams).length)),)
-      .subscribe((queryParams) => {
-
+      filter(queryParams => !Boolean(Object.keys(queryParams).length)))
+      .subscribe(() => {
         this._router.navigate([], { relativeTo: this._activatedRoute, queryParams: this.carTaxControl.value });
       });
 
@@ -74,57 +90,236 @@ export class CarTaxFormComponent implements OnInit {
       take(1),
       delay(1),
       map((queryParams) => {
-
         const vehicleValues = {};
-
         Object.keys(this.carTaxControl.value).forEach((controlName) => {
           if (queryParams[controlName]) {
-            this.carTaxControl.controls[controlName].setValue(queryParams[controlName]);
+            const val = controlName === 'fuelType' && queryParams[controlName] === 'Hybride'
+              ? 'Benzine' : queryParams[controlName];
+            this.carTaxControl.controls[controlName].setValue(val);
             vehicleValues[controlName] = queryParams[controlName];
           } else {
             vehicleValues[controlName] = this.carTaxControl.controls[controlName].value;
           }
         });
-
+        if (queryParams['volume']) {
+          this.sliderValue = +queryParams['volume'];
+        }
         return this.getPrice(vehicleValues as FormValue);
-      }),);
+      }));
 
     this.ObservableValueChanges = this.carTaxControl.valueChanges.pipe(
       map((vehicleValues: FormValue) => {
-
         return this.getPrice(vehicleValues);
       }));
 
-    this.price$ = concat(this.ObservableQueryParams, this.ObservableValueChanges);
+    this.price$ = concat(this.ObservableQueryParams, this.ObservableValueChanges).pipe(shareReplay(1));
+    this.displayPrice$ = combineLatest([this.price$, this.pricePeriodSubject]).pipe(
+      map(([price, period]) => {
+        if (period === 'monthly') return Math.round(price / 3);
+        if (period === 'yearly') return Math.round(price * 4);
+        return price;
+      })
+    );
 
-    this._activatedRoute.params.pipe(pluck('language'),filter(Boolean),).subscribe((language: string) => {
-      this._translationService.switchLanguage(language);
-      this.selectedLanguageClassIcon = this._translationService.getLanguageIconClass(language);
-      this._cookieService.setCookie('language', language, 365);
+    this.carTaxControl.valueChanges.pipe(
+      debounceTime(50)
+    ).subscribe(values => {
+      const fuelMatches = !this.detectedFuelType || values.fuelType === this.detectedFuelType;
+      const weightMatches = !this.detectedWeight || +values.volume === this.detectedWeight;
+      const plate = (this.vehicleInfo && fuelMatches && weightMatches)
+        ? this.plateInput.trim().toUpperCase()
+        : null;
+
+      this._router.navigate([], {
+        relativeTo: this._activatedRoute,
+        queryParams: { ...values, plate },
+        queryParamsHandling: 'merge'
+      });
     });
 
+    this._activatedRoute.queryParams.pipe(take(1)).subscribe(queryParams => {
+      if (queryParams['plate']) {
+        this.plateInput = queryParams['plate'];
+        this.searchVehicle();
+      }
+    });
+
+    this._rdwService.detectProvinceKey().subscribe(key => {
+      if (key) {
+        this.carTaxControl.patchValue({ provinceKey: key });
+        const province = this.provinces.find(p => p.key === key);
+        this.detectedProvinceName = province?.title || key;
+      }
+    });
   }
 
+  get currentProvinceName(): string {
+    const key = this.carTaxControl?.get('provinceKey')?.value;
+    return this.provinces.find(p => p.key === key)?.title ?? key ?? '';
+  }
 
+  openProvinceEdit(): void {
+    this.isEditingProvince = true;
+    Promise.resolve().then(() => this.provinceSelect?.open());
+  }
 
+  clearVehicle(): void {
+    this.vehicleInfo = null;
+    this.detectedFuelType = null;
+    this.detectedWeight = null;
+    this.vehicleNotFound = false;
+    this._router.navigate([], {
+      relativeTo: this._activatedRoute,
+      queryParams: { plate: null },
+      queryParamsHandling: 'merge'
+    });
+  }
+
+  getFuelLabel(fuel: string): string {
+    return this.FUEL_LABELS[fuel] ?? fuel;
+  }
+
+  setPricePeriod(period: 'monthly' | 'quarterly' | 'yearly'): void {
+    this.pricePeriod = period;
+    this.pricePeriodSubject.next(period);
+  }
+
+  searchVehicle(): void {
+    if (!this.plateInput) {
+      return;
+    }
+    this._router.navigate([], {
+      relativeTo: this._activatedRoute,
+      queryParams: { plate: this.plateInput.trim().toUpperCase() },
+      queryParamsHandling: 'merge'
+    });
+    this.isLoadingVehicle = true;
+    this.vehicleNotFound = false;
+    this.vehicleInfo = null;
+    this.detectedFuelType = null;
+    this.detectedWeight = null;
+
+    this._rdwService.lookupVehicle(this.plateInput).subscribe(vehicle => {
+      this.isLoadingVehicle = false;
+      if (vehicle && vehicle.massa_rijklaar) {
+        this.vehicleInfo = vehicle;
+        const weight = Math.round(+vehicle.massa_rijklaar / 50) * 50;
+        this.detectedWeight = weight;
+        const patch: Partial<FormValue> = { volume: weight };
+        const fuelType = this.mapRdwFuelType(vehicle.brandstof_types, vehicle);
+        if (fuelType) {
+          patch.fuelType = fuelType;
+          this.detectedFuelType = fuelType;
+        }
+        this.carTaxControl.patchValue(patch);
+        this.sliderValue = weight;
+      } else {
+        this.vehicleNotFound = true;
+      }
+    });
+  }
+
+  private mapRdwFuelType(fuels: string[] | undefined, vehicle?: RdwVehicle | null): string | null {
+    if (!fuels || fuels.length === 0) return null;
+    const hasElectric = fuels.includes('Elektriciteit');
+    const hasNonElectric = fuels.some(f => f !== 'Elektriciteit');
+    // Hybrid (incl. self-charging) → same rate as Benzine since 2026, map to Benzine
+    if (hasElectric && hasNonElectric) return 'Benzine';
+    if (hasElectric && vehicle?.cilinderinhoud && +vehicle.cilinderinhoud > 0) return 'Benzine';
+    if (hasElectric) return 'Elektrisch';
+    if (fuels.includes('Benzine')) return 'Benzine';
+    if (fuels.includes('Diesel')) return 'Diesel';
+    if (fuels.includes('LPG')) return 'LPG3';
+    if (fuels.some(f => /waterstof/i.test(f))) return 'Elektrisch';
+    return null;
+  }
+
+  getVehicleYear(vehicle: RdwVehicle): string {
+    return vehicle.datum_eerste_toelating?.substring(0, 4) || '';
+  }
+
+  formatPrice(val: string): string {
+    return val ? parseInt(val, 10).toLocaleString('nl-NL') : '';
+  }
+
+  getColorHex(colorName: string): string {
+    const map: { [key: string]: string } = {
+      'WIT': '#ffffff',
+      'ZWART': '#111111',
+      'GRIJS': '#9e9e9e',
+      'GRIJS/ZILVER': '#9e9e9e',
+      'ZILVER': '#c0c0c0',
+      'ROOD': '#e53935',
+      'BLAUW': '#1e88e5',
+      'GROEN': '#43a047',
+      'GEEL': '#fdd835',
+      'ORANJE': '#fb8c00',
+      'BRUIN': '#795548',
+      'BEIGE': '#d7ccc8',
+      'PAARS': '#7b1fa2'
+    };
+    return map[colorName] || '#9e9e9e';
+  }
+
+  // Grid columns: weight#benzine#diesel#lpg3#lpg
+  // 2026 MRB rates: electric = 70% of benzine, hybrid/PHEV = 100% of benzine (discount abolished)
+  private readonly FUEL_CONFIG: Record<string, { col: number; multiplier: number }> = {
+    'Benzine':    { col: 1, multiplier: 1.00 },
+    'Diesel':     { col: 2, multiplier: 1.00 },
+    'Elektrisch': { col: 1, multiplier: 0.70 },
+    'LPG3':       { col: 3, multiplier: 1.00 },
+    'LPG':        { col: 4, multiplier: 1.00 },
+    'Hybride':    { col: 1, multiplier: 1.00 }, // legacy URL compat → same as Benzine
+  };
+
+  getFuelIcon(fuel: string): string {
+    const icons: Record<string, string> = {
+      'Benzine':    'fa-gas-pump',
+      'Diesel':     'fa-tint',
+      'Elektrisch': 'fa-bolt',
+      'LPG3':       'fa-fire',
+      'LPG':        'fa-fire',
+    };
+    return icons[fuel] ?? 'fa-gas-pump';
+  }
+
+  getColorName(rdwColor: string): string {
+    const map: Record<string, string> = {
+      'WIT':        'White',
+      'ZWART':      'Black',
+      'GRIJS':      'Grey',
+      'GRIJS/ZILVER': 'Silver',
+      'ZILVER':     'Silver',
+      'ROOD':       'Red',
+      'BLAUW':      'Blue',
+      'GROEN':      'Green',
+      'GEEL':       'Yellow',
+      'ORANJE':     'Orange',
+      'BRUIN':      'Brown',
+      'BEIGE':      'Beige',
+      'PAARS':      'Purple',
+    };
+    return map[rdwColor] ?? rdwColor;
+  }
+
+  getVehicleModel(vehicle: RdwVehicle): string {
+    const make = vehicle.merk?.trim().toUpperCase() ?? '';
+    const model = vehicle.handelsbenaming?.trim() ?? '';
+    return model.toUpperCase().startsWith(make) ? model.substring(make.length).trim() : model;
+  }
 
   getPrice(value: FormValue): number {
+    const { col, multiplier } = this.FUEL_CONFIG[value.fuelType] ?? { col: 1, multiplier: 1 };
 
     if (value.volume < 551) {
-      return this.grid[value.provinceKey][0].split('#')[this.fuelTypes.indexOf(value.fuelType) + 1];
+      return Math.round(+this.grid[value.provinceKey][0].split('#')[col] * multiplier);
     }
+
     const provinceGrid = this.grid[value.provinceKey];
     const index = Math.floor(value.volume / 100 - 4);
-    const weight = provinceGrid[index].split('#')[0];
+    const weight = +provinceGrid[index].split('#')[0];
+    const row = value.volume < weight ? index - 1 : index;
 
-    if (value.volume < weight) {
-      return provinceGrid[index - 1].split('#')[this.fuelTypes.indexOf(value.fuelType) + 1];
-    }
-
-    return provinceGrid[index].split('#')[this.fuelTypes.indexOf(value.fuelType) + 1];
+    return Math.round(+provinceGrid[row].split('#')[col] * multiplier);
   }
-
-
-
-
 }

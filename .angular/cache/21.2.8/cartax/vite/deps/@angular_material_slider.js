@@ -1,0 +1,1846 @@
+import {
+  NG_VALUE_ACCESSOR
+} from "./chunk-KFE2AT5N.js";
+import {
+  MAT_RIPPLE_GLOBAL_OPTIONS,
+  MatRipple,
+  MatRippleModule,
+  RippleState,
+  _StructuralStylesLoader
+} from "./chunk-44JAJN5A.js";
+import "./chunk-7FCKUFGM.js";
+import "./chunk-32JQFJTS.js";
+import "./chunk-OK45VPFY.js";
+import "./chunk-6J2F7VLT.js";
+import "./chunk-CXF5TYVK.js";
+import {
+  _animationsDisabled
+} from "./chunk-AHUISWXM.js";
+import {
+  _CdkPrivateStyleLoader
+} from "./chunk-5R5LKIAH.js";
+import "./chunk-GUGIMSVJ.js";
+import "./chunk-O3GRQ36F.js";
+import {
+  Platform
+} from "./chunk-W34HVCMU.js";
+import {
+  BidiModule,
+  Directionality
+} from "./chunk-H4EIKF3B.js";
+import "./chunk-DIBYBW3O.js";
+import "./chunk-5JEZIUMB.js";
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  ContentChild,
+  ContentChildren,
+  Directive,
+  ElementRef,
+  EventEmitter,
+  InjectionToken,
+  Input,
+  NgModule,
+  NgZone,
+  Output,
+  Renderer2,
+  ViewChild,
+  ViewChildren,
+  ViewEncapsulation,
+  afterRenderEffect,
+  booleanAttribute,
+  computed,
+  forwardRef,
+  inject,
+  numberAttribute,
+  setClassMetadata,
+  signal,
+  ɵɵInheritDefinitionFeature,
+  ɵɵProvidersFeature,
+  ɵɵadvance,
+  ɵɵattribute,
+  ɵɵclassMap,
+  ɵɵclassProp,
+  ɵɵconditional,
+  ɵɵconditionalCreate,
+  ɵɵcontentQuery,
+  ɵɵdefineComponent,
+  ɵɵdefineDirective,
+  ɵɵdefineInjector,
+  ɵɵdefineNgModule,
+  ɵɵelement,
+  ɵɵelementEnd,
+  ɵɵelementStart,
+  ɵɵlistener,
+  ɵɵloadQuery,
+  ɵɵnextContext,
+  ɵɵprojection,
+  ɵɵprojectionDef,
+  ɵɵproperty,
+  ɵɵqueryRefresh,
+  ɵɵrepeater,
+  ɵɵrepeaterCreate,
+  ɵɵrepeaterTrackByIndex,
+  ɵɵstyleProp,
+  ɵɵtext,
+  ɵɵtextInterpolate,
+  ɵɵviewQuery
+} from "./chunk-HS26NPKE.js";
+import "./chunk-BY7Z3IGD.js";
+import "./chunk-UAVGWFT4.js";
+import {
+  Subject
+} from "./chunk-PSTBIIF2.js";
+
+// node_modules/@angular/material/fesm2022/slider.mjs
+var _c0 = ["knob"];
+var _c1 = ["valueIndicatorContainer"];
+function MatSliderVisualThumb_Conditional_0_Template(rf, ctx) {
+  if (rf & 1) {
+    ɵɵelementStart(0, "div", 2, 1)(2, "div", 5)(3, "span", 6);
+    ɵɵtext(4);
+    ɵɵelementEnd()()();
+  }
+  if (rf & 2) {
+    const ctx_r0 = ɵɵnextContext();
+    ɵɵadvance(4);
+    ɵɵtextInterpolate(ctx_r0.valueIndicatorText);
+  }
+}
+var _c2 = ["trackActive"];
+var _c3 = ["*"];
+function MatSlider_Conditional_6_Conditional_2_For_1_Template(rf, ctx) {
+  if (rf & 1) {
+    ɵɵelement(0, "div");
+  }
+  if (rf & 2) {
+    const tickMark_r1 = ctx.$implicit;
+    const ɵ$index_14_r2 = ctx.$index;
+    const ctx_r2 = ɵɵnextContext(3);
+    ɵɵclassMap(tickMark_r1 === 0 ? "mdc-slider__tick-mark--active" : "mdc-slider__tick-mark--inactive");
+    ɵɵstyleProp("transform", ctx_r2._calcTickMarkTransform(ɵ$index_14_r2));
+  }
+}
+function MatSlider_Conditional_6_Conditional_2_Template(rf, ctx) {
+  if (rf & 1) {
+    ɵɵrepeaterCreate(0, MatSlider_Conditional_6_Conditional_2_For_1_Template, 1, 4, "div", 8, ɵɵrepeaterTrackByIndex);
+  }
+  if (rf & 2) {
+    const ctx_r2 = ɵɵnextContext(2);
+    ɵɵrepeater(ctx_r2._tickMarks);
+  }
+}
+function MatSlider_Conditional_6_Template(rf, ctx) {
+  if (rf & 1) {
+    ɵɵelementStart(0, "div", 6, 1);
+    ɵɵconditionalCreate(2, MatSlider_Conditional_6_Conditional_2_Template, 2, 0);
+    ɵɵelementEnd();
+  }
+  if (rf & 2) {
+    const ctx_r2 = ɵɵnextContext();
+    ɵɵadvance(2);
+    ɵɵconditional(ctx_r2._cachedWidth ? 2 : -1);
+  }
+}
+function MatSlider_Conditional_7_Template(rf, ctx) {
+  if (rf & 1) {
+    ɵɵelement(0, "mat-slider-visual-thumb", 7);
+  }
+  if (rf & 2) {
+    const ctx_r2 = ɵɵnextContext();
+    ɵɵproperty("discrete", ctx_r2.discrete)("thumbPosition", 1)("valueIndicatorText", ctx_r2.startValueIndicatorText);
+  }
+}
+var _MatThumb;
+(function(_MatThumb2) {
+  _MatThumb2[_MatThumb2["START"] = 1] = "START";
+  _MatThumb2[_MatThumb2["END"] = 2] = "END";
+})(_MatThumb || (_MatThumb = {}));
+var _MatTickMark;
+(function(_MatTickMark2) {
+  _MatTickMark2[_MatTickMark2["ACTIVE"] = 0] = "ACTIVE";
+  _MatTickMark2[_MatTickMark2["INACTIVE"] = 1] = "INACTIVE";
+})(_MatTickMark || (_MatTickMark = {}));
+var MAT_SLIDER = new InjectionToken("_MatSlider");
+var MAT_SLIDER_THUMB = new InjectionToken("_MatSliderThumb");
+var MAT_SLIDER_RANGE_THUMB = new InjectionToken("_MatSliderRangeThumb");
+var MAT_SLIDER_VISUAL_THUMB = new InjectionToken("_MatSliderVisualThumb");
+var MatSliderChange = class {
+  source;
+  parent;
+  value;
+};
+var MatSliderVisualThumb = class _MatSliderVisualThumb {
+  _cdr = inject(ChangeDetectorRef);
+  _ngZone = inject(NgZone);
+  _slider = inject(MAT_SLIDER);
+  _renderer = inject(Renderer2);
+  _listenerCleanups;
+  discrete = false;
+  thumbPosition;
+  valueIndicatorText;
+  _ripple;
+  _knob;
+  _valueIndicatorContainer;
+  _sliderInput;
+  _sliderInputEl;
+  _hoverRippleRef;
+  _focusRippleRef;
+  _activeRippleRef;
+  _isHovered = false;
+  _isActive = false;
+  _isValueIndicatorVisible = false;
+  _hostElement = inject(ElementRef).nativeElement;
+  _platform = inject(Platform);
+  constructor() {
+  }
+  ngAfterViewInit() {
+    const sliderInput = this._slider._getInput(this.thumbPosition);
+    if (!sliderInput) {
+      return;
+    }
+    this._ripple.radius = 24;
+    this._sliderInput = sliderInput;
+    this._sliderInputEl = this._sliderInput._hostElement;
+    this._ngZone.runOutsideAngular(() => {
+      const input = this._sliderInputEl;
+      const renderer = this._renderer;
+      this._listenerCleanups = [renderer.listen(input, "pointermove", this._onPointerMove), renderer.listen(input, "pointerdown", this._onDragStart), renderer.listen(input, "pointerup", this._onDragEnd), renderer.listen(input, "pointerleave", this._onMouseLeave), renderer.listen(input, "focus", this._onFocus), renderer.listen(input, "blur", this._onBlur)];
+    });
+  }
+  ngOnDestroy() {
+    this._listenerCleanups?.forEach((cleanup) => cleanup());
+  }
+  _onPointerMove = (event) => {
+    if (this._sliderInput._isFocused) {
+      return;
+    }
+    const rect = this._hostElement.getBoundingClientRect();
+    const isHovered = this._slider._isCursorOnSliderThumb(event, rect);
+    this._isHovered = isHovered;
+    if (isHovered) {
+      this._showHoverRipple();
+    } else {
+      this._hideRipple(this._hoverRippleRef);
+    }
+  };
+  _onMouseLeave = () => {
+    this._isHovered = false;
+    this._hideRipple(this._hoverRippleRef);
+  };
+  _onFocus = () => {
+    this._hideRipple(this._hoverRippleRef);
+    this._showFocusRipple();
+    this._hostElement.classList.add("mdc-slider__thumb--focused");
+  };
+  _onBlur = () => {
+    if (!this._isActive) {
+      this._hideRipple(this._focusRippleRef);
+    }
+    if (this._isHovered) {
+      this._showHoverRipple();
+    }
+    this._hostElement.classList.remove("mdc-slider__thumb--focused");
+  };
+  _onDragStart = (event) => {
+    if (event.button !== 0) {
+      return;
+    }
+    this._isActive = true;
+    this._showActiveRipple();
+  };
+  _onDragEnd = () => {
+    this._isActive = false;
+    this._hideRipple(this._activeRippleRef);
+    if (!this._sliderInput._isFocused) {
+      this._hideRipple(this._focusRippleRef);
+    }
+    if (this._platform.SAFARI) {
+      this._showHoverRipple();
+    }
+  };
+  _showHoverRipple() {
+    if (!this._isShowingRipple(this._hoverRippleRef)) {
+      this._hoverRippleRef = this._showRipple({
+        enterDuration: 0,
+        exitDuration: 0
+      });
+      this._hoverRippleRef?.element.classList.add("mat-mdc-slider-hover-ripple");
+    }
+  }
+  _showFocusRipple() {
+    if (!this._isShowingRipple(this._focusRippleRef)) {
+      this._focusRippleRef = this._showRipple({
+        enterDuration: 0,
+        exitDuration: 0
+      }, true);
+      this._focusRippleRef?.element.classList.add("mat-mdc-slider-focus-ripple");
+    }
+  }
+  _showActiveRipple() {
+    if (!this._isShowingRipple(this._activeRippleRef)) {
+      this._activeRippleRef = this._showRipple({
+        enterDuration: 225,
+        exitDuration: 400
+      });
+      this._activeRippleRef?.element.classList.add("mat-mdc-slider-active-ripple");
+    }
+  }
+  _isShowingRipple(rippleRef) {
+    return rippleRef?.state === RippleState.FADING_IN || rippleRef?.state === RippleState.VISIBLE;
+  }
+  _showRipple(animation, ignoreGlobalRippleConfig) {
+    if (this._slider.disabled) {
+      return;
+    }
+    this._showValueIndicator();
+    if (this._slider._isRange) {
+      const sibling = this._slider._getThumb(this.thumbPosition === _MatThumb.START ? _MatThumb.END : _MatThumb.START);
+      sibling._showValueIndicator();
+    }
+    if (this._slider._globalRippleOptions?.disabled && !ignoreGlobalRippleConfig) {
+      return;
+    }
+    return this._ripple.launch({
+      animation: this._slider._noopAnimations ? {
+        enterDuration: 0,
+        exitDuration: 0
+      } : animation,
+      centered: true,
+      persistent: true
+    });
+  }
+  _hideRipple(rippleRef) {
+    rippleRef?.fadeOut();
+    if (this._isShowingAnyRipple()) {
+      return;
+    }
+    if (!this._slider._isRange) {
+      this._hideValueIndicator();
+    }
+    const sibling = this._getSibling();
+    if (!sibling._isShowingAnyRipple()) {
+      this._hideValueIndicator();
+      sibling._hideValueIndicator();
+    }
+  }
+  _showValueIndicator() {
+    this._hostElement.classList.add("mdc-slider__thumb--with-indicator");
+  }
+  _hideValueIndicator() {
+    this._hostElement.classList.remove("mdc-slider__thumb--with-indicator");
+  }
+  _getSibling() {
+    return this._slider._getThumb(this.thumbPosition === _MatThumb.START ? _MatThumb.END : _MatThumb.START);
+  }
+  _getValueIndicatorContainer() {
+    return this._valueIndicatorContainer?.nativeElement;
+  }
+  _getKnob() {
+    return this._knob.nativeElement;
+  }
+  _isShowingAnyRipple() {
+    return this._isShowingRipple(this._hoverRippleRef) || this._isShowingRipple(this._focusRippleRef) || this._isShowingRipple(this._activeRippleRef);
+  }
+  static ɵfac = function MatSliderVisualThumb_Factory(__ngFactoryType__) {
+    return new (__ngFactoryType__ || _MatSliderVisualThumb)();
+  };
+  static ɵcmp = ɵɵdefineComponent({
+    type: _MatSliderVisualThumb,
+    selectors: [["mat-slider-visual-thumb"]],
+    viewQuery: function MatSliderVisualThumb_Query(rf, ctx) {
+      if (rf & 1) {
+        ɵɵviewQuery(MatRipple, 5)(_c0, 5)(_c1, 5);
+      }
+      if (rf & 2) {
+        let _t;
+        ɵɵqueryRefresh(_t = ɵɵloadQuery()) && (ctx._ripple = _t.first);
+        ɵɵqueryRefresh(_t = ɵɵloadQuery()) && (ctx._knob = _t.first);
+        ɵɵqueryRefresh(_t = ɵɵloadQuery()) && (ctx._valueIndicatorContainer = _t.first);
+      }
+    },
+    hostAttrs: [1, "mdc-slider__thumb", "mat-mdc-slider-visual-thumb"],
+    inputs: {
+      discrete: "discrete",
+      thumbPosition: "thumbPosition",
+      valueIndicatorText: "valueIndicatorText"
+    },
+    features: [ɵɵProvidersFeature([{
+      provide: MAT_SLIDER_VISUAL_THUMB,
+      useExisting: _MatSliderVisualThumb
+    }])],
+    decls: 4,
+    vars: 2,
+    consts: [["knob", ""], ["valueIndicatorContainer", ""], [1, "mdc-slider__value-indicator-container"], [1, "mdc-slider__thumb-knob"], ["matRipple", "", 1, "mat-focus-indicator", 3, "matRippleDisabled"], [1, "mdc-slider__value-indicator"], [1, "mdc-slider__value-indicator-text"]],
+    template: function MatSliderVisualThumb_Template(rf, ctx) {
+      if (rf & 1) {
+        ɵɵconditionalCreate(0, MatSliderVisualThumb_Conditional_0_Template, 5, 1, "div", 2);
+        ɵɵelement(1, "div", 3, 0)(3, "div", 4);
+      }
+      if (rf & 2) {
+        ɵɵconditional(ctx.discrete ? 0 : -1);
+        ɵɵadvance(3);
+        ɵɵproperty("matRippleDisabled", true);
+      }
+    },
+    dependencies: [MatRipple],
+    styles: [".mat-mdc-slider-visual-thumb .mat-ripple {\n  height: 100%;\n  width: 100%;\n}\n\n.mat-mdc-slider .mdc-slider__tick-marks {\n  justify-content: start;\n}\n.mat-mdc-slider .mdc-slider__tick-marks .mdc-slider__tick-mark--active,\n.mat-mdc-slider .mdc-slider__tick-marks .mdc-slider__tick-mark--inactive {\n  position: absolute;\n  left: 2px;\n}\n"],
+    encapsulation: 2,
+    changeDetection: 0
+  });
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(MatSliderVisualThumb, [{
+    type: Component,
+    args: [{
+      selector: "mat-slider-visual-thumb",
+      host: {
+        "class": "mdc-slider__thumb mat-mdc-slider-visual-thumb"
+      },
+      changeDetection: ChangeDetectionStrategy.OnPush,
+      encapsulation: ViewEncapsulation.None,
+      providers: [{
+        provide: MAT_SLIDER_VISUAL_THUMB,
+        useExisting: MatSliderVisualThumb
+      }],
+      imports: [MatRipple],
+      template: '@if (discrete) {\n  <div class="mdc-slider__value-indicator-container" #valueIndicatorContainer>\n    <div class="mdc-slider__value-indicator">\n      <span class="mdc-slider__value-indicator-text">{{valueIndicatorText}}</span>\n    </div>\n  </div>\n}\n<div class="mdc-slider__thumb-knob" #knob></div>\n<div matRipple class="mat-focus-indicator" [matRippleDisabled]="true"></div>\n',
+      styles: [".mat-mdc-slider-visual-thumb .mat-ripple {\n  height: 100%;\n  width: 100%;\n}\n\n.mat-mdc-slider .mdc-slider__tick-marks {\n  justify-content: start;\n}\n.mat-mdc-slider .mdc-slider__tick-marks .mdc-slider__tick-mark--active,\n.mat-mdc-slider .mdc-slider__tick-marks .mdc-slider__tick-mark--inactive {\n  position: absolute;\n  left: 2px;\n}\n"]
+    }]
+  }], () => [], {
+    discrete: [{
+      type: Input
+    }],
+    thumbPosition: [{
+      type: Input
+    }],
+    valueIndicatorText: [{
+      type: Input
+    }],
+    _ripple: [{
+      type: ViewChild,
+      args: [MatRipple]
+    }],
+    _knob: [{
+      type: ViewChild,
+      args: ["knob"]
+    }],
+    _valueIndicatorContainer: [{
+      type: ViewChild,
+      args: ["valueIndicatorContainer"]
+    }]
+  });
+})();
+var MatSlider = class _MatSlider {
+  _ngZone = inject(NgZone);
+  _cdr = inject(ChangeDetectorRef);
+  _elementRef = inject(ElementRef);
+  _dir = inject(Directionality, {
+    optional: true
+  });
+  _globalRippleOptions = inject(MAT_RIPPLE_GLOBAL_OPTIONS, {
+    optional: true
+  });
+  _trackActive;
+  _thumbs;
+  _input;
+  _inputs;
+  get disabled() {
+    return this._disabled;
+  }
+  set disabled(v) {
+    this._disabled = v;
+    const endInput = this._getInput(_MatThumb.END);
+    const startInput = this._getInput(_MatThumb.START);
+    if (endInput) {
+      endInput.disabled = this._disabled;
+    }
+    if (startInput) {
+      startInput.disabled = this._disabled;
+    }
+  }
+  _disabled = false;
+  get discrete() {
+    return this._discrete;
+  }
+  set discrete(v) {
+    this._discrete = v;
+    this._updateValueIndicatorUIs();
+  }
+  _discrete = false;
+  get showTickMarks() {
+    return this._showTickMarks;
+  }
+  set showTickMarks(value) {
+    this._showTickMarks = value;
+    if (this._hasViewInitialized) {
+      this._updateTickMarkUI();
+      this._updateTickMarkTrackUI();
+    }
+  }
+  _showTickMarks = false;
+  get min() {
+    return this._min;
+  }
+  set min(v) {
+    const min = v === void 0 || v === null || isNaN(v) ? this._min : v;
+    if (this._min !== min) {
+      this._updateMin(min);
+    }
+  }
+  _min = 0;
+  color;
+  disableRipple = false;
+  _updateMin(min) {
+    const prevMin = this._min;
+    this._min = min;
+    this._isRange ? this._updateMinRange({
+      old: prevMin,
+      new: min
+    }) : this._updateMinNonRange(min);
+    this._onMinMaxOrStepChange();
+  }
+  _updateMinRange(min) {
+    const endInput = this._getInput(_MatThumb.END);
+    const startInput = this._getInput(_MatThumb.START);
+    const oldEndValue = endInput.value;
+    const oldStartValue = startInput.value;
+    startInput.min = min.new;
+    endInput.min = Math.max(min.new, startInput.value);
+    startInput.max = Math.min(endInput.max, endInput.value);
+    startInput._updateWidthInactive();
+    endInput._updateWidthInactive();
+    min.new < min.old ? this._onTranslateXChangeBySideEffect(endInput, startInput) : this._onTranslateXChangeBySideEffect(startInput, endInput);
+    if (oldEndValue !== endInput.value) {
+      this._onValueChange(endInput);
+    }
+    if (oldStartValue !== startInput.value) {
+      this._onValueChange(startInput);
+    }
+  }
+  _updateMinNonRange(min) {
+    const input = this._getInput(_MatThumb.END);
+    if (input) {
+      const oldValue = input.value;
+      input.min = min;
+      input._updateThumbUIByValue();
+      this._updateTrackUI(input);
+      if (oldValue !== input.value) {
+        this._onValueChange(input);
+      }
+    }
+  }
+  get max() {
+    return this._max;
+  }
+  set max(v) {
+    const max = v === void 0 || v === null || isNaN(v) ? this._max : v;
+    if (this._max !== max) {
+      this._updateMax(max);
+    }
+  }
+  _max = 100;
+  _updateMax(max) {
+    const prevMax = this._max;
+    this._max = max;
+    this._isRange ? this._updateMaxRange({
+      old: prevMax,
+      new: max
+    }) : this._updateMaxNonRange(max);
+    this._onMinMaxOrStepChange();
+  }
+  _updateMaxRange(max) {
+    const endInput = this._getInput(_MatThumb.END);
+    const startInput = this._getInput(_MatThumb.START);
+    const oldEndValue = endInput.value;
+    const oldStartValue = startInput.value;
+    endInput.max = max.new;
+    startInput.max = Math.min(max.new, endInput.value);
+    endInput.min = startInput.value;
+    endInput._updateWidthInactive();
+    startInput._updateWidthInactive();
+    max.new > max.old ? this._onTranslateXChangeBySideEffect(startInput, endInput) : this._onTranslateXChangeBySideEffect(endInput, startInput);
+    if (oldEndValue !== endInput.value) {
+      this._onValueChange(endInput);
+    }
+    if (oldStartValue !== startInput.value) {
+      this._onValueChange(startInput);
+    }
+  }
+  _updateMaxNonRange(max) {
+    const input = this._getInput(_MatThumb.END);
+    if (input) {
+      const oldValue = input.value;
+      input.max = max;
+      input._updateThumbUIByValue();
+      this._updateTrackUI(input);
+      if (oldValue !== input.value) {
+        this._onValueChange(input);
+      }
+    }
+  }
+  get step() {
+    return this._step;
+  }
+  set step(v) {
+    const step = isNaN(v) ? this._step : v;
+    if (this._step !== step) {
+      this._updateStep(step);
+    }
+  }
+  _step = 1;
+  _updateStep(step) {
+    this._step = step;
+    this._isRange ? this._updateStepRange() : this._updateStepNonRange();
+    this._onMinMaxOrStepChange();
+  }
+  _updateStepRange() {
+    const endInput = this._getInput(_MatThumb.END);
+    const startInput = this._getInput(_MatThumb.START);
+    const oldEndValue = endInput.value;
+    const oldStartValue = startInput.value;
+    const prevStartValue = startInput.value;
+    endInput.min = this._min;
+    startInput.max = this._max;
+    endInput.step = this._step;
+    startInput.step = this._step;
+    if (this._platform.SAFARI) {
+      endInput.value = endInput.value;
+      startInput.value = startInput.value;
+    }
+    endInput.min = Math.max(this._min, startInput.value);
+    startInput.max = Math.min(this._max, endInput.value);
+    startInput._updateWidthInactive();
+    endInput._updateWidthInactive();
+    endInput.value < prevStartValue ? this._onTranslateXChangeBySideEffect(startInput, endInput) : this._onTranslateXChangeBySideEffect(endInput, startInput);
+    if (oldEndValue !== endInput.value) {
+      this._onValueChange(endInput);
+    }
+    if (oldStartValue !== startInput.value) {
+      this._onValueChange(startInput);
+    }
+  }
+  _updateStepNonRange() {
+    const input = this._getInput(_MatThumb.END);
+    if (input) {
+      const oldValue = input.value;
+      input.step = this._step;
+      if (this._platform.SAFARI) {
+        input.value = input.value;
+      }
+      input._updateThumbUIByValue();
+      if (oldValue !== input.value) {
+        this._onValueChange(input);
+      }
+    }
+  }
+  displayWith = (value) => `${value}`;
+  _tickMarks;
+  _noopAnimations = _animationsDisabled();
+  _resizeObserver = null;
+  _cachedWidth;
+  _cachedLeft;
+  _rippleRadius = 24;
+  startValueIndicatorText = "";
+  endValueIndicatorText = "";
+  _endThumbTransform;
+  _startThumbTransform;
+  _isRange = false;
+  _isRtl = computed(() => this._dir?.valueSignal() === "rtl", ...ngDevMode ? [{
+    debugName: "_isRtl"
+  }] : []);
+  _hasViewInitialized = false;
+  _tickMarkTrackWidth = 0;
+  _hasAnimation = false;
+  _resizeTimer = null;
+  _platform = inject(Platform);
+  constructor() {
+    inject(_CdkPrivateStyleLoader).load(_StructuralStylesLoader);
+    let prevIsRtl = this._isRtl();
+    afterRenderEffect(() => {
+      const isRtl = this._isRtl();
+      if (isRtl !== prevIsRtl) {
+        prevIsRtl = isRtl;
+        this._isRange ? this._onDirChangeRange() : this._onDirChangeNonRange();
+        this._updateTickMarkUI();
+      }
+    });
+  }
+  _knobRadius = 8;
+  _inputPadding;
+  ngAfterViewInit() {
+    if (this._platform.isBrowser) {
+      this._updateDimensions();
+    }
+    const eInput = this._getInput(_MatThumb.END);
+    const sInput = this._getInput(_MatThumb.START);
+    this._isRange = !!eInput && !!sInput;
+    this._cdr.detectChanges();
+    if (typeof ngDevMode === "undefined" || ngDevMode) {
+      _validateInputs(this._isRange, this._getInput(_MatThumb.END), this._getInput(_MatThumb.START));
+    }
+    const thumb = this._getThumb(_MatThumb.END);
+    this._rippleRadius = thumb._ripple.radius;
+    this._inputPadding = this._rippleRadius - this._knobRadius;
+    this._isRange ? this._initUIRange(eInput, sInput) : this._initUINonRange(eInput);
+    this._updateTrackUI(eInput);
+    this._updateTickMarkUI();
+    this._updateTickMarkTrackUI();
+    this._observeHostResize();
+    this._cdr.detectChanges();
+  }
+  _initUINonRange(eInput) {
+    eInput.initProps();
+    eInput.initUI();
+    this._updateValueIndicatorUI(eInput);
+    this._hasViewInitialized = true;
+    eInput._updateThumbUIByValue();
+  }
+  _initUIRange(eInput, sInput) {
+    eInput.initProps();
+    eInput.initUI();
+    sInput.initProps();
+    sInput.initUI();
+    eInput._updateMinMax();
+    sInput._updateMinMax();
+    eInput._updateStaticStyles();
+    sInput._updateStaticStyles();
+    this._updateValueIndicatorUIs();
+    this._hasViewInitialized = true;
+    eInput._updateThumbUIByValue();
+    sInput._updateThumbUIByValue();
+  }
+  ngOnDestroy() {
+    this._resizeObserver?.disconnect();
+    this._resizeObserver = null;
+  }
+  _onDirChangeRange() {
+    const endInput = this._getInput(_MatThumb.END);
+    const startInput = this._getInput(_MatThumb.START);
+    endInput._setIsLeftThumb();
+    startInput._setIsLeftThumb();
+    endInput.translateX = endInput._calcTranslateXByValue();
+    startInput.translateX = startInput._calcTranslateXByValue();
+    endInput._updateStaticStyles();
+    startInput._updateStaticStyles();
+    endInput._updateWidthInactive();
+    startInput._updateWidthInactive();
+    endInput._updateThumbUIByValue();
+    startInput._updateThumbUIByValue();
+  }
+  _onDirChangeNonRange() {
+    const input = this._getInput(_MatThumb.END);
+    input._updateThumbUIByValue();
+  }
+  _observeHostResize() {
+    if (typeof ResizeObserver === "undefined" || !ResizeObserver) {
+      return;
+    }
+    this._ngZone.runOutsideAngular(() => {
+      this._resizeObserver = new ResizeObserver(() => {
+        if (this._isActive()) {
+          return;
+        }
+        if (this._resizeTimer) {
+          clearTimeout(this._resizeTimer);
+        }
+        this._onResize();
+      });
+      this._resizeObserver.observe(this._elementRef.nativeElement);
+    });
+  }
+  _isActive() {
+    return this._getThumb(_MatThumb.START)._isActive || this._getThumb(_MatThumb.END)._isActive;
+  }
+  _getValue(thumbPosition = _MatThumb.END) {
+    const input = this._getInput(thumbPosition);
+    if (!input) {
+      return this.min;
+    }
+    return input.value;
+  }
+  _skipUpdate() {
+    return !!(this._getInput(_MatThumb.START)?._skipUIUpdate || this._getInput(_MatThumb.END)?._skipUIUpdate);
+  }
+  _updateDimensions() {
+    this._cachedWidth = this._elementRef.nativeElement.offsetWidth;
+    this._cachedLeft = this._elementRef.nativeElement.getBoundingClientRect().left;
+  }
+  _setTrackActiveStyles(styles) {
+    const trackStyle = this._trackActive.nativeElement.style;
+    trackStyle.left = styles.left;
+    trackStyle.right = styles.right;
+    trackStyle.transformOrigin = styles.transformOrigin;
+    trackStyle.transform = styles.transform;
+  }
+  _calcTickMarkTransform(index) {
+    const offset = index * (this._tickMarkTrackWidth / (this._tickMarks.length - 1));
+    const translateX = this._isRtl() ? this._cachedWidth - 6 - offset : offset;
+    return `translateX(${translateX}px)`;
+  }
+  _onTranslateXChange(source) {
+    if (!this._hasViewInitialized) {
+      return;
+    }
+    this._updateThumbUI(source);
+    this._updateTrackUI(source);
+    this._updateOverlappingThumbUI(source);
+  }
+  _onTranslateXChangeBySideEffect(input1, input2) {
+    if (!this._hasViewInitialized) {
+      return;
+    }
+    input1._updateThumbUIByValue();
+    input2._updateThumbUIByValue();
+  }
+  _onValueChange(source) {
+    if (!this._hasViewInitialized) {
+      return;
+    }
+    this._updateValueIndicatorUI(source);
+    this._updateTickMarkUI();
+    this._cdr.detectChanges();
+  }
+  _onMinMaxOrStepChange() {
+    if (!this._hasViewInitialized) {
+      return;
+    }
+    this._updateTickMarkUI();
+    this._updateTickMarkTrackUI();
+    this._cdr.markForCheck();
+  }
+  _onResize() {
+    if (!this._hasViewInitialized) {
+      return;
+    }
+    this._updateDimensions();
+    if (this._isRange) {
+      const eInput = this._getInput(_MatThumb.END);
+      const sInput = this._getInput(_MatThumb.START);
+      eInput._updateThumbUIByValue();
+      sInput._updateThumbUIByValue();
+      eInput._updateStaticStyles();
+      sInput._updateStaticStyles();
+      eInput._updateMinMax();
+      sInput._updateMinMax();
+      eInput._updateWidthInactive();
+      sInput._updateWidthInactive();
+    } else {
+      const eInput = this._getInput(_MatThumb.END);
+      if (eInput) {
+        eInput._updateThumbUIByValue();
+      }
+    }
+    this._updateTickMarkUI();
+    this._updateTickMarkTrackUI();
+    this._cdr.detectChanges();
+  }
+  _thumbsOverlap = false;
+  _areThumbsOverlapping() {
+    const startInput = this._getInput(_MatThumb.START);
+    const endInput = this._getInput(_MatThumb.END);
+    if (!startInput || !endInput) {
+      return false;
+    }
+    return endInput.translateX - startInput.translateX < 20;
+  }
+  _updateOverlappingThumbClassNames(source) {
+    const sibling = source.getSibling();
+    const sourceThumb = this._getThumb(source.thumbPosition);
+    const siblingThumb = this._getThumb(sibling.thumbPosition);
+    siblingThumb._hostElement.classList.remove("mdc-slider__thumb--top");
+    sourceThumb._hostElement.classList.toggle("mdc-slider__thumb--top", this._thumbsOverlap);
+  }
+  _updateOverlappingThumbUI(source) {
+    if (!this._isRange || this._skipUpdate()) {
+      return;
+    }
+    if (this._thumbsOverlap !== this._areThumbsOverlapping()) {
+      this._thumbsOverlap = !this._thumbsOverlap;
+      this._updateOverlappingThumbClassNames(source);
+    }
+  }
+  _updateThumbUI(source) {
+    if (this._skipUpdate()) {
+      return;
+    }
+    const thumb = this._getThumb(source.thumbPosition === _MatThumb.END ? _MatThumb.END : _MatThumb.START);
+    thumb._hostElement.style.transform = `translateX(${source.translateX}px)`;
+  }
+  _updateValueIndicatorUI(source) {
+    if (this._skipUpdate()) {
+      return;
+    }
+    const valuetext = this.displayWith(source.value);
+    this._hasViewInitialized ? source._valuetext.set(valuetext) : source._hostElement.setAttribute("aria-valuetext", valuetext);
+    if (this.discrete) {
+      source.thumbPosition === _MatThumb.START ? this.startValueIndicatorText = valuetext : this.endValueIndicatorText = valuetext;
+      const visualThumb = this._getThumb(source.thumbPosition);
+      valuetext.length < 3 ? visualThumb._hostElement.classList.add("mdc-slider__thumb--short-value") : visualThumb._hostElement.classList.remove("mdc-slider__thumb--short-value");
+    }
+  }
+  _updateValueIndicatorUIs() {
+    const eInput = this._getInput(_MatThumb.END);
+    const sInput = this._getInput(_MatThumb.START);
+    if (eInput) {
+      this._updateValueIndicatorUI(eInput);
+    }
+    if (sInput) {
+      this._updateValueIndicatorUI(sInput);
+    }
+  }
+  _updateTickMarkTrackUI() {
+    if (!this.showTickMarks || this._skipUpdate()) {
+      return;
+    }
+    const step = this._step && this._step > 0 ? this._step : 1;
+    const maxValue = Math.floor(this.max / step) * step;
+    const percentage = (maxValue - this.min) / (this.max - this.min);
+    this._tickMarkTrackWidth = (this._cachedWidth - 6) * percentage;
+  }
+  _updateTrackUI(source) {
+    if (this._skipUpdate()) {
+      return;
+    }
+    this._isRange ? this._updateTrackUIRange(source) : this._updateTrackUINonRange(source);
+  }
+  _updateTrackUIRange(source) {
+    const sibling = source.getSibling();
+    if (!sibling || !this._cachedWidth) {
+      return;
+    }
+    const activePercentage = Math.abs(sibling.translateX - source.translateX) / this._cachedWidth;
+    if (source._isLeftThumb && this._cachedWidth) {
+      this._setTrackActiveStyles({
+        left: "auto",
+        right: `${this._cachedWidth - sibling.translateX}px`,
+        transformOrigin: "right",
+        transform: `scaleX(${activePercentage})`
+      });
+    } else {
+      this._setTrackActiveStyles({
+        left: `${sibling.translateX}px`,
+        right: "auto",
+        transformOrigin: "left",
+        transform: `scaleX(${activePercentage})`
+      });
+    }
+  }
+  _updateTrackUINonRange(source) {
+    this._isRtl() ? this._setTrackActiveStyles({
+      left: "auto",
+      right: "0px",
+      transformOrigin: "right",
+      transform: `scaleX(${1 - source.fillPercentage})`
+    }) : this._setTrackActiveStyles({
+      left: "0px",
+      right: "auto",
+      transformOrigin: "left",
+      transform: `scaleX(${source.fillPercentage})`
+    });
+  }
+  _updateTickMarkUI() {
+    if (!this.showTickMarks || this.step === void 0 || this.min === void 0 || this.max === void 0) {
+      return;
+    }
+    const step = this.step > 0 ? this.step : 1;
+    this._isRange ? this._updateTickMarkUIRange(step) : this._updateTickMarkUINonRange(step);
+  }
+  _updateTickMarkUINonRange(step) {
+    const value = this._getValue();
+    let numActive = Math.max(Math.round((value - this.min) / step), 0) + 1;
+    let numInactive = Math.max(Math.round((this.max - value) / step), 0) - 1;
+    this._isRtl() ? numActive++ : numInactive++;
+    this._tickMarks = Array(numActive).fill(_MatTickMark.ACTIVE).concat(Array(numInactive).fill(_MatTickMark.INACTIVE));
+  }
+  _updateTickMarkUIRange(step) {
+    const endValue = this._getValue();
+    const startValue = this._getValue(_MatThumb.START);
+    const numInactiveBeforeStartThumb = Math.max(Math.round((startValue - this.min) / step), 0);
+    const numActive = Math.max(Math.round((endValue - startValue) / step) + 1, 0);
+    const numInactiveAfterEndThumb = Math.max(Math.round((this.max - endValue) / step), 0);
+    this._tickMarks = Array(numInactiveBeforeStartThumb).fill(_MatTickMark.INACTIVE).concat(Array(numActive).fill(_MatTickMark.ACTIVE), Array(numInactiveAfterEndThumb).fill(_MatTickMark.INACTIVE));
+  }
+  _getInput(thumbPosition) {
+    if (thumbPosition === _MatThumb.END && this._input) {
+      return this._input;
+    }
+    if (this._inputs?.length) {
+      return thumbPosition === _MatThumb.START ? this._inputs.first : this._inputs.last;
+    }
+    return;
+  }
+  _getThumb(thumbPosition) {
+    return thumbPosition === _MatThumb.END ? this._thumbs?.last : this._thumbs?.first;
+  }
+  _setTransition(withAnimation) {
+    this._hasAnimation = !this._platform.IOS && withAnimation && !this._noopAnimations;
+    this._elementRef.nativeElement.classList.toggle("mat-mdc-slider-with-animation", this._hasAnimation);
+  }
+  _isCursorOnSliderThumb(event, rect) {
+    const radius = rect.width / 2;
+    const centerX = rect.x + radius;
+    const centerY = rect.y + radius;
+    const dx = event.clientX - centerX;
+    const dy = event.clientY - centerY;
+    return Math.pow(dx, 2) + Math.pow(dy, 2) < Math.pow(radius, 2);
+  }
+  static ɵfac = function MatSlider_Factory(__ngFactoryType__) {
+    return new (__ngFactoryType__ || _MatSlider)();
+  };
+  static ɵcmp = ɵɵdefineComponent({
+    type: _MatSlider,
+    selectors: [["mat-slider"]],
+    contentQueries: function MatSlider_ContentQueries(rf, ctx, dirIndex) {
+      if (rf & 1) {
+        ɵɵcontentQuery(dirIndex, MAT_SLIDER_THUMB, 5)(dirIndex, MAT_SLIDER_RANGE_THUMB, 4);
+      }
+      if (rf & 2) {
+        let _t;
+        ɵɵqueryRefresh(_t = ɵɵloadQuery()) && (ctx._input = _t.first);
+        ɵɵqueryRefresh(_t = ɵɵloadQuery()) && (ctx._inputs = _t);
+      }
+    },
+    viewQuery: function MatSlider_Query(rf, ctx) {
+      if (rf & 1) {
+        ɵɵviewQuery(_c2, 5)(MAT_SLIDER_VISUAL_THUMB, 5);
+      }
+      if (rf & 2) {
+        let _t;
+        ɵɵqueryRefresh(_t = ɵɵloadQuery()) && (ctx._trackActive = _t.first);
+        ɵɵqueryRefresh(_t = ɵɵloadQuery()) && (ctx._thumbs = _t);
+      }
+    },
+    hostAttrs: [1, "mat-mdc-slider", "mdc-slider"],
+    hostVars: 12,
+    hostBindings: function MatSlider_HostBindings(rf, ctx) {
+      if (rf & 2) {
+        ɵɵclassMap("mat-" + (ctx.color || "primary"));
+        ɵɵclassProp("mdc-slider--range", ctx._isRange)("mdc-slider--disabled", ctx.disabled)("mdc-slider--discrete", ctx.discrete)("mdc-slider--tick-marks", ctx.showTickMarks)("_mat-animation-noopable", ctx._noopAnimations);
+      }
+    },
+    inputs: {
+      disabled: [2, "disabled", "disabled", booleanAttribute],
+      discrete: [2, "discrete", "discrete", booleanAttribute],
+      showTickMarks: [2, "showTickMarks", "showTickMarks", booleanAttribute],
+      min: [2, "min", "min", numberAttribute],
+      color: "color",
+      disableRipple: [2, "disableRipple", "disableRipple", booleanAttribute],
+      max: [2, "max", "max", numberAttribute],
+      step: [2, "step", "step", numberAttribute],
+      displayWith: "displayWith"
+    },
+    exportAs: ["matSlider"],
+    features: [ɵɵProvidersFeature([{
+      provide: MAT_SLIDER,
+      useExisting: _MatSlider
+    }])],
+    ngContentSelectors: _c3,
+    decls: 9,
+    vars: 5,
+    consts: [["trackActive", ""], ["tickMarkContainer", ""], [1, "mdc-slider__track"], [1, "mdc-slider__track--inactive"], [1, "mdc-slider__track--active"], [1, "mdc-slider__track--active_fill"], [1, "mdc-slider__tick-marks"], [3, "discrete", "thumbPosition", "valueIndicatorText"], [3, "class", "transform"]],
+    template: function MatSlider_Template(rf, ctx) {
+      if (rf & 1) {
+        ɵɵprojectionDef();
+        ɵɵprojection(0);
+        ɵɵelementStart(1, "div", 2);
+        ɵɵelement(2, "div", 3);
+        ɵɵelementStart(3, "div", 4);
+        ɵɵelement(4, "div", 5, 0);
+        ɵɵelementEnd();
+        ɵɵconditionalCreate(6, MatSlider_Conditional_6_Template, 3, 1, "div", 6);
+        ɵɵelementEnd();
+        ɵɵconditionalCreate(7, MatSlider_Conditional_7_Template, 1, 3, "mat-slider-visual-thumb", 7);
+        ɵɵelement(8, "mat-slider-visual-thumb", 7);
+      }
+      if (rf & 2) {
+        ɵɵadvance(6);
+        ɵɵconditional(ctx.showTickMarks ? 6 : -1);
+        ɵɵadvance();
+        ɵɵconditional(ctx._isRange ? 7 : -1);
+        ɵɵadvance();
+        ɵɵproperty("discrete", ctx.discrete)("thumbPosition", 2)("valueIndicatorText", ctx.endValueIndicatorText);
+      }
+    },
+    dependencies: [MatSliderVisualThumb],
+    styles: ['.mdc-slider__track {\n  position: absolute;\n  top: 50%;\n  transform: translateY(-50%);\n  width: 100%;\n  pointer-events: none;\n  height: var(--mat-slider-inactive-track-height, 4px);\n}\n\n.mdc-slider__track--active,\n.mdc-slider__track--inactive {\n  display: flex;\n  height: 100%;\n  position: absolute;\n  width: 100%;\n}\n\n.mdc-slider__track--active {\n  overflow: hidden;\n  border-radius: var(--mat-slider-active-track-shape, var(--mat-sys-corner-full));\n  height: var(--mat-slider-active-track-height, 4px);\n  top: calc((var(--mat-slider-inactive-track-height, 4px) - var(--mat-slider-active-track-height, 4px)) / 2);\n}\n\n.mdc-slider__track--active_fill {\n  border-top-style: solid;\n  box-sizing: border-box;\n  height: 100%;\n  width: 100%;\n  position: relative;\n  transform-origin: left;\n  transition: transform 80ms ease;\n  border-color: var(--mat-slider-active-track-color, var(--mat-sys-primary));\n  border-top-width: var(--mat-slider-active-track-height, 4px);\n}\n.mdc-slider--disabled .mdc-slider__track--active_fill {\n  border-color: var(--mat-slider-disabled-active-track-color, var(--mat-sys-on-surface));\n}\n[dir=rtl] .mdc-slider__track--active_fill {\n  -webkit-transform-origin: right;\n  transform-origin: right;\n}\n\n.mdc-slider__track--inactive {\n  left: 0;\n  top: 0;\n  opacity: 0.24;\n  background-color: var(--mat-slider-inactive-track-color, var(--mat-sys-surface-variant));\n  height: var(--mat-slider-inactive-track-height, 4px);\n  border-radius: var(--mat-slider-inactive-track-shape, var(--mat-sys-corner-full));\n}\n.mdc-slider--disabled .mdc-slider__track--inactive {\n  background-color: var(--mat-slider-disabled-inactive-track-color, var(--mat-sys-on-surface));\n  opacity: 0.24;\n}\n.mdc-slider__track--inactive::before {\n  position: absolute;\n  box-sizing: border-box;\n  width: 100%;\n  height: 100%;\n  top: 0;\n  left: 0;\n  border: 1px solid transparent;\n  border-radius: inherit;\n  content: "";\n  pointer-events: none;\n}\n@media (forced-colors: active) {\n  .mdc-slider__track--inactive::before {\n    border-color: CanvasText;\n  }\n}\n\n.mdc-slider__value-indicator-container {\n  bottom: 44px;\n  left: 50%;\n  pointer-events: none;\n  position: absolute;\n  transform: var(--mat-slider-value-indicator-container-transform, translateX(-50%) rotate(-45deg));\n}\n.mdc-slider__thumb--with-indicator .mdc-slider__value-indicator-container {\n  pointer-events: auto;\n}\n\n.mdc-slider__value-indicator {\n  display: flex;\n  align-items: center;\n  transform: scale(0);\n  transform-origin: var(--mat-slider-value-indicator-transform-origin, 0 28px);\n  transition: transform 100ms cubic-bezier(0.4, 0, 1, 1);\n  word-break: normal;\n  background-color: var(--mat-slider-label-container-color, var(--mat-sys-primary));\n  color: var(--mat-slider-label-label-text-color, var(--mat-sys-on-primary));\n  width: var(--mat-slider-value-indicator-width, 28px);\n  height: var(--mat-slider-value-indicator-height, 28px);\n  padding: var(--mat-slider-value-indicator-padding, 0);\n  opacity: var(--mat-slider-value-indicator-opacity, 1);\n  border-radius: var(--mat-slider-value-indicator-border-radius, 50% 50% 50% 0);\n}\n.mdc-slider__thumb--with-indicator .mdc-slider__value-indicator {\n  transition: transform 100ms cubic-bezier(0, 0, 0.2, 1);\n  transform: scale(1);\n}\n.mdc-slider__value-indicator::before {\n  border-left: 6px solid transparent;\n  border-right: 6px solid transparent;\n  border-top: 6px solid;\n  bottom: -5px;\n  content: "";\n  height: 0;\n  left: 50%;\n  position: absolute;\n  transform: translateX(-50%);\n  width: 0;\n  display: var(--mat-slider-value-indicator-caret-display, none);\n  border-top-color: var(--mat-slider-label-container-color, var(--mat-sys-primary));\n}\n.mdc-slider__value-indicator::after {\n  position: absolute;\n  box-sizing: border-box;\n  width: 100%;\n  height: 100%;\n  top: 0;\n  left: 0;\n  border: 1px solid transparent;\n  border-radius: inherit;\n  content: "";\n  pointer-events: none;\n}\n@media (forced-colors: active) {\n  .mdc-slider__value-indicator::after {\n    border-color: CanvasText;\n  }\n}\n\n.mdc-slider__value-indicator-text {\n  text-align: center;\n  width: var(--mat-slider-value-indicator-width, 28px);\n  transform: var(--mat-slider-value-indicator-text-transform, rotate(45deg));\n  font-family: var(--mat-slider-label-label-text-font, var(--mat-sys-label-medium-font));\n  font-size: var(--mat-slider-label-label-text-size, var(--mat-sys-label-medium-size));\n  font-weight: var(--mat-slider-label-label-text-weight, var(--mat-sys-label-medium-weight));\n  line-height: var(--mat-slider-label-label-text-line-height, var(--mat-sys-label-medium-line-height));\n  letter-spacing: var(--mat-slider-label-label-text-tracking, var(--mat-sys-label-medium-tracking));\n}\n\n.mdc-slider__thumb {\n  -webkit-user-select: none;\n  user-select: none;\n  display: flex;\n  left: -24px;\n  outline: none;\n  position: absolute;\n  height: 48px;\n  width: 48px;\n  pointer-events: none;\n}\n.mdc-slider--discrete .mdc-slider__thumb {\n  transition: transform 80ms ease;\n}\n.mdc-slider--disabled .mdc-slider__thumb {\n  pointer-events: none;\n}\n\n.mdc-slider__thumb--top {\n  z-index: 1;\n}\n\n.mdc-slider__thumb-knob {\n  position: absolute;\n  box-sizing: border-box;\n  left: 50%;\n  top: 50%;\n  transform: translate(-50%, -50%);\n  border-style: solid;\n  width: var(--mat-slider-handle-width, 20px);\n  height: var(--mat-slider-handle-height, 20px);\n  border-width: calc(var(--mat-slider-handle-height, 20px) / 2) calc(var(--mat-slider-handle-width, 20px) / 2);\n  box-shadow: var(--mat-slider-handle-elevation, var(--mat-sys-level1));\n  background-color: var(--mat-slider-handle-color, var(--mat-sys-primary));\n  border-color: var(--mat-slider-handle-color, var(--mat-sys-primary));\n  border-radius: var(--mat-slider-handle-shape, var(--mat-sys-corner-full));\n}\n.mdc-slider__thumb:hover .mdc-slider__thumb-knob {\n  background-color: var(--mat-slider-hover-handle-color, var(--mat-sys-primary));\n  border-color: var(--mat-slider-hover-handle-color, var(--mat-sys-primary));\n}\n.mdc-slider__thumb--focused .mdc-slider__thumb-knob {\n  background-color: var(--mat-slider-focus-handle-color, var(--mat-sys-primary));\n  border-color: var(--mat-slider-focus-handle-color, var(--mat-sys-primary));\n}\n.mdc-slider--disabled .mdc-slider__thumb-knob {\n  background-color: var(--mat-slider-disabled-handle-color, var(--mat-sys-on-surface));\n  border-color: var(--mat-slider-disabled-handle-color, var(--mat-sys-on-surface));\n}\n.mdc-slider__thumb--top .mdc-slider__thumb-knob, .mdc-slider__thumb--top.mdc-slider__thumb:hover .mdc-slider__thumb-knob, .mdc-slider__thumb--top.mdc-slider__thumb--focused .mdc-slider__thumb-knob {\n  border: solid 1px #fff;\n  box-sizing: content-box;\n  border-color: var(--mat-slider-with-overlap-handle-outline-color, var(--mat-sys-on-primary));\n  border-width: var(--mat-slider-with-overlap-handle-outline-width, 1px);\n}\n\n.mdc-slider__tick-marks {\n  align-items: center;\n  box-sizing: border-box;\n  display: flex;\n  height: 100%;\n  justify-content: space-between;\n  padding: 0 1px;\n  position: absolute;\n  width: 100%;\n}\n\n.mdc-slider__tick-mark--active,\n.mdc-slider__tick-mark--inactive {\n  width: var(--mat-slider-with-tick-marks-container-size, 2px);\n  height: var(--mat-slider-with-tick-marks-container-size, 2px);\n  border-radius: var(--mat-slider-with-tick-marks-container-shape, var(--mat-sys-corner-full));\n}\n\n.mdc-slider__tick-mark--inactive {\n  opacity: var(--mat-slider-with-tick-marks-inactive-container-opacity, 0.38);\n  background-color: var(--mat-slider-with-tick-marks-inactive-container-color, var(--mat-sys-on-surface-variant));\n}\n.mdc-slider--disabled .mdc-slider__tick-mark--inactive {\n  opacity: var(--mat-slider-with-tick-marks-inactive-container-opacity, 0.38);\n  background-color: var(--mat-slider-with-tick-marks-disabled-container-color, var(--mat-sys-on-surface));\n}\n\n.mdc-slider__tick-mark--active {\n  opacity: var(--mat-slider-with-tick-marks-active-container-opacity, 0.38);\n  background-color: var(--mat-slider-with-tick-marks-active-container-color, var(--mat-sys-on-primary));\n}\n\n.mdc-slider__input {\n  cursor: pointer;\n  left: 2px;\n  margin: 0;\n  height: 44px;\n  opacity: 0;\n  position: absolute;\n  top: 2px;\n  width: 44px;\n  box-sizing: content-box;\n}\n.mdc-slider__input.mat-mdc-slider-input-no-pointer-events {\n  pointer-events: none;\n}\n.mdc-slider__input.mat-slider__right-input {\n  left: auto;\n  right: 0;\n}\n\n.mat-mdc-slider {\n  display: inline-block;\n  box-sizing: border-box;\n  outline: none;\n  vertical-align: middle;\n  cursor: pointer;\n  height: 48px;\n  margin: 0 8px;\n  position: relative;\n  touch-action: pan-y;\n  width: auto;\n  min-width: 112px;\n  -webkit-tap-highlight-color: transparent;\n}\n.mat-mdc-slider.mdc-slider--disabled {\n  cursor: auto;\n  opacity: 0.38;\n}\n.mat-mdc-slider.mdc-slider--disabled .mdc-slider__input {\n  cursor: auto;\n}\n.mat-mdc-slider .mdc-slider__thumb,\n.mat-mdc-slider .mdc-slider__track--active_fill {\n  transition-duration: 0ms;\n}\n.mat-mdc-slider.mat-mdc-slider-with-animation .mdc-slider__thumb,\n.mat-mdc-slider.mat-mdc-slider-with-animation .mdc-slider__track--active_fill {\n  transition-duration: 80ms;\n}\n.mat-mdc-slider.mdc-slider--discrete .mdc-slider__thumb,\n.mat-mdc-slider.mdc-slider--discrete .mdc-slider__track--active_fill {\n  transition-duration: 0ms;\n}\n.mat-mdc-slider.mat-mdc-slider-with-animation .mdc-slider__thumb,\n.mat-mdc-slider.mat-mdc-slider-with-animation .mdc-slider__track--active_fill {\n  transition-duration: 80ms;\n}\n.mat-mdc-slider .mat-ripple .mat-ripple-element {\n  background-color: var(--mat-slider-ripple-color, var(--mat-sys-primary));\n}\n.mat-mdc-slider .mat-ripple .mat-mdc-slider-hover-ripple {\n  background-color: var(--mat-slider-hover-state-layer-color, color-mix(in srgb, var(--mat-sys-primary) 5%, transparent));\n}\n.mat-mdc-slider .mat-ripple .mat-mdc-slider-focus-ripple,\n.mat-mdc-slider .mat-ripple .mat-mdc-slider-active-ripple {\n  background-color: var(--mat-slider-focus-state-layer-color, color-mix(in srgb, var(--mat-sys-primary) 20%, transparent));\n}\n.mat-mdc-slider._mat-animation-noopable.mdc-slider--discrete .mdc-slider__thumb, .mat-mdc-slider._mat-animation-noopable.mdc-slider--discrete .mdc-slider__track--active_fill,\n.mat-mdc-slider._mat-animation-noopable .mdc-slider__value-indicator {\n  transition: none;\n}\n.mat-mdc-slider .mat-focus-indicator::before {\n  border-radius: 50%;\n}\n\n.mdc-slider__thumb--focused .mat-focus-indicator::before {\n  content: "";\n}\n'],
+    encapsulation: 2,
+    changeDetection: 0
+  });
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(MatSlider, [{
+    type: Component,
+    args: [{
+      selector: "mat-slider",
+      host: {
+        "class": "mat-mdc-slider mdc-slider",
+        "[class]": '"mat-" + (color || "primary")',
+        "[class.mdc-slider--range]": "_isRange",
+        "[class.mdc-slider--disabled]": "disabled",
+        "[class.mdc-slider--discrete]": "discrete",
+        "[class.mdc-slider--tick-marks]": "showTickMarks",
+        "[class._mat-animation-noopable]": "_noopAnimations"
+      },
+      exportAs: "matSlider",
+      changeDetection: ChangeDetectionStrategy.OnPush,
+      encapsulation: ViewEncapsulation.None,
+      providers: [{
+        provide: MAT_SLIDER,
+        useExisting: MatSlider
+      }],
+      imports: [MatSliderVisualThumb],
+      template: `<!-- Inputs -->
+<ng-content></ng-content>
+
+<!-- Track -->
+<div class="mdc-slider__track">
+  <div class="mdc-slider__track--inactive"></div>
+  <div class="mdc-slider__track--active">
+    <div #trackActive class="mdc-slider__track--active_fill"></div>
+  </div>
+  @if (showTickMarks) {
+    <div class="mdc-slider__tick-marks" #tickMarkContainer>
+      @if (_cachedWidth) {
+        @for (tickMark of _tickMarks; track i; let i = $index) {
+          <div
+            [class]="tickMark === 0 ? 'mdc-slider__tick-mark--active' : 'mdc-slider__tick-mark--inactive'"
+            [style.transform]="_calcTickMarkTransform(i)"></div>
+        }
+      }
+    </div>
+  }
+</div>
+
+<!-- Thumbs -->
+@if (_isRange) {
+  <mat-slider-visual-thumb
+    [discrete]="discrete"
+    [thumbPosition]="1"
+    [valueIndicatorText]="startValueIndicatorText">
+  </mat-slider-visual-thumb>
+}
+
+<mat-slider-visual-thumb
+  [discrete]="discrete"
+  [thumbPosition]="2"
+  [valueIndicatorText]="endValueIndicatorText">
+</mat-slider-visual-thumb>
+`,
+      styles: ['.mdc-slider__track {\n  position: absolute;\n  top: 50%;\n  transform: translateY(-50%);\n  width: 100%;\n  pointer-events: none;\n  height: var(--mat-slider-inactive-track-height, 4px);\n}\n\n.mdc-slider__track--active,\n.mdc-slider__track--inactive {\n  display: flex;\n  height: 100%;\n  position: absolute;\n  width: 100%;\n}\n\n.mdc-slider__track--active {\n  overflow: hidden;\n  border-radius: var(--mat-slider-active-track-shape, var(--mat-sys-corner-full));\n  height: var(--mat-slider-active-track-height, 4px);\n  top: calc((var(--mat-slider-inactive-track-height, 4px) - var(--mat-slider-active-track-height, 4px)) / 2);\n}\n\n.mdc-slider__track--active_fill {\n  border-top-style: solid;\n  box-sizing: border-box;\n  height: 100%;\n  width: 100%;\n  position: relative;\n  transform-origin: left;\n  transition: transform 80ms ease;\n  border-color: var(--mat-slider-active-track-color, var(--mat-sys-primary));\n  border-top-width: var(--mat-slider-active-track-height, 4px);\n}\n.mdc-slider--disabled .mdc-slider__track--active_fill {\n  border-color: var(--mat-slider-disabled-active-track-color, var(--mat-sys-on-surface));\n}\n[dir=rtl] .mdc-slider__track--active_fill {\n  -webkit-transform-origin: right;\n  transform-origin: right;\n}\n\n.mdc-slider__track--inactive {\n  left: 0;\n  top: 0;\n  opacity: 0.24;\n  background-color: var(--mat-slider-inactive-track-color, var(--mat-sys-surface-variant));\n  height: var(--mat-slider-inactive-track-height, 4px);\n  border-radius: var(--mat-slider-inactive-track-shape, var(--mat-sys-corner-full));\n}\n.mdc-slider--disabled .mdc-slider__track--inactive {\n  background-color: var(--mat-slider-disabled-inactive-track-color, var(--mat-sys-on-surface));\n  opacity: 0.24;\n}\n.mdc-slider__track--inactive::before {\n  position: absolute;\n  box-sizing: border-box;\n  width: 100%;\n  height: 100%;\n  top: 0;\n  left: 0;\n  border: 1px solid transparent;\n  border-radius: inherit;\n  content: "";\n  pointer-events: none;\n}\n@media (forced-colors: active) {\n  .mdc-slider__track--inactive::before {\n    border-color: CanvasText;\n  }\n}\n\n.mdc-slider__value-indicator-container {\n  bottom: 44px;\n  left: 50%;\n  pointer-events: none;\n  position: absolute;\n  transform: var(--mat-slider-value-indicator-container-transform, translateX(-50%) rotate(-45deg));\n}\n.mdc-slider__thumb--with-indicator .mdc-slider__value-indicator-container {\n  pointer-events: auto;\n}\n\n.mdc-slider__value-indicator {\n  display: flex;\n  align-items: center;\n  transform: scale(0);\n  transform-origin: var(--mat-slider-value-indicator-transform-origin, 0 28px);\n  transition: transform 100ms cubic-bezier(0.4, 0, 1, 1);\n  word-break: normal;\n  background-color: var(--mat-slider-label-container-color, var(--mat-sys-primary));\n  color: var(--mat-slider-label-label-text-color, var(--mat-sys-on-primary));\n  width: var(--mat-slider-value-indicator-width, 28px);\n  height: var(--mat-slider-value-indicator-height, 28px);\n  padding: var(--mat-slider-value-indicator-padding, 0);\n  opacity: var(--mat-slider-value-indicator-opacity, 1);\n  border-radius: var(--mat-slider-value-indicator-border-radius, 50% 50% 50% 0);\n}\n.mdc-slider__thumb--with-indicator .mdc-slider__value-indicator {\n  transition: transform 100ms cubic-bezier(0, 0, 0.2, 1);\n  transform: scale(1);\n}\n.mdc-slider__value-indicator::before {\n  border-left: 6px solid transparent;\n  border-right: 6px solid transparent;\n  border-top: 6px solid;\n  bottom: -5px;\n  content: "";\n  height: 0;\n  left: 50%;\n  position: absolute;\n  transform: translateX(-50%);\n  width: 0;\n  display: var(--mat-slider-value-indicator-caret-display, none);\n  border-top-color: var(--mat-slider-label-container-color, var(--mat-sys-primary));\n}\n.mdc-slider__value-indicator::after {\n  position: absolute;\n  box-sizing: border-box;\n  width: 100%;\n  height: 100%;\n  top: 0;\n  left: 0;\n  border: 1px solid transparent;\n  border-radius: inherit;\n  content: "";\n  pointer-events: none;\n}\n@media (forced-colors: active) {\n  .mdc-slider__value-indicator::after {\n    border-color: CanvasText;\n  }\n}\n\n.mdc-slider__value-indicator-text {\n  text-align: center;\n  width: var(--mat-slider-value-indicator-width, 28px);\n  transform: var(--mat-slider-value-indicator-text-transform, rotate(45deg));\n  font-family: var(--mat-slider-label-label-text-font, var(--mat-sys-label-medium-font));\n  font-size: var(--mat-slider-label-label-text-size, var(--mat-sys-label-medium-size));\n  font-weight: var(--mat-slider-label-label-text-weight, var(--mat-sys-label-medium-weight));\n  line-height: var(--mat-slider-label-label-text-line-height, var(--mat-sys-label-medium-line-height));\n  letter-spacing: var(--mat-slider-label-label-text-tracking, var(--mat-sys-label-medium-tracking));\n}\n\n.mdc-slider__thumb {\n  -webkit-user-select: none;\n  user-select: none;\n  display: flex;\n  left: -24px;\n  outline: none;\n  position: absolute;\n  height: 48px;\n  width: 48px;\n  pointer-events: none;\n}\n.mdc-slider--discrete .mdc-slider__thumb {\n  transition: transform 80ms ease;\n}\n.mdc-slider--disabled .mdc-slider__thumb {\n  pointer-events: none;\n}\n\n.mdc-slider__thumb--top {\n  z-index: 1;\n}\n\n.mdc-slider__thumb-knob {\n  position: absolute;\n  box-sizing: border-box;\n  left: 50%;\n  top: 50%;\n  transform: translate(-50%, -50%);\n  border-style: solid;\n  width: var(--mat-slider-handle-width, 20px);\n  height: var(--mat-slider-handle-height, 20px);\n  border-width: calc(var(--mat-slider-handle-height, 20px) / 2) calc(var(--mat-slider-handle-width, 20px) / 2);\n  box-shadow: var(--mat-slider-handle-elevation, var(--mat-sys-level1));\n  background-color: var(--mat-slider-handle-color, var(--mat-sys-primary));\n  border-color: var(--mat-slider-handle-color, var(--mat-sys-primary));\n  border-radius: var(--mat-slider-handle-shape, var(--mat-sys-corner-full));\n}\n.mdc-slider__thumb:hover .mdc-slider__thumb-knob {\n  background-color: var(--mat-slider-hover-handle-color, var(--mat-sys-primary));\n  border-color: var(--mat-slider-hover-handle-color, var(--mat-sys-primary));\n}\n.mdc-slider__thumb--focused .mdc-slider__thumb-knob {\n  background-color: var(--mat-slider-focus-handle-color, var(--mat-sys-primary));\n  border-color: var(--mat-slider-focus-handle-color, var(--mat-sys-primary));\n}\n.mdc-slider--disabled .mdc-slider__thumb-knob {\n  background-color: var(--mat-slider-disabled-handle-color, var(--mat-sys-on-surface));\n  border-color: var(--mat-slider-disabled-handle-color, var(--mat-sys-on-surface));\n}\n.mdc-slider__thumb--top .mdc-slider__thumb-knob, .mdc-slider__thumb--top.mdc-slider__thumb:hover .mdc-slider__thumb-knob, .mdc-slider__thumb--top.mdc-slider__thumb--focused .mdc-slider__thumb-knob {\n  border: solid 1px #fff;\n  box-sizing: content-box;\n  border-color: var(--mat-slider-with-overlap-handle-outline-color, var(--mat-sys-on-primary));\n  border-width: var(--mat-slider-with-overlap-handle-outline-width, 1px);\n}\n\n.mdc-slider__tick-marks {\n  align-items: center;\n  box-sizing: border-box;\n  display: flex;\n  height: 100%;\n  justify-content: space-between;\n  padding: 0 1px;\n  position: absolute;\n  width: 100%;\n}\n\n.mdc-slider__tick-mark--active,\n.mdc-slider__tick-mark--inactive {\n  width: var(--mat-slider-with-tick-marks-container-size, 2px);\n  height: var(--mat-slider-with-tick-marks-container-size, 2px);\n  border-radius: var(--mat-slider-with-tick-marks-container-shape, var(--mat-sys-corner-full));\n}\n\n.mdc-slider__tick-mark--inactive {\n  opacity: var(--mat-slider-with-tick-marks-inactive-container-opacity, 0.38);\n  background-color: var(--mat-slider-with-tick-marks-inactive-container-color, var(--mat-sys-on-surface-variant));\n}\n.mdc-slider--disabled .mdc-slider__tick-mark--inactive {\n  opacity: var(--mat-slider-with-tick-marks-inactive-container-opacity, 0.38);\n  background-color: var(--mat-slider-with-tick-marks-disabled-container-color, var(--mat-sys-on-surface));\n}\n\n.mdc-slider__tick-mark--active {\n  opacity: var(--mat-slider-with-tick-marks-active-container-opacity, 0.38);\n  background-color: var(--mat-slider-with-tick-marks-active-container-color, var(--mat-sys-on-primary));\n}\n\n.mdc-slider__input {\n  cursor: pointer;\n  left: 2px;\n  margin: 0;\n  height: 44px;\n  opacity: 0;\n  position: absolute;\n  top: 2px;\n  width: 44px;\n  box-sizing: content-box;\n}\n.mdc-slider__input.mat-mdc-slider-input-no-pointer-events {\n  pointer-events: none;\n}\n.mdc-slider__input.mat-slider__right-input {\n  left: auto;\n  right: 0;\n}\n\n.mat-mdc-slider {\n  display: inline-block;\n  box-sizing: border-box;\n  outline: none;\n  vertical-align: middle;\n  cursor: pointer;\n  height: 48px;\n  margin: 0 8px;\n  position: relative;\n  touch-action: pan-y;\n  width: auto;\n  min-width: 112px;\n  -webkit-tap-highlight-color: transparent;\n}\n.mat-mdc-slider.mdc-slider--disabled {\n  cursor: auto;\n  opacity: 0.38;\n}\n.mat-mdc-slider.mdc-slider--disabled .mdc-slider__input {\n  cursor: auto;\n}\n.mat-mdc-slider .mdc-slider__thumb,\n.mat-mdc-slider .mdc-slider__track--active_fill {\n  transition-duration: 0ms;\n}\n.mat-mdc-slider.mat-mdc-slider-with-animation .mdc-slider__thumb,\n.mat-mdc-slider.mat-mdc-slider-with-animation .mdc-slider__track--active_fill {\n  transition-duration: 80ms;\n}\n.mat-mdc-slider.mdc-slider--discrete .mdc-slider__thumb,\n.mat-mdc-slider.mdc-slider--discrete .mdc-slider__track--active_fill {\n  transition-duration: 0ms;\n}\n.mat-mdc-slider.mat-mdc-slider-with-animation .mdc-slider__thumb,\n.mat-mdc-slider.mat-mdc-slider-with-animation .mdc-slider__track--active_fill {\n  transition-duration: 80ms;\n}\n.mat-mdc-slider .mat-ripple .mat-ripple-element {\n  background-color: var(--mat-slider-ripple-color, var(--mat-sys-primary));\n}\n.mat-mdc-slider .mat-ripple .mat-mdc-slider-hover-ripple {\n  background-color: var(--mat-slider-hover-state-layer-color, color-mix(in srgb, var(--mat-sys-primary) 5%, transparent));\n}\n.mat-mdc-slider .mat-ripple .mat-mdc-slider-focus-ripple,\n.mat-mdc-slider .mat-ripple .mat-mdc-slider-active-ripple {\n  background-color: var(--mat-slider-focus-state-layer-color, color-mix(in srgb, var(--mat-sys-primary) 20%, transparent));\n}\n.mat-mdc-slider._mat-animation-noopable.mdc-slider--discrete .mdc-slider__thumb, .mat-mdc-slider._mat-animation-noopable.mdc-slider--discrete .mdc-slider__track--active_fill,\n.mat-mdc-slider._mat-animation-noopable .mdc-slider__value-indicator {\n  transition: none;\n}\n.mat-mdc-slider .mat-focus-indicator::before {\n  border-radius: 50%;\n}\n\n.mdc-slider__thumb--focused .mat-focus-indicator::before {\n  content: "";\n}\n']
+    }]
+  }], () => [], {
+    _trackActive: [{
+      type: ViewChild,
+      args: ["trackActive"]
+    }],
+    _thumbs: [{
+      type: ViewChildren,
+      args: [MAT_SLIDER_VISUAL_THUMB]
+    }],
+    _input: [{
+      type: ContentChild,
+      args: [MAT_SLIDER_THUMB]
+    }],
+    _inputs: [{
+      type: ContentChildren,
+      args: [MAT_SLIDER_RANGE_THUMB, {
+        descendants: false
+      }]
+    }],
+    disabled: [{
+      type: Input,
+      args: [{
+        transform: booleanAttribute
+      }]
+    }],
+    discrete: [{
+      type: Input,
+      args: [{
+        transform: booleanAttribute
+      }]
+    }],
+    showTickMarks: [{
+      type: Input,
+      args: [{
+        transform: booleanAttribute
+      }]
+    }],
+    min: [{
+      type: Input,
+      args: [{
+        transform: numberAttribute
+      }]
+    }],
+    color: [{
+      type: Input
+    }],
+    disableRipple: [{
+      type: Input,
+      args: [{
+        transform: booleanAttribute
+      }]
+    }],
+    max: [{
+      type: Input,
+      args: [{
+        transform: numberAttribute
+      }]
+    }],
+    step: [{
+      type: Input,
+      args: [{
+        transform: numberAttribute
+      }]
+    }],
+    displayWith: [{
+      type: Input
+    }]
+  });
+})();
+function _validateInputs(isRange, endInputElement, startInputElement) {
+  const startValid = !isRange || startInputElement?._hostElement.hasAttribute("matSliderStartThumb");
+  const endValid = endInputElement?._hostElement.hasAttribute(isRange ? "matSliderEndThumb" : "matSliderThumb");
+  if (!startValid || !endValid) {
+    _throwInvalidInputConfigurationError();
+  }
+}
+function _throwInvalidInputConfigurationError() {
+  throw Error(`Invalid slider thumb input configuration!
+
+   Valid configurations are as follows:
+
+     <mat-slider>
+       <input matSliderThumb>
+     </mat-slider>
+
+     or
+
+     <mat-slider>
+       <input matSliderStartThumb>
+       <input matSliderEndThumb>
+     </mat-slider>
+   `);
+}
+var MAT_SLIDER_THUMB_VALUE_ACCESSOR = {
+  provide: NG_VALUE_ACCESSOR,
+  useExisting: forwardRef(() => MatSliderThumb),
+  multi: true
+};
+var MAT_SLIDER_RANGE_THUMB_VALUE_ACCESSOR = {
+  provide: NG_VALUE_ACCESSOR,
+  useExisting: forwardRef(() => MatSliderRangeThumb),
+  multi: true
+};
+var MatSliderThumb = class _MatSliderThumb {
+  _ngZone = inject(NgZone);
+  _elementRef = inject(ElementRef);
+  _cdr = inject(ChangeDetectorRef);
+  _slider = inject(MAT_SLIDER);
+  _platform = inject(Platform);
+  _listenerCleanups;
+  get value() {
+    return numberAttribute(this._hostElement.value, 0);
+  }
+  set value(value) {
+    if (value === null) {
+      value = this._getDefaultValue();
+    }
+    value = isNaN(value) ? 0 : value;
+    const stringValue = value + "";
+    if (!this._hasSetInitialValue) {
+      this._initialValue = stringValue;
+      return;
+    }
+    if (this._isActive) {
+      return;
+    }
+    this._setValue(stringValue);
+  }
+  _setValue(value) {
+    this._hostElement.value = value;
+    this._updateThumbUIByValue();
+    this._slider._onValueChange(this);
+    this._cdr.detectChanges();
+    this._slider._cdr.markForCheck();
+  }
+  valueChange = new EventEmitter();
+  dragStart = new EventEmitter();
+  dragEnd = new EventEmitter();
+  get translateX() {
+    if (this._slider.min >= this._slider.max) {
+      this._translateX = this._tickMarkOffset;
+      return this._translateX;
+    }
+    if (this._translateX === void 0) {
+      this._translateX = this._calcTranslateXByValue();
+    }
+    return this._translateX;
+  }
+  set translateX(v) {
+    this._translateX = v;
+  }
+  _translateX;
+  thumbPosition = _MatThumb.END;
+  get min() {
+    return numberAttribute(this._hostElement.min, 0);
+  }
+  set min(v) {
+    this._hostElement.min = v + "";
+    this._cdr.detectChanges();
+  }
+  get max() {
+    return numberAttribute(this._hostElement.max, 0);
+  }
+  set max(v) {
+    this._hostElement.max = v + "";
+    this._cdr.detectChanges();
+  }
+  get step() {
+    return numberAttribute(this._hostElement.step, 0);
+  }
+  set step(v) {
+    this._hostElement.step = v + "";
+    this._cdr.detectChanges();
+  }
+  get disabled() {
+    return booleanAttribute(this._hostElement.disabled);
+  }
+  set disabled(v) {
+    this._hostElement.disabled = v;
+    this._cdr.detectChanges();
+    if (this._slider.disabled !== this.disabled) {
+      this._slider.disabled = this.disabled;
+    }
+  }
+  get percentage() {
+    if (this._slider.min >= this._slider.max) {
+      return this._slider._isRtl() ? 1 : 0;
+    }
+    return (this.value - this._slider.min) / (this._slider.max - this._slider.min);
+  }
+  get fillPercentage() {
+    if (!this._slider._cachedWidth) {
+      return this._slider._isRtl() ? 1 : 0;
+    }
+    if (this._translateX === 0) {
+      return 0;
+    }
+    return this.translateX / this._slider._cachedWidth;
+  }
+  _hostElement = this._elementRef.nativeElement;
+  _valuetext = signal("", ...ngDevMode ? [{
+    debugName: "_valuetext"
+  }] : []);
+  _knobRadius = 8;
+  _tickMarkOffset = 3;
+  _isActive = false;
+  _isFocused = false;
+  _setIsFocused(v) {
+    this._isFocused = v;
+  }
+  _hasSetInitialValue = false;
+  _initialValue;
+  _formControl;
+  _destroyed = new Subject();
+  _skipUIUpdate = false;
+  _onChangeFn;
+  _onTouchedFn = () => {
+  };
+  _isControlInitialized = false;
+  constructor() {
+    const renderer = inject(Renderer2);
+    this._ngZone.runOutsideAngular(() => {
+      this._listenerCleanups = [renderer.listen(this._hostElement, "pointerdown", this._onPointerDown.bind(this)), renderer.listen(this._hostElement, "pointermove", this._onPointerMove.bind(this)), renderer.listen(this._hostElement, "pointerup", this._onPointerUp.bind(this))];
+    });
+  }
+  ngOnDestroy() {
+    this._listenerCleanups.forEach((cleanup) => cleanup());
+    this._destroyed.next();
+    this._destroyed.complete();
+    this.dragStart.complete();
+    this.dragEnd.complete();
+  }
+  initProps() {
+    this._updateWidthInactive();
+    if (this.disabled !== this._slider.disabled) {
+      this._slider.disabled = true;
+    }
+    this.step = this._slider.step;
+    this.min = this._slider.min;
+    this.max = this._slider.max;
+    this._initValue();
+  }
+  initUI() {
+    this._updateThumbUIByValue();
+  }
+  _initValue() {
+    this._hasSetInitialValue = true;
+    if (this._initialValue === void 0) {
+      this.value = this._getDefaultValue();
+    } else {
+      this._hostElement.value = this._initialValue;
+      this._updateThumbUIByValue();
+      this._slider._onValueChange(this);
+      this._cdr.detectChanges();
+    }
+  }
+  _getDefaultValue() {
+    return this.min;
+  }
+  _onBlur() {
+    this._setIsFocused(false);
+    this._onTouchedFn();
+  }
+  _onFocus() {
+    this._slider._setTransition(false);
+    this._slider._updateTrackUI(this);
+    this._setIsFocused(true);
+  }
+  _onChange() {
+    this.valueChange.emit(this.value);
+    if (this._isActive) {
+      this._updateThumbUIByValue({
+        withAnimation: true
+      });
+    }
+  }
+  _onInput() {
+    this._onChangeFn?.(this.value);
+    if (this._slider.step || !this._isActive) {
+      this._updateThumbUIByValue({
+        withAnimation: true
+      });
+    }
+    this._slider._onValueChange(this);
+  }
+  _onNgControlValueChange() {
+    if (!this._isActive || !this._isFocused) {
+      this._slider._onValueChange(this);
+      this._updateThumbUIByValue();
+    }
+    this._slider.disabled = this._formControl.disabled;
+  }
+  _onPointerDown(event) {
+    if (this.disabled || event.button !== 0) {
+      return;
+    }
+    if (this._platform.IOS) {
+      const isCursorOnSliderThumb = this._slider._isCursorOnSliderThumb(event, this._slider._getThumb(this.thumbPosition)._hostElement.getBoundingClientRect());
+      this._isActive = isCursorOnSliderThumb;
+      this._updateWidthActive();
+      this._slider._updateDimensions();
+      return;
+    }
+    this._isActive = true;
+    this._setIsFocused(true);
+    this._updateWidthActive();
+    this._slider._updateDimensions();
+    if (!this._slider.step) {
+      this._updateThumbUIByPointerEvent(event, {
+        withAnimation: true
+      });
+    }
+    if (!this.disabled) {
+      this._handleValueCorrection(event);
+      this.dragStart.emit({
+        source: this,
+        parent: this._slider,
+        value: this.value
+      });
+    }
+  }
+  _handleValueCorrection(event) {
+    this._skipUIUpdate = true;
+    setTimeout(() => {
+      this._skipUIUpdate = false;
+      this._fixValue(event);
+    }, 0);
+  }
+  _fixValue(event) {
+    const xPos = event.clientX - this._slider._cachedLeft;
+    const width = this._slider._cachedWidth;
+    const step = this._slider.step === 0 ? 1 : this._slider.step;
+    const numSteps = Math.floor((this._slider.max - this._slider.min) / step);
+    const percentage = this._slider._isRtl() ? 1 - xPos / width : xPos / width;
+    const fixedPercentage = Math.round(percentage * numSteps) / numSteps;
+    const impreciseValue = fixedPercentage * (this._slider.max - this._slider.min) + this._slider.min;
+    const value = Math.round(impreciseValue / step) * step;
+    const prevValue = this.value;
+    if (value === prevValue) {
+      this._slider._onValueChange(this);
+      this._slider.step > 0 ? this._updateThumbUIByValue() : this._updateThumbUIByPointerEvent(event, {
+        withAnimation: this._slider._hasAnimation
+      });
+      return;
+    }
+    this.value = value;
+    this.valueChange.emit(this.value);
+    this._onChangeFn?.(this.value);
+    this._slider._onValueChange(this);
+    this._slider.step > 0 ? this._updateThumbUIByValue() : this._updateThumbUIByPointerEvent(event, {
+      withAnimation: this._slider._hasAnimation
+    });
+  }
+  _onPointerMove(event) {
+    if (!this._slider.step && this._isActive) {
+      this._updateThumbUIByPointerEvent(event);
+    }
+  }
+  _onPointerUp() {
+    if (this._isActive) {
+      this._isActive = false;
+      if (this._platform.SAFARI) {
+        this._setIsFocused(false);
+      }
+      this.dragEnd.emit({
+        source: this,
+        parent: this._slider,
+        value: this.value
+      });
+      setTimeout(() => this._updateWidthInactive(), this._platform.IOS ? 10 : 0);
+    }
+  }
+  _clamp(v) {
+    const min = this._tickMarkOffset;
+    const max = this._slider._cachedWidth - this._tickMarkOffset;
+    return Math.max(Math.min(v, max), min);
+  }
+  _calcTranslateXByValue() {
+    if (this._slider._isRtl()) {
+      return (1 - this.percentage) * (this._slider._cachedWidth - this._tickMarkOffset * 2) + this._tickMarkOffset;
+    }
+    return this.percentage * (this._slider._cachedWidth - this._tickMarkOffset * 2) + this._tickMarkOffset;
+  }
+  _calcTranslateXByPointerEvent(event) {
+    return event.clientX - this._slider._cachedLeft;
+  }
+  _updateWidthActive() {
+  }
+  _updateWidthInactive() {
+    this._hostElement.style.padding = `0 ${this._slider._inputPadding}px`;
+    this._hostElement.style.width = `calc(100% + ${this._slider._inputPadding - this._tickMarkOffset * 2}px)`;
+    this._hostElement.style.left = `-${this._slider._rippleRadius - this._tickMarkOffset}px`;
+  }
+  _updateThumbUIByValue(options) {
+    this.translateX = this._clamp(this._calcTranslateXByValue());
+    this._updateThumbUI(options);
+  }
+  _updateThumbUIByPointerEvent(event, options) {
+    this.translateX = this._clamp(this._calcTranslateXByPointerEvent(event));
+    this._updateThumbUI(options);
+  }
+  _updateThumbUI(options) {
+    this._slider._setTransition(!!options?.withAnimation);
+    this._slider._onTranslateXChange(this);
+  }
+  writeValue(value) {
+    if (this._isControlInitialized || value !== null) {
+      this.value = value;
+    }
+  }
+  registerOnChange(fn) {
+    this._onChangeFn = fn;
+    this._isControlInitialized = true;
+  }
+  registerOnTouched(fn) {
+    this._onTouchedFn = fn;
+  }
+  setDisabledState(isDisabled) {
+    this.disabled = isDisabled;
+  }
+  focus() {
+    this._hostElement.focus();
+  }
+  blur() {
+    this._hostElement.blur();
+  }
+  static ɵfac = function MatSliderThumb_Factory(__ngFactoryType__) {
+    return new (__ngFactoryType__ || _MatSliderThumb)();
+  };
+  static ɵdir = ɵɵdefineDirective({
+    type: _MatSliderThumb,
+    selectors: [["input", "matSliderThumb", ""]],
+    hostAttrs: ["type", "range", 1, "mdc-slider__input"],
+    hostVars: 1,
+    hostBindings: function MatSliderThumb_HostBindings(rf, ctx) {
+      if (rf & 1) {
+        ɵɵlistener("change", function MatSliderThumb_change_HostBindingHandler() {
+          return ctx._onChange();
+        })("input", function MatSliderThumb_input_HostBindingHandler() {
+          return ctx._onInput();
+        })("blur", function MatSliderThumb_blur_HostBindingHandler() {
+          return ctx._onBlur();
+        })("focus", function MatSliderThumb_focus_HostBindingHandler() {
+          return ctx._onFocus();
+        });
+      }
+      if (rf & 2) {
+        ɵɵattribute("aria-valuetext", ctx._valuetext());
+      }
+    },
+    inputs: {
+      value: [2, "value", "value", numberAttribute]
+    },
+    outputs: {
+      valueChange: "valueChange",
+      dragStart: "dragStart",
+      dragEnd: "dragEnd"
+    },
+    exportAs: ["matSliderThumb"],
+    features: [ɵɵProvidersFeature([MAT_SLIDER_THUMB_VALUE_ACCESSOR, {
+      provide: MAT_SLIDER_THUMB,
+      useExisting: _MatSliderThumb
+    }])]
+  });
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(MatSliderThumb, [{
+    type: Directive,
+    args: [{
+      selector: "input[matSliderThumb]",
+      exportAs: "matSliderThumb",
+      host: {
+        "class": "mdc-slider__input",
+        "type": "range",
+        "[attr.aria-valuetext]": "_valuetext()",
+        "(change)": "_onChange()",
+        "(input)": "_onInput()",
+        "(blur)": "_onBlur()",
+        "(focus)": "_onFocus()"
+      },
+      providers: [MAT_SLIDER_THUMB_VALUE_ACCESSOR, {
+        provide: MAT_SLIDER_THUMB,
+        useExisting: MatSliderThumb
+      }]
+    }]
+  }], () => [], {
+    value: [{
+      type: Input,
+      args: [{
+        transform: numberAttribute
+      }]
+    }],
+    valueChange: [{
+      type: Output
+    }],
+    dragStart: [{
+      type: Output
+    }],
+    dragEnd: [{
+      type: Output
+    }]
+  });
+})();
+var MatSliderRangeThumb = class _MatSliderRangeThumb extends MatSliderThumb {
+  _cdr = inject(ChangeDetectorRef);
+  getSibling() {
+    if (!this._sibling) {
+      this._sibling = this._slider._getInput(this._isEndThumb ? _MatThumb.START : _MatThumb.END);
+    }
+    return this._sibling;
+  }
+  _sibling;
+  getMinPos() {
+    const sibling = this.getSibling();
+    if (!this._isLeftThumb && sibling) {
+      return sibling.translateX;
+    }
+    return this._tickMarkOffset;
+  }
+  getMaxPos() {
+    const sibling = this.getSibling();
+    if (this._isLeftThumb && sibling) {
+      return sibling.translateX;
+    }
+    return this._slider._cachedWidth - this._tickMarkOffset;
+  }
+  _setIsLeftThumb() {
+    this._isLeftThumb = this._isEndThumb && this._slider._isRtl() || !this._isEndThumb && !this._slider._isRtl();
+  }
+  _isLeftThumb = false;
+  _isEndThumb = false;
+  constructor() {
+    super();
+    this._isEndThumb = this._hostElement.hasAttribute("matSliderEndThumb");
+    this._setIsLeftThumb();
+    this.thumbPosition = this._isEndThumb ? _MatThumb.END : _MatThumb.START;
+  }
+  _getDefaultValue() {
+    return this._isEndThumb && this._slider._isRange ? this.max : this.min;
+  }
+  _onInput() {
+    super._onInput();
+    this._updateSibling();
+    if (!this._isActive) {
+      this._updateWidthInactive();
+    }
+  }
+  _onNgControlValueChange() {
+    super._onNgControlValueChange();
+    this.getSibling()?._updateMinMax();
+  }
+  _onPointerDown(event) {
+    if (this.disabled || event.button !== 0) {
+      return;
+    }
+    if (this._sibling) {
+      this._sibling._updateWidthActive();
+      this._sibling._hostElement.classList.add("mat-mdc-slider-input-no-pointer-events");
+    }
+    super._onPointerDown(event);
+  }
+  _onPointerUp() {
+    super._onPointerUp();
+    if (this._sibling) {
+      setTimeout(() => {
+        this._sibling._updateWidthInactive();
+        this._sibling._hostElement.classList.remove("mat-mdc-slider-input-no-pointer-events");
+      });
+    }
+  }
+  _onPointerMove(event) {
+    super._onPointerMove(event);
+    if (!this._slider.step && this._isActive) {
+      this._updateSibling();
+    }
+  }
+  _fixValue(event) {
+    super._fixValue(event);
+    this._sibling?._updateMinMax();
+  }
+  _clamp(v) {
+    return Math.max(Math.min(v, this.getMaxPos()), this.getMinPos());
+  }
+  _updateMinMax() {
+    const sibling = this.getSibling();
+    if (!sibling) {
+      return;
+    }
+    if (this._isEndThumb) {
+      this.min = Math.max(this._slider.min, sibling.value);
+      this.max = this._slider.max;
+    } else {
+      this.min = this._slider.min;
+      this.max = Math.min(this._slider.max, sibling.value);
+    }
+  }
+  _updateWidthActive() {
+    const minWidth = this._slider._rippleRadius * 2 - this._slider._inputPadding * 2;
+    const maxWidth = this._slider._cachedWidth + this._slider._inputPadding - minWidth - this._tickMarkOffset * 2;
+    const percentage = this._slider.min < this._slider.max ? (this.max - this.min) / (this._slider.max - this._slider.min) : 1;
+    const width = maxWidth * percentage + minWidth;
+    this._hostElement.style.width = `${width}px`;
+    this._hostElement.style.padding = `0 ${this._slider._inputPadding}px`;
+  }
+  _updateWidthInactive() {
+    const sibling = this.getSibling();
+    if (!sibling) {
+      return;
+    }
+    const maxWidth = this._slider._cachedWidth - this._tickMarkOffset * 2;
+    const midValue = this._isEndThumb ? this.value - (this.value - sibling.value) / 2 : this.value + (sibling.value - this.value) / 2;
+    const _percentage = this._isEndThumb ? (this.max - midValue) / (this._slider.max - this._slider.min) : (midValue - this.min) / (this._slider.max - this._slider.min);
+    const percentage = this._slider.min < this._slider.max ? _percentage : 1;
+    let ripplePadding = this._slider._rippleRadius;
+    if (percentage === 1) {
+      ripplePadding = 48;
+    } else if (percentage === 0) {
+      ripplePadding = 0;
+    }
+    const width = maxWidth * percentage + ripplePadding;
+    this._hostElement.style.width = `${width}px`;
+    this._hostElement.style.padding = "0px";
+    if (this._isLeftThumb) {
+      this._hostElement.style.left = `-${this._slider._rippleRadius - this._tickMarkOffset}px`;
+      this._hostElement.style.right = "auto";
+    } else {
+      this._hostElement.style.left = "auto";
+      this._hostElement.style.right = `-${this._slider._rippleRadius - this._tickMarkOffset}px`;
+    }
+  }
+  _updateStaticStyles() {
+    this._hostElement.classList.toggle("mat-slider__right-input", !this._isLeftThumb);
+  }
+  _updateSibling() {
+    const sibling = this.getSibling();
+    if (!sibling) {
+      return;
+    }
+    sibling._updateMinMax();
+    if (this._isActive) {
+      sibling._updateWidthActive();
+    } else {
+      sibling._updateWidthInactive();
+    }
+  }
+  writeValue(value) {
+    if (this._isControlInitialized || value !== null) {
+      this.value = value;
+      this._updateWidthInactive();
+      this._updateSibling();
+    }
+  }
+  _setValue(value) {
+    super._setValue(value);
+    this._updateWidthInactive();
+    this._updateSibling();
+  }
+  static ɵfac = function MatSliderRangeThumb_Factory(__ngFactoryType__) {
+    return new (__ngFactoryType__ || _MatSliderRangeThumb)();
+  };
+  static ɵdir = ɵɵdefineDirective({
+    type: _MatSliderRangeThumb,
+    selectors: [["input", "matSliderStartThumb", ""], ["input", "matSliderEndThumb", ""]],
+    exportAs: ["matSliderRangeThumb"],
+    features: [ɵɵProvidersFeature([MAT_SLIDER_RANGE_THUMB_VALUE_ACCESSOR, {
+      provide: MAT_SLIDER_RANGE_THUMB,
+      useExisting: _MatSliderRangeThumb
+    }]), ɵɵInheritDefinitionFeature]
+  });
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(MatSliderRangeThumb, [{
+    type: Directive,
+    args: [{
+      selector: "input[matSliderStartThumb], input[matSliderEndThumb]",
+      exportAs: "matSliderRangeThumb",
+      providers: [MAT_SLIDER_RANGE_THUMB_VALUE_ACCESSOR, {
+        provide: MAT_SLIDER_RANGE_THUMB,
+        useExisting: MatSliderRangeThumb
+      }]
+    }]
+  }], () => [], null);
+})();
+var MatSliderModule = class _MatSliderModule {
+  static ɵfac = function MatSliderModule_Factory(__ngFactoryType__) {
+    return new (__ngFactoryType__ || _MatSliderModule)();
+  };
+  static ɵmod = ɵɵdefineNgModule({
+    type: _MatSliderModule,
+    imports: [MatRippleModule, MatSlider, MatSliderThumb, MatSliderRangeThumb, MatSliderVisualThumb],
+    exports: [MatSlider, MatSliderThumb, MatSliderRangeThumb, BidiModule]
+  });
+  static ɵinj = ɵɵdefineInjector({
+    imports: [MatRippleModule, BidiModule]
+  });
+};
+(() => {
+  (typeof ngDevMode === "undefined" || ngDevMode) && setClassMetadata(MatSliderModule, [{
+    type: NgModule,
+    args: [{
+      imports: [MatRippleModule, MatSlider, MatSliderThumb, MatSliderRangeThumb, MatSliderVisualThumb],
+      exports: [MatSlider, MatSliderThumb, MatSliderRangeThumb, BidiModule]
+    }]
+  }], null, null);
+})();
+export {
+  MatSlider,
+  MatSliderChange,
+  MatSliderModule,
+  MatSliderRangeThumb,
+  MatSliderThumb,
+  MatSliderVisualThumb
+};
+//# sourceMappingURL=@angular_material_slider.js.map
