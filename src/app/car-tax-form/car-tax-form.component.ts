@@ -13,6 +13,32 @@ export type FormValue = {
   'volume': number;
 };
 
+// Grid columns: weight#benzine#diesel#lpg3#lpg
+// 2026 MRB rates: electric = 70% of benzine, hybrid/PHEV = 100% of benzine (discount abolished)
+export const FUEL_CONFIG: Record<string, { col: number; multiplier: number }> = {
+  'Benzine':    { col: 1, multiplier: 1.00 },
+  'Diesel':     { col: 2, multiplier: 1.00 },
+  'Elektrisch': { col: 1, multiplier: 0.70 },
+  'LPG3':       { col: 3, multiplier: 1.00 },
+  'LPG':        { col: 4, multiplier: 1.00 },
+  'Hybride':    { col: 1, multiplier: 1.00 },
+};
+
+export function calculatePrice(grid: Grid, value: FormValue): number {
+  const { col, multiplier } = FUEL_CONFIG[value.fuelType] ?? { col: 1, multiplier: 1 };
+
+  if (value.volume < 551) {
+    return Math.round(+grid[value.provinceKey][0].split('#')[col] * multiplier);
+  }
+
+  const provinceGrid = grid[value.provinceKey];
+  const index = Math.floor(value.volume / 100 - 4);
+  const weight = +provinceGrid[index].split('#')[0];
+  const row = value.volume < weight ? index - 1 : index;
+
+  return Math.round(+provinceGrid[row].split('#')[col] * multiplier);
+}
+
 @Component({
   standalone: false,
   selector: 'app-car-tax-form',
@@ -207,7 +233,7 @@ export class CarTaxFormComponent implements OnInit {
       this.isLoadingVehicle = false;
       if (vehicle && vehicle.massa_rijklaar) {
         this.vehicleInfo = vehicle;
-        const weight = Math.round(+vehicle.massa_rijklaar / 50) * 50;
+        const weight = Math.ceil(+vehicle.massa_rijklaar / 50) * 50;
         this.detectedWeight = weight;
         const patch: Partial<FormValue> = { volume: weight };
         const fuelType = this.mapRdwFuelType(vehicle.brandstof_types, vehicle);
@@ -265,16 +291,7 @@ export class CarTaxFormComponent implements OnInit {
     return map[colorName] || '#9e9e9e';
   }
 
-  // Grid columns: weight#benzine#diesel#lpg3#lpg
-  // 2026 MRB rates: electric = 70% of benzine, hybrid/PHEV = 100% of benzine (discount abolished)
-  private readonly FUEL_CONFIG: Record<string, { col: number; multiplier: number }> = {
-    'Benzine':    { col: 1, multiplier: 1.00 },
-    'Diesel':     { col: 2, multiplier: 1.00 },
-    'Elektrisch': { col: 1, multiplier: 0.70 },
-    'LPG3':       { col: 3, multiplier: 1.00 },
-    'LPG':        { col: 4, multiplier: 1.00 },
-    'Hybride':    { col: 1, multiplier: 1.00 }, // legacy URL compat → same as Benzine
-  };
+  private readonly FUEL_CONFIG = FUEL_CONFIG;
 
   getFuelIcon(fuel: string): string {
     const icons: Record<string, string> = {
@@ -313,17 +330,6 @@ export class CarTaxFormComponent implements OnInit {
   }
 
   getPrice(value: FormValue): number {
-    const { col, multiplier } = this.FUEL_CONFIG[value.fuelType] ?? { col: 1, multiplier: 1 };
-
-    if (value.volume < 551) {
-      return Math.round(+this.grid[value.provinceKey][0].split('#')[col] * multiplier);
-    }
-
-    const provinceGrid = this.grid[value.provinceKey];
-    const index = Math.floor(value.volume / 100 - 4);
-    const weight = +provinceGrid[index].split('#')[0];
-    const row = value.volume < weight ? index - 1 : index;
-
-    return Math.round(+provinceGrid[row].split('#')[col] * multiplier);
+    return calculatePrice(this.grid, value);
   }
 }
