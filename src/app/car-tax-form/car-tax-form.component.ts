@@ -233,7 +233,7 @@ export class CarTaxFormComponent implements OnInit {
       this.isLoadingVehicle = false;
       if (vehicle && vehicle.massa_ledig_voertuig) {
         this.vehicleInfo = vehicle;
-        const weight = Math.ceil(+vehicle.massa_ledig_voertuig / 50) * 50;
+        const weight = +vehicle.massa_ledig_voertuig;
         this.detectedWeight = weight;
         const patch: Partial<FormValue> = { volume: weight };
         const fuelType = this.mapRdwFuelType(vehicle.brandstof_types, vehicle);
