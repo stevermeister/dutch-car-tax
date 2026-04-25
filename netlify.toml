@@ -1,0 +1,6 @@
+[build]
+  command = "npm ci && ng build --configuration production"
+  publish = "dist/browser"
+
+[build.environment]
+  NODE_VERSION = "22"
