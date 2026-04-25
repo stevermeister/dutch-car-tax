@@ -3,6 +3,12 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, of, forkJoin } from 'rxjs';
 import { map, catchError, switchMap } from 'rxjs/operators';
 
+import LicensePlate from 'license-plate';
+
+export function isValidDutchPlate(plate: string): boolean {
+  return new LicensePlate(plate).valid();
+}
+
 export interface RdwVehicle {
   kenteken: string;
   voertuigsoort: string;
