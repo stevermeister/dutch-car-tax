@@ -1,5 +1,5 @@
 [build]
-  command = "npm ci && ng build --configuration production"
+  command = "npm install && ng build --configuration production"
   publish = "dist/browser"
 
 [build.environment]
