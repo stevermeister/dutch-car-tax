@@ -20,11 +20,15 @@
           autocomplete="off"
           spellcheck="false">
       </div>
-      <button mat-raised-button color="primary" class="search-btn" (click)="searchVehicle()" [disabled]="isLoadingVehicle || !plateInput.trim()">
+      <button mat-raised-button color="primary" class="search-btn" (click)="searchVehicle()" [disabled]="isLoadingVehicle || !plateInput.trim() || !isPlateValid">
         <mat-spinner *ngIf="isLoadingVehicle" [diameter]="18" class="btn-spinner"></mat-spinner>
         <mat-icon *ngIf="!isLoadingVehicle">search</mat-icon>
         Search
       </button>
+    </div>
+
+    <div *ngIf="plateInput.trim() && !isPlateValid" class="not-found">
+      <mat-icon>info_outline</mat-icon> Enter a valid Dutch plate (e.g. AB-123-C).
     </div>
 
     <div *ngIf="vehicleNotFound && !vehicleInfo" class="not-found">

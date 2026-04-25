@@ -5,7 +5,7 @@ import { MatSelect } from '@angular/material/select';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { CarTaxService, FuelTypes, Grid, Provinces } from './car-tax.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { RdwService, RdwVehicle } from './rdw.service';
+import { RdwService, RdwVehicle, isValidDutchPlate } from './rdw.service';
 
 export type FormValue = {
   'provinceKey': string;
@@ -184,8 +184,12 @@ export class CarTaxFormComponent implements OnInit {
     this.pricePeriodSubject.next(period);
   }
 
+  get isPlateValid(): boolean {
+    return isValidDutchPlate(this.plateInput);
+  }
+
   searchVehicle(): void {
-    if (!this.plateInput) {
+    if (!this.plateInput || !this.isPlateValid) {
       return;
     }
     this._router.navigate([], {
