@@ -7,39 +7,44 @@ describe('calculatePrice (2026 MRB rates)', () => {
     return calculatePrice(GRID, { provinceKey, fuelType, volume } as FormValue);
   }
 
-  // Reference value from belastingdienst.nl: Benzine, 1551–1650 kg = €280 (DR)
-  it('DR Benzine 1551 = 280 (reference from belastingdienst.nl)', () => {
-    expect(price('DR', 'Benzine', 1551)).toBe(280);
+  // Reference: official belastingdienst.nl 2026 JS tariff file
+  // NH benzine 1551–1650 kg = €280 (NH has the lowest opcenten: 82.1%)
+  it('NH Benzine 1551 = 280 (reference from belastingdienst.nl 2026)', () => {
+    expect(price('NH', 'Benzine', 1551)).toBe(280);
   });
 
-  it('DR Benzine 1600 = 280 (same bracket as 1551)', () => {
-    expect(price('DR', 'Benzine', 1600)).toBe(280);
+  it('DR Benzine 1551 = 291 (2026 official rate)', () => {
+    expect(price('DR', 'Benzine', 1551)).toBe(291);
   });
 
-  it('DR Benzine 1650 = 280 (top of bracket)', () => {
-    expect(price('DR', 'Benzine', 1650)).toBe(280);
+  it('DR Benzine 1600 = 291 (same bracket as 1551)', () => {
+    expect(price('DR', 'Benzine', 1600)).toBe(291);
+  });
+
+  it('DR Benzine 1650 = 291 (top of bracket)', () => {
+    expect(price('DR', 'Benzine', 1650)).toBe(291);
   });
 
   it('DR Benzine 1651 moves to next bracket', () => {
-    expect(price('DR', 'Benzine', 1651)).toBeGreaterThan(280);
+    expect(price('DR', 'Benzine', 1651)).toBeGreaterThan(291);
   });
 
   // Bracket below 551
   it('NH Benzine 500 uses the lowest bracket', () => {
-    expect(price('NH', 'Benzine', 500)).toBe(32);
+    expect(price('NH', 'Benzine', 500)).toBe(33);
   });
 
   it('NH Benzine 1 uses the lowest bracket', () => {
-    expect(price('NH', 'Benzine', 1)).toBe(32);
+    expect(price('NH', 'Benzine', 1)).toBe(33);
   });
 
   // Bracket boundary at 551
   it('NH Benzine 550 still in lowest bracket', () => {
-    expect(price('NH', 'Benzine', 550)).toBe(32);
+    expect(price('NH', 'Benzine', 550)).toBe(33);
   });
 
   it('NH Benzine 551 enters the 551–650 bracket', () => {
-    expect(price('NH', 'Benzine', 551)).toBeGreaterThan(32);
+    expect(price('NH', 'Benzine', 551)).toBeGreaterThan(33);
   });
 
   // Bracket boundary: 1550 vs 1551
@@ -51,15 +56,15 @@ describe('calculatePrice (2026 MRB rates)', () => {
 
   // All fuel types for NH at 1551
   it('NH Diesel 1551 matches grid', () => {
-    expect(price('NH', 'Diesel', 1551)).toBe(535);
+    expect(price('NH', 'Diesel', 1551)).toBe(549);
   });
 
   it('NH LPG3 1551 matches grid', () => {
-    expect(price('NH', 'LPG3', 1551)).toBe(418);
+    expect(price('NH', 'LPG3', 1551)).toBe(432);
   });
 
   it('NH LPG 1551 matches grid', () => {
-    expect(price('NH', 'LPG', 1551)).toBe(566);
+    expect(price('NH', 'LPG', 1551)).toBe(579);
   });
 
   it('NH Elektrisch 1551 = 70% of Benzine', () => {
