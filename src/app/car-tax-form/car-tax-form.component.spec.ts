@@ -67,10 +67,10 @@ describe('calculatePrice (2026 MRB rates)', () => {
     expect(price('NH', 'LPG', 1551)).toBe(579);
   });
 
-  it('NH Elektrisch 1551 = 70% of Benzine', () => {
+  it('NH Elektrisch 1551 = 70% of Benzine (floored, matching belastingdienst.nl)', () => {
     const benzine = price('NH', 'Benzine', 1551);
     const electric = price('NH', 'Elektrisch', 1551);
-    expect(electric).toBe(Math.round(benzine * 0.70));
+    expect(electric).toBe(Math.floor(benzine * 0.70));
   });
 
   // Legacy Hybride maps to same as Benzine

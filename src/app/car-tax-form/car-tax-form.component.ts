@@ -28,7 +28,7 @@ export function calculatePrice(grid: Grid, value: FormValue): number {
   const { col, multiplier } = FUEL_CONFIG[value.fuelType] ?? { col: 1, multiplier: 1 };
 
   if (value.volume < 551) {
-    return Math.round(+grid[value.provinceKey][0].split('#')[col] * multiplier);
+    return Math.floor(+grid[value.provinceKey][0].split('#')[col] * multiplier);
   }
 
   const provinceGrid = grid[value.provinceKey];
@@ -36,7 +36,7 @@ export function calculatePrice(grid: Grid, value: FormValue): number {
   const weight = +provinceGrid[index].split('#')[0];
   const row = value.volume < weight ? index - 1 : index;
 
-  return Math.round(+provinceGrid[row].split('#')[col] * multiplier);
+  return Math.floor(+provinceGrid[row].split('#')[col] * multiplier);
 }
 
 @Component({
