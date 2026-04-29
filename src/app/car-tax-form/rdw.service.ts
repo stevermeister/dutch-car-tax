@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+import { Injectable, PLATFORM_ID, Inject } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of, forkJoin } from 'rxjs';
 import { map, catchError, switchMap } from 'rxjs/operators';
@@ -49,7 +50,10 @@ const PROVINCE_MAP: Record<string, string> = {
 @Injectable({ providedIn: 'root' })
 export class RdwService {
 
-  constructor(private _http: HttpClient) {}
+  constructor(
+    private _http: HttpClient,
+    @Inject(PLATFORM_ID) private _platformId: object
+  ) {}
 
   lookupVehicle(plate: string): Observable<RdwVehicle | null> {
     const kenteken = plate.replace(/-/g, '').toUpperCase();
@@ -77,6 +81,9 @@ export class RdwService {
   private readonly MAX_GEO_ACCURACY_M = 30000;
 
   detectProvinceKey(): Observable<string | null> {
+    if (!isPlatformBrowser(this._platformId)) {
+      return of(null);
+    }
     return new Observable<GeolocationPosition>(observer => {
       if (!navigator.geolocation) {
         observer.error('no-geolocation');

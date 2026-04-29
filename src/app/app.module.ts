@@ -1,5 +1,5 @@
 import { RouterModule, Routes } from '@angular/router';
-import { BrowserModule } from '@angular/platform-browser';
+import { BrowserModule, provideClientHydration, withEventReplay } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -16,10 +16,11 @@ import { NgModule } from '@angular/core';
 import { AppComponent } from './app.component';
 import { CarTaxFormComponent } from './car-tax-form/car-tax-form.component';
 import { CarTaxService } from './car-tax-form/car-tax.service';
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withFetch } from '@angular/common/http';
 import { TruckIconDirective } from './car-tax-form/truck-icon.directive';
 
 const routes: Routes = [
+  { path: '', component: CarTaxFormComponent },
   { path: '**', component: CarTaxFormComponent }
 ];
 
@@ -35,7 +36,6 @@ const routes: Routes = [
     MatSelectModule,
     ReactiveFormsModule,
     MatSliderModule,
-    HttpClientModule,
     MatButtonToggleModule,
     FormsModule,
     MatIconModule,
@@ -44,9 +44,9 @@ const routes: Routes = [
     MatMenuModule,
     MatInputModule,
     MatProgressSpinnerModule,
-    RouterModule.forRoot(routes, { useHash: true })
+    RouterModule.forRoot(routes)
   ],
-  providers: [CarTaxService],
+  providers: [CarTaxService, provideHttpClient(withFetch()), provideClientHydration(withEventReplay())],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
