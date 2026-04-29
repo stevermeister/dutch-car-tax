@@ -16,7 +16,7 @@ import { NgModule } from '@angular/core';
 import { AppComponent } from './app.component';
 import { CarTaxFormComponent } from './car-tax-form/car-tax-form.component';
 import { CarTaxService } from './car-tax-form/car-tax.service';
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withFetch } from '@angular/common/http';
 import { TruckIconDirective } from './car-tax-form/truck-icon.directive';
 
 const routes: Routes = [
@@ -36,7 +36,6 @@ const routes: Routes = [
     MatSelectModule,
     ReactiveFormsModule,
     MatSliderModule,
-    HttpClientModule,
     MatButtonToggleModule,
     FormsModule,
     MatIconModule,
@@ -47,7 +46,7 @@ const routes: Routes = [
     MatProgressSpinnerModule,
     RouterModule.forRoot(routes)
   ],
-  providers: [CarTaxService, provideClientHydration(withEventReplay())],
+  providers: [CarTaxService, provideHttpClient(withFetch()), provideClientHydration(withEventReplay())],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
