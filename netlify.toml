@@ -4,3 +4,56 @@
 
 [build.environment]
   NODE_VERSION = "22"
+
+# ── Canonical domain redirects ────────────────────────────
+[[redirects]]
+  from = "https://www.car.thetax.nl/*"
+  to   = "https://car.thetax.nl/:splat"
+  status = 301
+  force  = true
+
+[[redirects]]
+  from = "http://car.thetax.nl/*"
+  to   = "https://car.thetax.nl/:splat"
+  status = 301
+  force  = true
+
+[[redirects]]
+  from = "http://www.car.thetax.nl/*"
+  to   = "https://car.thetax.nl/:splat"
+  status = 301
+  force  = true
+
+# ── SPA fallback (serves index.html for unknown paths) ───
+[[redirects]]
+  from   = "/*"
+  to     = "/index.html"
+  status = 200
+
+# ── Cache headers ─────────────────────────────────────────
+# Prerendered HTML: 1 h CDN, 1 day revalidate window, 1 week stale
+[[headers]]
+  for = "/"
+  [headers.values]
+    Cache-Control = "public, max-age=3600, s-maxage=86400, stale-while-revalidate=604800"
+
+[[headers]]
+  for = "/en/"
+  [headers.values]
+    Cache-Control = "public, max-age=3600, s-maxage=86400, stale-while-revalidate=604800"
+
+[[headers]]
+  for = "/en"
+  [headers.values]
+    Cache-Control = "public, max-age=3600, s-maxage=86400, stale-while-revalidate=604800"
+
+# Hashed JS/CSS assets: immutable, 1 year
+[[headers]]
+  for = "/*.js"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.css"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
