@@ -7,6 +7,8 @@ export interface Translations {
   ogLocale: string;
   ogLocaleAlternate: string;
   canonicalUrl: string;
+  subtitle: string;
+  introTitle: string;
   intro: string;
   faqTitle: string;
   faqs: Array<{ q: string; a: string }>;
@@ -48,6 +50,8 @@ export const TRANSLATIONS: Record<Lang, Translations> = {
       'Met deze calculator bereken je het kwartaaltarief op basis van kenteken. De voertuiggegevens ' +
       '— gewicht en brandstoftype — worden automatisch opgehaald uit de RDW-database. Je kunt het ' +
       'bedrag weergeven per maand, kwartaal of jaar.',
+    subtitle: 'Bereken in seconden hoeveel motorrijtuigenbelasting je betaalt. Voer je kenteken in — wij halen automatisch het gewicht en brandstoftype op via RDW.',
+    introTitle: 'Hoe werkt deze berekening?',
     faqTitle: 'Veelgestelde vragen over wegenbelasting (MRB)',
     faqs: [
       {
@@ -64,18 +68,20 @@ export const TRANSLATIONS: Record<Lang, Translations> = {
       {
         q: 'Wat verandert er in 2026 voor elektrische auto\'s en plug-in hybrides?',
         a: 'Plug-in hybrides (PHEV) verliezen per 1 januari 2026 hun MRB-korting volledig en betalen ' +
-           'hetzelfde tarief als benzineauto\'s. Volledig elektrische voertuigen betalen 70% van het ' +
-           'benzine-tarief. De volledige vrijstelling voor EV\'s is al in 2025 afgelopen.',
+           'hetzelfde tarief als benzineauto\'s. Volledig elektrische voertuigen betalen in 2026 nog 70% ' +
+           'van het benzine-tarief; deze korting wordt afgebouwd tot 25% in 2029 en verdwijnt volledig in 2030.',
       },
       {
         q: 'Welke provincie heeft de laagste opcenten?',
         a: 'Noord-Holland heeft de laagste provinciale opcenten (82,1% in 2026), gevolgd door Overijssel ' +
-           '(82,2%). Zuid-Holland heeft de hoogste opcenten (104,4%), wat resulteert in de hoogste MRB.',
+           'met 82,2%, vrijwel gelijk. Zuid-Holland heeft de hoogste opcenten (104,4%), wat resulteert in de hoogste MRB.',
       },
       {
         q: 'Geldt er een vrijstelling voor oldtimers?',
-        a: 'Ja, voertuigen van 40 jaar of ouder zijn vrijgesteld van MRB. Je kunt dan niet rijden in de ' +
-           'maanden oktober t/m maart, tenzij je een overgangsregeling hebt gekozen bij de Belastingdienst.',
+        a: 'Personenauto\'s van 40 jaar of ouder zijn volledig vrijgesteld van MRB en mogen het hele jaar ' +
+           'rijden. Voor benzine- en LPG-voertuigen tussen 26 en 40 jaar geldt een overgangsregeling: ' +
+           'ongeveer 25% van het normale tarief, mits je niet rijdt in januari, februari en december. ' +
+           'Let op: vanaf 2028 geldt de volledige vrijstelling alleen nog voor voertuigen gebouwd vóór 1988.',
       },
     ],
     searchBtn: 'Zoeken',
@@ -119,6 +125,8 @@ export const TRANSLATIONS: Record<Lang, Translations> = {
       'This calculator determines your quarterly road tax from your licence plate. Vehicle data — ' +
       'weight and fuel type — are fetched automatically from the Dutch RDW registration database. ' +
       'You can view the amount per month, quarter, or year.',
+    subtitle: 'Calculate your Dutch road tax in seconds. Enter your license plate — we\'ll fetch weight and fuel type automatically via RDW.',
+    introTitle: 'How is this calculated?',
     faqTitle: 'Frequently asked questions about Dutch road tax (MRB)',
     faqs: [
       {
@@ -135,19 +143,20 @@ export const TRANSLATIONS: Record<Lang, Translations> = {
       {
         q: 'What changes in 2026 for EVs and plug-in hybrids?',
         a: 'Plug-in hybrids (PHEVs) lose their MRB discount entirely from 1 January 2026 and pay ' +
-           'the same rate as petrol vehicles. Fully electric vehicles pay 70% of the petrol rate. ' +
-           'The full EV exemption already ended in 2025.',
+           'the same rate as petrol cars. Fully electric vehicles still pay 70% of the petrol rate in ' +
+           '2026; this discount is reduced to 25% in 2029 and disappears entirely in 2030.',
       },
       {
         q: 'Which province has the lowest opcenten?',
         a: 'Noord-Holland has the lowest provincial surcharge (82.1% in 2026), followed by Overijssel ' +
-           '(82.2%). Zuid-Holland has the highest surcharge (104.4%), resulting in the highest road tax.',
+           'at 82.2%, almost identical. Zuid-Holland has the highest surcharge (104.4%), resulting in the highest road tax.',
       },
       {
         q: 'Is there an exemption for classic cars?',
-        a: 'Yes, vehicles 40 years or older are exempt from MRB in the Netherlands. However, you ' +
-           'cannot drive during October through March unless you have opted for the transitional ' +
-           'arrangement with the Belastingdienst.',
+        a: 'Passenger cars 40 years or older are fully exempt from MRB and may drive year-round. ' +
+           'For petrol and LPG vehicles between 26 and 40 years old, a transitional scheme applies: ' +
+           'roughly 25% of the standard rate, provided you don\'t drive in January, February, or December. ' +
+           'Note: from 2028, the full exemption applies only to vehicles built before 1988.',
       },
     ],
     searchBtn: 'Search',
