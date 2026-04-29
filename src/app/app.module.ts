@@ -1,5 +1,5 @@
 import { RouterModule, Routes } from '@angular/router';
-import { BrowserModule } from '@angular/platform-browser';
+import { BrowserModule, provideClientHydration, withEventReplay } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -20,6 +20,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { TruckIconDirective } from './car-tax-form/truck-icon.directive';
 
 const routes: Routes = [
+  { path: '', component: CarTaxFormComponent },
   { path: '**', component: CarTaxFormComponent }
 ];
 
@@ -44,9 +45,9 @@ const routes: Routes = [
     MatMenuModule,
     MatInputModule,
     MatProgressSpinnerModule,
-    RouterModule.forRoot(routes, { useHash: true })
+    RouterModule.forRoot(routes)
   ],
-  providers: [CarTaxService],
+  providers: [CarTaxService, provideClientHydration(withEventReplay())],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -1,6 +1,7 @@
 import { concat, Observable, BehaviorSubject, combineLatest } from 'rxjs';
 import { map, delay, filter, take, debounceTime, shareReplay } from 'rxjs/operators';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, Inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { MatSelect } from '@angular/material/select';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { CarTaxService, FuelTypes, Grid, Provinces } from './car-tax.service';
@@ -81,12 +82,16 @@ export class CarTaxFormComponent implements OnInit {
     'LPG':        'LPG',
   };
 
+  private readonly isBrowser: boolean;
+
   constructor(
     public _formBuilder: FormBuilder,
     public _carTaxService: CarTaxService,
     private _activatedRoute: ActivatedRoute,
     private _router: Router,
-    private _rdwService: RdwService) {
+    private _rdwService: RdwService,
+    @Inject(PLATFORM_ID) platformId: object) {
+    this.isBrowser = isPlatformBrowser(platformId);
 
     this.fuelTypes = this._carTaxService.getFuelTypes();
     this.provinces = this._carTaxService.getProvinces();
@@ -105,12 +110,14 @@ export class CarTaxFormComponent implements OnInit {
       this.sliderValue = +v;
     });
 
-    this._activatedRoute.queryParams.pipe(
-      take(1),
-      filter(queryParams => !Boolean(Object.keys(queryParams).length)))
-      .subscribe(() => {
-        this._router.navigate([], { relativeTo: this._activatedRoute, queryParams: this.carTaxControl.value });
-      });
+    if (this.isBrowser) {
+      this._activatedRoute.queryParams.pipe(
+        take(1),
+        filter(queryParams => !Boolean(Object.keys(queryParams).length)))
+        .subscribe(() => {
+          this._router.navigate([], { relativeTo: this._activatedRoute, queryParams: this.carTaxControl.value });
+        });
+    }
 
     this.ObservableQueryParams = this._activatedRoute.queryParams.pipe(
       take(1),
@@ -147,28 +154,30 @@ export class CarTaxFormComponent implements OnInit {
       })
     );
 
-    this.carTaxControl.valueChanges.pipe(
-      debounceTime(50)
-    ).subscribe(values => {
-      const fuelMatches = !this.detectedFuelType || values.fuelType === this.detectedFuelType;
-      const weightMatches = !this.detectedWeight || +values.volume === this.detectedWeight;
-      const plate = (this.vehicleInfo && fuelMatches && weightMatches)
-        ? this.plateInput.trim().toUpperCase()
-        : null;
+    if (this.isBrowser) {
+      this.carTaxControl.valueChanges.pipe(
+        debounceTime(50)
+      ).subscribe(values => {
+        const fuelMatches = !this.detectedFuelType || values.fuelType === this.detectedFuelType;
+        const weightMatches = !this.detectedWeight || +values.volume === this.detectedWeight;
+        const plate = (this.vehicleInfo && fuelMatches && weightMatches)
+          ? this.plateInput.trim().toUpperCase()
+          : null;
 
-      this._router.navigate([], {
-        relativeTo: this._activatedRoute,
-        queryParams: { ...values, plate },
-        queryParamsHandling: 'merge'
+        this._router.navigate([], {
+          relativeTo: this._activatedRoute,
+          queryParams: { ...values, plate },
+          queryParamsHandling: 'merge'
+        });
       });
-    });
 
-    this._activatedRoute.queryParams.pipe(take(1)).subscribe(queryParams => {
-      if (queryParams['plate']) {
-        this.plateInput = queryParams['plate'];
-        this.searchVehicle();
-      }
-    });
+      this._activatedRoute.queryParams.pipe(take(1)).subscribe(queryParams => {
+        if (queryParams['plate']) {
+          this.plateInput = queryParams['plate'];
+          this.searchVehicle();
+        }
+      });
+    }
 
     this._rdwService.detectProvinceKey().subscribe(key => {
       if (key) {
