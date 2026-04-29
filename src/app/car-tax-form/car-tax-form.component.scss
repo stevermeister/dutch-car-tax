@@ -338,44 +338,105 @@ mat-slider {
   color: #3f51b5;
 }
 
-// ── Intro section ─────────────────────────────────────────
-.intro-section p {
+// ── Subtitle ──────────────────────────────────────────────
+.page-subtitle {
   font-size: 0.88rem;
-  line-height: 1.6;
-  color: rgba(0,0,0,0.65);
-  margin: 0 0 10px;
+  line-height: 1.5;
+  color: rgba(0,0,0,0.55);
+  margin: -16px 0 20px;
 }
 
-// ── FAQ section ───────────────────────────────────────────
-.faq-section {
-  margin-top: 32px;
+// ── Collapsible intro ─────────────────────────────────────
+.intro-details {
+  margin: 16px 0 0;
   border-top: 1px solid #e0e0e0;
-  padding-top: 24px;
+  padding-top: 12px;
 
-  h2 {
-    font-size: 1rem;
+  summary {
+    font-size: 0.82rem;
     font-weight: 600;
-    color: #1a237e;
-    margin: 0 0 16px;
+    color: #3f51b5;
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    user-select: none;
+
+    &::after {
+      content: '▾';
+      font-size: 0.9rem;
+      transition: transform 0.2s;
+    }
+
+    &::-webkit-details-marker { display: none; }
   }
 
-  dl { margin: 0; }
+  &[open] summary::after { transform: rotate(-180deg); }
 
-  .faq-item {
-    margin-bottom: 16px;
+  .intro-body {
+    padding-top: 10px;
 
-    dt {
-      font-size: 0.88rem;
-      font-weight: 600;
-      color: rgba(0,0,0,0.75);
-      margin-bottom: 4px;
-    }
-
-    dd {
-      margin: 0;
+    p {
       font-size: 0.85rem;
-      line-height: 1.55;
+      line-height: 1.6;
       color: rgba(0,0,0,0.6);
+      margin: 0 0 10px;
+      &:last-child { margin-bottom: 0; }
     }
+  }
+}
+
+// ── FAQ accordion ─────────────────────────────────────────
+.faq-section {
+  margin-top: 24px;
+  border-top: 1px solid #e0e0e0;
+  padding-top: 20px;
+
+  h2 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #1a237e;
+    margin: 0 0 12px;
+  }
+}
+
+.faq-item {
+  border-bottom: 1px solid #f0f0f0;
+
+  summary {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: rgba(0,0,0,0.75);
+    cursor: pointer;
+    list-style: none;
+    padding: 12px 20px 12px 0;
+    position: relative;
+    user-select: none;
+
+    &::after {
+      content: '▾';
+      position: absolute;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.85rem;
+      color: rgba(0,0,0,0.4);
+      transition: transform 0.2s;
+    }
+
+    &::-webkit-details-marker { display: none; }
+  }
+
+  &[open] summary::after {
+    transform: translateY(-50%) rotate(-180deg);
+  }
+
+  p {
+    font-size: 0.82rem;
+    line-height: 1.55;
+    color: rgba(0,0,0,0.6);
+    margin: 0 0 12px;
+    padding-right: 20px;
   }
 }

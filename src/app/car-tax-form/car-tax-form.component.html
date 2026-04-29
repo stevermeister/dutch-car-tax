@@ -7,16 +7,12 @@
     <a class="language-btn" [class.active]="i18n.lang === 'en'" routerLink="/en" aria-label="English">EN</a>
   </div>
 
-  <!-- Page title (h1 for SEO — styled small via CSS) -->
+  <!-- Page title + subtitle -->
   <div class="page-title">
     <i class="fas fa-car" aria-hidden="true"></i>
     <h1>{{ i18n.tr.h1 }}</h1>
   </div>
-
-  <!-- Intro paragraph -->
-  <div class="intro-section" *ngFor="let para of i18n.tr.intro.split('\n\n')">
-    <p>{{ para }}</p>
-  </div>
+  <p class="page-subtitle">{{ i18n.tr.subtitle }}</p>
 
   <!-- Plate lookup -->
   <div class="plate-section">
@@ -26,7 +22,7 @@
         <input
           class="plate-input"
           [(ngModel)]="plateInput"
-          [placeholder]="'AA-123-B'"
+          placeholder="AA-123-B"
           (keyup.enter)="searchVehicle()"
           maxlength="9"
           autocomplete="off"
@@ -61,7 +57,7 @@
           {{ getVehicleYear(vehicleInfo) }}<ng-container *ngIf="detectedFuelType"> · {{ getFuelLabel(detectedFuelType) }}</ng-container><ng-container *ngIf="detectedWeight"> · {{ detectedWeight }} kg</ng-container> · {{ getColorName(vehicleInfo.eerste_kleur) }}
         </div>
       </div>
-      <button class="clear-vehicle-btn" (click)="clearVehicle()" [title]="'Clear'">
+      <button class="clear-vehicle-btn" (click)="clearVehicle()" title="Clear">
         <mat-icon>close</mat-icon>
       </button>
     </div>
@@ -121,15 +117,21 @@
 
   </div>
 
-  <!-- FAQ section -->
+  <!-- Collapsible long-form intro (SEO content, hidden by default) -->
+  <details class="intro-details">
+    <summary>{{ i18n.tr.introTitle }}</summary>
+    <div class="intro-body">
+      <p *ngFor="let para of i18n.tr.intro.split('\n\n')">{{ para }}</p>
+    </div>
+  </details>
+
+  <!-- FAQ accordion (SEO content, all collapsed by default) -->
   <section class="faq-section" aria-labelledby="faq-heading">
     <h2 id="faq-heading">{{ i18n.tr.faqTitle }}</h2>
-    <dl>
-      <div class="faq-item" *ngFor="let faq of i18n.tr.faqs">
-        <dt>{{ faq.q }}</dt>
-        <dd>{{ faq.a }}</dd>
-      </div>
-    </dl>
+    <details class="faq-item" *ngFor="let faq of i18n.tr.faqs">
+      <summary>{{ faq.q }}</summary>
+      <p>{{ faq.a }}</p>
+    </details>
   </section>
 
 </div>
