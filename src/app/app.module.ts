@@ -20,8 +20,9 @@ import { provideHttpClient, withFetch } from '@angular/common/http';
 import { TruckIconDirective } from './car-tax-form/truck-icon.directive';
 
 const routes: Routes = [
-  { path: '', component: CarTaxFormComponent },
-  { path: '**', component: CarTaxFormComponent }
+  { path: '',   component: CarTaxFormComponent },
+  { path: 'en', component: CarTaxFormComponent },
+  { path: '**', component: CarTaxFormComponent },
 ];
 
 @NgModule({

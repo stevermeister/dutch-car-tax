@@ -7,6 +7,7 @@ import { FormGroup, FormBuilder } from '@angular/forms';
 import { CarTaxService, FuelTypes, Grid, Provinces } from './car-tax.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RdwService, RdwVehicle, isValidDutchPlate } from './rdw.service';
+import { I18nService } from '../i18n.service';
 
 export type FormValue = {
   'provinceKey': string;
@@ -74,13 +75,6 @@ export class CarTaxFormComponent implements OnInit {
 
   @ViewChild('provinceSelect') provinceSelect?: MatSelect;
 
-  private readonly FUEL_LABELS: Record<string, string> = {
-    'Benzine':    'Petrol',
-    'Diesel':     'Diesel',
-    'Elektrisch': 'Electric',
-    'LPG3':       'LPG3',
-    'LPG':        'LPG',
-  };
 
   private readonly isBrowser: boolean;
 
@@ -90,7 +84,8 @@ export class CarTaxFormComponent implements OnInit {
     private _activatedRoute: ActivatedRoute,
     private _router: Router,
     private _rdwService: RdwService,
-    @Inject(PLATFORM_ID) platformId: object) {
+    @Inject(PLATFORM_ID) platformId: object,
+    public i18n: I18nService) {
     this.isBrowser = isPlatformBrowser(platformId);
 
     this.fuelTypes = this._carTaxService.getFuelTypes();
@@ -211,7 +206,7 @@ export class CarTaxFormComponent implements OnInit {
   }
 
   getFuelLabel(fuel: string): string {
-    return this.FUEL_LABELS[fuel] ?? fuel;
+    return this.i18n.tr.fuelLabels[fuel] ?? fuel;
   }
 
   setPricePeriod(period: 'monthly' | 'quarterly' | 'yearly'): void {

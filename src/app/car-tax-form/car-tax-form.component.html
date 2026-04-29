@@ -1,9 +1,21 @@
 <div class="tax-calculator">
 
-  <!-- Page title -->
+  <!-- Language switcher -->
+  <div class="language-row">
+    <a class="language-btn" [class.active]="i18n.lang === 'nl'" routerLink="/" aria-label="Nederlands">NL</a>
+    <span class="language-sep">|</span>
+    <a class="language-btn" [class.active]="i18n.lang === 'en'" routerLink="/en" aria-label="English">EN</a>
+  </div>
+
+  <!-- Page title (h1 for SEO — styled small via CSS) -->
   <div class="page-title">
-    <i class="fas fa-car"></i>
-    <h2>Dutch Road Tax Calculator</h2>
+    <i class="fas fa-car" aria-hidden="true"></i>
+    <h1>{{ i18n.tr.h1 }}</h1>
+  </div>
+
+  <!-- Intro paragraph -->
+  <div class="intro-section" *ngFor="let para of i18n.tr.intro.split('\n\n')">
+    <p>{{ para }}</p>
   </div>
 
   <!-- Plate lookup -->
@@ -14,39 +26,42 @@
         <input
           class="plate-input"
           [(ngModel)]="plateInput"
-          placeholder="AA-123-B"
+          [placeholder]="'AA-123-B'"
           (keyup.enter)="searchVehicle()"
           maxlength="9"
           autocomplete="off"
-          spellcheck="false">
+          spellcheck="false"
+          aria-label="License plate">
       </div>
-      <button mat-raised-button color="primary" class="search-btn" (click)="searchVehicle()" [disabled]="isLoadingVehicle || !plateInput.trim() || !isPlateValid">
+      <button mat-raised-button color="primary" class="search-btn"
+              (click)="searchVehicle()"
+              [disabled]="isLoadingVehicle || !plateInput.trim() || !isPlateValid">
         <mat-spinner *ngIf="isLoadingVehicle" [diameter]="18" class="btn-spinner"></mat-spinner>
         <mat-icon *ngIf="!isLoadingVehicle">search</mat-icon>
-        Search
+        {{ i18n.tr.searchBtn }}
       </button>
     </div>
 
     <div *ngIf="plateInput.trim() && !isPlateValid" class="not-found">
-      <mat-icon>info_outline</mat-icon> Enter a valid Dutch plate (e.g. AB-123-C).
+      <mat-icon>info_outline</mat-icon> {{ i18n.tr.invalidPlate }}
     </div>
 
     <div *ngIf="vehicleNotFound && !vehicleInfo" class="not-found">
-      <mat-icon>warning</mat-icon> No vehicle found for this plate number.
+      <mat-icon>warning</mat-icon> {{ i18n.tr.notFound }}
     </div>
 
     <div *ngIf="vehicleInfo" class="vehicle-banner">
-      <span class="vehicle-plate-badge">{{vehicleInfo.kenteken}}</span>
+      <span class="vehicle-plate-badge">{{ vehicleInfo.kenteken }}</span>
       <div class="vehicle-summary">
         <div class="vehicle-name">
-          <span class="vehicle-make">{{vehicleInfo.merk}}</span>
-          <span class="vehicle-model">{{getVehicleModel(vehicleInfo)}}</span>
+          <span class="vehicle-make">{{ vehicleInfo.merk }}</span>
+          <span class="vehicle-model">{{ getVehicleModel(vehicleInfo) }}</span>
         </div>
         <div class="vehicle-stats">
-          {{getVehicleYear(vehicleInfo)}}<ng-container *ngIf="detectedFuelType"> · {{getFuelLabel(detectedFuelType)}}</ng-container><ng-container *ngIf="detectedWeight"> · {{detectedWeight}} kg</ng-container> · {{getColorName(vehicleInfo.eerste_kleur)}}
+          {{ getVehicleYear(vehicleInfo) }}<ng-container *ngIf="detectedFuelType"> · {{ getFuelLabel(detectedFuelType) }}</ng-container><ng-container *ngIf="detectedWeight"> · {{ detectedWeight }} kg</ng-container> · {{ getColorName(vehicleInfo.eerste_kleur) }}
         </div>
       </div>
-      <button class="clear-vehicle-btn" (click)="clearVehicle()" title="Clear">
+      <button class="clear-vehicle-btn" (click)="clearVehicle()" [title]="'Clear'">
         <mat-icon>close</mat-icon>
       </button>
     </div>
@@ -56,13 +71,13 @@
   <div class="form-section" [formGroup]="carTaxControl">
 
     <div *ngIf="!isEditingProvince" class="province-display" (click)="openProvinceEdit()">
-      <mat-icon>{{detectedProvinceName ? 'my_location' : 'place'}}</mat-icon>
-      <span class="province-name">{{currentProvinceName}}</span>
+      <mat-icon>{{ detectedProvinceName ? 'my_location' : 'place' }}</mat-icon>
+      <span class="province-name">{{ currentProvinceName }}</span>
       <mat-icon class="province-chevron">expand_more</mat-icon>
     </div>
 
     <mat-form-field *ngIf="isEditingProvince" class="full-width" appearance="outline">
-      <mat-label>Province</mat-label>
+      <mat-label>{{ i18n.tr.province }}</mat-label>
       <mat-select #provinceSelect formControlName="provinceKey" (closed)="isEditingProvince = false">
         <mat-option *ngFor="let province of provinces" [value]="province.key">
           {{ province.title }}
@@ -73,37 +88,48 @@
     <div class="fuel-row">
       <mat-button-toggle-group formControlName="fuelType" hideSingleSelectionIndicator>
         <mat-button-toggle *ngFor="let fuel of fuelTypes" [value]="fuel" #b>
-          <i class="fas" [ngClass]="[getFuelIcon(fuel), b.checked ? 'fa-lg' : '']"></i>
-          {{getFuelLabel(fuel)}}
+          <i class="fas" [ngClass]="[getFuelIcon(fuel), b.checked ? 'fa-lg' : '']" aria-hidden="true"></i>
+          {{ getFuelLabel(fuel) }}
         </mat-button-toggle>
       </mat-button-toggle-group>
     </div>
 
     <div class="weight-section">
       <div class="weight-label">
-        <span class="weight-range">{{sliderValue}} kg</span>
-        <span class="weight-hint">Vehicle weight</span>
+        <span class="weight-range">{{ sliderValue }} kg</span>
+        <span class="weight-hint">{{ i18n.tr.vehicleWeight }}</span>
       </div>
       <mat-slider
         [ngClass]="{'motorcycle': sliderValue < motorcycleWeight, 'lightTruck': sliderValue > lightTruckWeight, 'heavyTruck': sliderValue > heavyTruckWeight}"
         [volumeValue]="sliderValue"
         min="1" max="5051" step="50">
-        <input matSliderThumb formControlName="volume">
+        <input matSliderThumb formControlName="volume" [attr.aria-label]="i18n.tr.vehicleWeight">
       </mat-slider>
     </div>
 
     <div class="price-section">
       <div class="price-row">
-        <div class="price-currency"><i class="fas fa-euro-sign"></i></div>
-        <div class="price-amount">{{displayPrice$ | async}}</div>
+        <div class="price-currency"><i class="fas fa-euro-sign" aria-hidden="true"></i></div>
+        <div class="price-amount" aria-live="polite">{{ displayPrice$ | async }}</div>
       </div>
       <div class="period-toggle">
-        <button class="period-btn" [class.active]="pricePeriod === 'monthly'" (click)="setPricePeriod('monthly')">Monthly</button>
-        <button class="period-btn" [class.active]="pricePeriod === 'quarterly'" (click)="setPricePeriod('quarterly')">Quarterly</button>
-        <button class="period-btn" [class.active]="pricePeriod === 'yearly'" (click)="setPricePeriod('yearly')">Yearly</button>
+        <button class="period-btn" [class.active]="pricePeriod === 'monthly'"  (click)="setPricePeriod('monthly')">{{ i18n.tr.monthly }}</button>
+        <button class="period-btn" [class.active]="pricePeriod === 'quarterly'" (click)="setPricePeriod('quarterly')">{{ i18n.tr.quarterly }}</button>
+        <button class="period-btn" [class.active]="pricePeriod === 'yearly'"   (click)="setPricePeriod('yearly')">{{ i18n.tr.yearly }}</button>
       </div>
     </div>
 
   </div>
+
+  <!-- FAQ section -->
+  <section class="faq-section" aria-labelledby="faq-heading">
+    <h2 id="faq-heading">{{ i18n.tr.faqTitle }}</h2>
+    <dl>
+      <div class="faq-item" *ngFor="let faq of i18n.tr.faqs">
+        <dt>{{ faq.q }}</dt>
+        <dd>{{ faq.a }}</dd>
+      </div>
+    </dl>
+  </section>
 
 </div>
