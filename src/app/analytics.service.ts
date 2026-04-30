@@ -11,6 +11,11 @@ export class AnalyticsService {
     this.isBrowser = isPlatformBrowser(platformId);
   }
 
+  pageView(url: string): void {
+    if (!this.isBrowser || typeof gtag === 'undefined') return;
+    gtag('event', 'page_view', { page_location: url });
+  }
+
   event(name: string, params?: Record<string, unknown>): void {
     if (!this.isBrowser || typeof gtag === 'undefined') return;
     gtag('event', name, params ?? {});

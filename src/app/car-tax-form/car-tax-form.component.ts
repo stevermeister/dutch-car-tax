@@ -152,17 +152,6 @@ export class CarTaxFormComponent implements OnInit {
     );
 
     if (this.isBrowser) {
-      // Track calculator parameter changes (debounced so slider doesn't flood GA)
-      this.price$.pipe(debounceTime(500)).subscribe(price => {
-        const { provinceKey, fuelType, volume } = this.carTaxControl.value as FormValue;
-        this._analytics.event('mrb_calculate', {
-          province: provinceKey,
-          fuel_type: fuelType,
-          weight_kg: +volume,
-          price_quarterly: price,
-        });
-      });
-
       this.carTaxControl.valueChanges.pipe(
         debounceTime(50)
       ).subscribe(values => {

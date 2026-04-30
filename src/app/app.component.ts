@@ -3,6 +3,7 @@ import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { I18nService } from './i18n.service';
 import { SeoService } from './seo.service';
+import { AnalyticsService } from './analytics.service';
 import { Lang } from './i18n';
 
 @Component({
@@ -16,6 +17,7 @@ export class AppComponent implements OnInit {
     private router: Router,
     public i18n: I18nService,
     private seo: SeoService,
+    private analytics: AnalyticsService,
   ) {}
 
   ngOnInit(): void {
@@ -25,6 +27,7 @@ export class AppComponent implements OnInit {
         const lang: Lang = e.urlAfterRedirects.startsWith('/en') ? 'en' : 'nl';
         this.i18n.setLang(lang);
         this.seo.apply(lang);
+        this.analytics.pageView(e.urlAfterRedirects);
       });
 
     // Apply on initial SSR render (NavigationEnd already fired before subscription)
