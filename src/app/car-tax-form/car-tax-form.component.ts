@@ -8,6 +8,7 @@ import { CarTaxService, FuelTypes, Grid, Provinces } from './car-tax.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RdwService, RdwVehicle, isValidDutchPlate } from './rdw.service';
 import { I18nService } from '../i18n.service';
+import { AnalyticsService } from '../analytics.service';
 
 export type FormValue = {
   'provinceKey': string;
@@ -85,7 +86,8 @@ export class CarTaxFormComponent implements OnInit {
     private _router: Router,
     private _rdwService: RdwService,
     @Inject(PLATFORM_ID) platformId: object,
-    public i18n: I18nService) {
+    public i18n: I18nService,
+    private _analytics: AnalyticsService) {
     this.isBrowser = isPlatformBrowser(platformId);
 
     this.fuelTypes = this._carTaxService.getFuelTypes();
@@ -194,6 +196,7 @@ export class CarTaxFormComponent implements OnInit {
   }
 
   clearVehicle(): void {
+    this._analytics.event('plate_clear', { plate: this.plateInput.trim().toUpperCase() });
     this.vehicleInfo = null;
     this.detectedFuelType = null;
     this.detectedWeight = null;
@@ -212,6 +215,7 @@ export class CarTaxFormComponent implements OnInit {
   setPricePeriod(period: 'monthly' | 'quarterly' | 'yearly'): void {
     this.pricePeriod = period;
     this.pricePeriodSubject.next(period);
+    this._analytics.event('period_select', { period });
   }
 
   get isPlateValid(): boolean {
@@ -233,6 +237,9 @@ export class CarTaxFormComponent implements OnInit {
     this.detectedFuelType = null;
     this.detectedWeight = null;
 
+    const plate = this.plateInput.trim().toUpperCase();
+    this._analytics.event('plate_search', { plate });
+
     this._rdwService.lookupVehicle(this.plateInput).subscribe(vehicle => {
       this.isLoadingVehicle = false;
       if (vehicle && vehicle.massa_ledig_voertuig) {
@@ -247,8 +254,10 @@ export class CarTaxFormComponent implements OnInit {
         }
         this.carTaxControl.patchValue(patch);
         this.sliderValue = weight;
+        this._analytics.event('plate_found', { plate, fuel_type: fuelType, weight_kg: weight });
       } else {
         this.vehicleNotFound = true;
+        this._analytics.event('plate_not_found', { plate });
       }
     });
   }
