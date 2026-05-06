@@ -2,7 +2,7 @@ import { Injectable, PLATFORM_ID, Inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { isValidDutchPlate } from './rdw.service';
 
-const OCR_MIN_WIDTH = 500; // upscale if narrower — minimum for reliable Tesseract output
+const OCR_MIN_WIDTH = 800; // upscale if narrower — characters need ~30px tall for Tesseract
 
 @Injectable({ providedIn: 'root' })
 export class KentekenScanService {
@@ -53,7 +53,10 @@ export class KentekenScanService {
     ]);
 
     const { data: { text } } = await worker.recognize(processedBlob);
-    return this.extractPlateCandidates(text);
+    console.debug('[KentekenScan] OCR raw:', JSON.stringify(text));
+    const candidates = this.extractPlateCandidates(text);
+    console.debug('[KentekenScan] candidates:', candidates);
+    return candidates;
   }
 
   private prepareImage(file: File): Promise<Blob> {
@@ -75,7 +78,8 @@ export class KentekenScanService {
         const plateCanvas = this.cropYellow(canvas) ?? canvas;
         // Scale up so characters are tall enough for Tesseract (~30px minimum)
         const scaled = this.upscale(plateCanvas);
-        // Convert to high-contrast grayscale: yellow bg → white, dark text → black
+        // Contrast-stretch grayscale — softer than binarization, works better
+        // with Tesseract LSTM and avoids NL-band polarity inversion issues
         this.enhance(scaled);
 
         scaled.toBlob(b => resolve(b ?? file), 'image/png');
@@ -139,10 +143,13 @@ export class KentekenScanService {
     const ctx = canvas.getContext('2d')!;
     const id = ctx.getImageData(0, 0, canvas.width, canvas.height);
     const d = id.data;
-    // Grayscale + threshold: yellow plate bg → white, dark blue text → black
+    // Contrast-stretch grayscale: map [50, 210] → [0, 255].
+    // Hard binarization hurts Tesseract LSTM and inverts polarity on the NL
+    // indicator strip (blue bg → black, white "NL" → white = opposite of plate).
+    // Soft stretching keeps edge detail and lets Tesseract decide boundaries.
     for (let i = 0; i < d.length; i += 4) {
       const gray = 0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2];
-      const v = gray > 128 ? 255 : 0;
+      const v = Math.max(0, Math.min(255, Math.round((gray - 50) * 255 / 160)));
       d[i] = d[i + 1] = d[i + 2] = v;
     }
     ctx.putImageData(id, 0, 0);

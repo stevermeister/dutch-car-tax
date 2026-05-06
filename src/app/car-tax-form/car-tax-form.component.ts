@@ -1,4 +1,4 @@
-import { concat, Observable, BehaviorSubject, combineLatest, firstValueFrom } from 'rxjs';
+import { concat, Observable, BehaviorSubject, combineLatest } from 'rxjs';
 import { map, delay, filter, take, debounceTime, shareReplay } from 'rxjs/operators';
 import { Component, OnInit, ViewChild, Inject, PLATFORM_ID, ElementRef, NgZone } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
@@ -246,22 +246,13 @@ export class CarTaxFormComponent implements OnInit {
         return;
       }
 
-      for (const candidate of candidates) {
-        const vehicle = await firstValueFrom(this._rdwService.lookupVehicle(candidate));
-        if (vehicle?.massa_ledig_voertuig) {
-          this._zone.run(() => {
-            this.plateInput = candidate;
-            this.scanState = 'idle';
-            this._analytics.event('kenteken_scan_success', { plate: candidate });
-            this.searchVehicle();
-          });
-          return;
-        }
-      }
-
+      // Fill with the best OCR candidate and let the existing search flow
+      // show vehicle info or "not found" — avoids a redundant extra RDW call
       this._zone.run(() => {
-        this.scanState = 'error';
-        this.scanError = 'Kenteken niet herkend, probeer opnieuw';
+        this.plateInput = candidates[0];
+        this.scanState = 'idle';
+        this._analytics.event('kenteken_scan_success', { plate: candidates[0] });
+        this.searchVehicle();
       });
 
     } catch {
