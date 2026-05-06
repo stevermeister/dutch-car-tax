@@ -2,9 +2,13 @@ import { Injectable, PLATFORM_ID, Inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { isValidDutchPlate } from './rdw.service';
 
+const OCR_MIN_WIDTH = 500; // upscale if narrower — minimum for reliable Tesseract output
+
 @Injectable({ providedIn: 'root' })
 export class KentekenScanService {
-  private _mod: any = null;
+  // Worker is created once and kept alive; re-creating it re-downloads eng.traineddata (~4MB)
+  private _workerReady: Promise<any> | null = null;
+  private _worker: any = null;
   private readonly isBrowser: boolean;
 
   constructor(@Inject(PLATFORM_ID) platformId: object) {
@@ -12,40 +16,47 @@ export class KentekenScanService {
   }
 
   get isLoaded(): boolean {
-    return this._mod !== null;
+    return this._worker !== null;
   }
 
   preload(): void {
-    if (this.isBrowser && !this._mod) {
-      import('tesseract.js').then(m => { this._mod = m; }).catch(() => {});
+    if (this.isBrowser && !this._workerReady) {
+      this._workerReady = this.createWorker();
     }
+  }
+
+  private async createWorker(): Promise<any> {
+    const mod = await import('tesseract.js') as any;
+    const worker = await mod.createWorker('eng');
+    await worker.setParameters({
+      tessedit_char_whitelist: '0123456789ABCDEFGHJKLMNPRSTUVWXYZ-',
+      tessedit_pageseg_mode: mod.PSM.SINGLE_LINE,
+    });
+    this._worker = worker;
+    return worker;
+  }
+
+  private getWorker(): Promise<any> {
+    if (!this._workerReady) {
+      this._workerReady = this.createWorker();
+    }
+    return this._workerReady;
   }
 
   async scanImage(file: File): Promise<string[]> {
     if (!this.isBrowser) return [];
 
-    const croppedBlob = await this.cropYellowRegion(file);
+    // Prepare image and initialize worker in parallel — they're independent
+    const [processedBlob, worker] = await Promise.all([
+      this.prepareImage(file),
+      this.getWorker(),
+    ]);
 
-    if (!this._mod) {
-      this._mod = await import('tesseract.js');
-    }
-
-    const { createWorker, PSM } = this._mod;
-    const worker = await createWorker('eng');
-    await worker.setParameters({
-      tessedit_char_whitelist: '0123456789ABCDEFGHJKLMNPRSTUVWXYZ',
-      tessedit_pageseg_mode: PSM.SINGLE_LINE,
-    });
-
-    try {
-      const { data: { text } } = await worker.recognize(croppedBlob);
-      return this.extractPlateCandidates(text);
-    } finally {
-      await worker.terminate();
-    }
+    const { data: { text } } = await worker.recognize(processedBlob);
+    return this.extractPlateCandidates(text);
   }
 
-  private cropYellowRegion(file: File): Promise<Blob> {
+  private prepareImage(file: File): Promise<Blob> {
     return new Promise(resolve => {
       const img = new Image();
       const url = URL.createObjectURL(file);
@@ -53,58 +64,94 @@ export class KentekenScanService {
       img.onerror = () => { URL.revokeObjectURL(url); resolve(file); };
       img.onload = () => {
         URL.revokeObjectURL(url);
+
         const canvas = document.createElement('canvas');
         canvas.width = img.naturalWidth;
         canvas.height = img.naturalHeight;
         const ctx = canvas.getContext('2d')!;
         ctx.drawImage(img, 0, 0);
 
-        const { data, width, height } = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        let minX = width, maxX = 0, minY = height, maxY = 0, count = 0;
+        // Crop to yellow region; fall back to full image if not found
+        const plateCanvas = this.cropYellow(canvas) ?? canvas;
+        // Scale up so characters are tall enough for Tesseract (~30px minimum)
+        const scaled = this.upscale(plateCanvas);
+        // Convert to high-contrast grayscale: yellow bg → white, dark text → black
+        this.enhance(scaled);
 
-        for (let i = 0; i < data.length; i += 4) {
-          const r = data[i], g = data[i + 1], b = data[i + 2];
-          // Dutch plate yellow: high R+G, low B
-          if (r > 200 && g > 160 && b < 80 && r > b + 120 && g > b + 100) {
-            const px = (i / 4) % width;
-            const py = Math.floor((i / 4) / width);
-            if (px < minX) minX = px;
-            if (px > maxX) maxX = px;
-            if (py < minY) minY = py;
-            if (py > maxY) maxY = py;
-            count++;
-          }
-        }
-
-        const yellowW = maxX - minX;
-        const yellowH = maxY - minY;
-        if (count < 500 || yellowW < 60 || yellowH < 10) {
-          canvas.toBlob(b => resolve(b ?? file), 'image/jpeg', 0.92);
-          return;
-        }
-
-        const pad = 30;
-        const cx = Math.max(0, minX - pad);
-        const cy = Math.max(0, minY - pad);
-        const cw = Math.min(width - cx, yellowW + pad * 2);
-        const ch = Math.min(height - cy, yellowH + pad * 2);
-
-        const crop = document.createElement('canvas');
-        crop.width = cw;
-        crop.height = ch;
-        crop.getContext('2d')!.drawImage(canvas, cx, cy, cw, ch, 0, 0, cw, ch);
-        crop.toBlob(b => resolve(b ?? file), 'image/jpeg', 0.92);
+        scaled.toBlob(b => resolve(b ?? file), 'image/png');
       };
 
       img.src = url;
     });
   }
 
+  private cropYellow(canvas: HTMLCanvasElement): HTMLCanvasElement | null {
+    const ctx = canvas.getContext('2d')!;
+    const { data, width, height } = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    let minX = width, maxX = 0, minY = height, maxY = 0, count = 0;
+
+    for (let i = 0; i < data.length; i += 4) {
+      const r = data[i], g = data[i + 1], b = data[i + 2];
+      // Dutch plate yellow (tolerant — JPEG compression shifts values)
+      if (r > 180 && g > 140 && b < 80 && r > b + 100 && g > b + 80) {
+        const px = (i / 4) % width;
+        const py = Math.floor((i / 4) / width);
+        if (px < minX) minX = px;
+        if (px > maxX) maxX = px;
+        if (py < minY) minY = py;
+        if (py > maxY) maxY = py;
+        count++;
+      }
+    }
+
+    const w = maxX - minX;
+    const h = maxY - minY;
+    // Require a plausible plate-shaped region (wider than tall, at least some pixels)
+    if (count < 50 || w < 20 || h < 4 || w < h) return null;
+
+    const pad = Math.max(4, Math.round(h * 0.3));
+    const cx = Math.max(0, minX - pad);
+    const cy = Math.max(0, minY - pad);
+    const cw = Math.min(width - cx, w + pad * 2);
+    const ch = Math.min(height - cy, h + pad * 2);
+
+    const crop = document.createElement('canvas');
+    crop.width = cw;
+    crop.height = ch;
+    crop.getContext('2d')!.drawImage(canvas, cx, cy, cw, ch, 0, 0, cw, ch);
+    return crop;
+  }
+
+  private upscale(canvas: HTMLCanvasElement): HTMLCanvasElement {
+    if (canvas.width >= OCR_MIN_WIDTH) return canvas;
+    const scale = Math.ceil(OCR_MIN_WIDTH / canvas.width);
+    const out = document.createElement('canvas');
+    out.width = canvas.width * scale;
+    out.height = canvas.height * scale;
+    const ctx = out.getContext('2d')!;
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+    ctx.drawImage(canvas, 0, 0, out.width, out.height);
+    return out;
+  }
+
+  private enhance(canvas: HTMLCanvasElement): void {
+    const ctx = canvas.getContext('2d')!;
+    const id = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const d = id.data;
+    // Grayscale + threshold: yellow plate bg → white, dark blue text → black
+    for (let i = 0; i < d.length; i += 4) {
+      const gray = 0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2];
+      const v = gray > 128 ? 255 : 0;
+      d[i] = d[i + 1] = d[i + 2] = v;
+    }
+    ctx.putImageData(id, 0, 0);
+  }
+
   extractPlateCandidates(text: string): string[] {
     const found = new Set<string>();
     const clean = text.toUpperCase().replace(/[^A-Z0-9]/g, '');
 
-    // All Dutch plates are 6 alphanumeric chars; valid dash groupings by char position
     const dashPatterns: [number, number][] = [
       [2, 4], // 2-2-2  (sidecodes 1–6)
       [2, 5], // 2-3-1  (sidecodes 7, 9)
@@ -117,9 +164,7 @@ export class KentekenScanService {
       const sub = clean.slice(i, i + 6);
       for (const [p1, p2] of dashPatterns) {
         const candidate = `${sub.slice(0, p1)}-${sub.slice(p1, p2)}-${sub.slice(p2)}`;
-        if (isValidDutchPlate(candidate)) {
-          found.add(candidate);
-        }
+        if (isValidDutchPlate(candidate)) found.add(candidate);
       }
     }
 
