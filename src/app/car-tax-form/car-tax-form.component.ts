@@ -1,6 +1,6 @@
-import { concat, Observable, BehaviorSubject, combineLatest } from 'rxjs';
+import { concat, Observable, BehaviorSubject, combineLatest, firstValueFrom } from 'rxjs';
 import { map, delay, filter, take, debounceTime, shareReplay } from 'rxjs/operators';
-import { Component, OnInit, ViewChild, Inject, PLATFORM_ID } from '@angular/core';
+import { Component, OnInit, ViewChild, Inject, PLATFORM_ID, ElementRef, NgZone } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { MatSelect } from '@angular/material/select';
 import { FormGroup, FormBuilder } from '@angular/forms';
@@ -9,6 +9,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { RdwService, RdwVehicle, isValidDutchPlate } from './rdw.service';
 import { I18nService } from '../i18n.service';
 import { AnalyticsService } from '../analytics.service';
+import { KentekenScanService } from './kenteken-scan.service';
 
 export type FormValue = {
   'provinceKey': string;
@@ -68,6 +69,11 @@ export class CarTaxFormComponent implements OnInit {
   public plateInput = '';
   public isLoadingVehicle = false;
   public vehicleNotFound = false;
+  public scanState: 'idle' | 'loading' | 'processing' | 'error' = 'idle';
+  public scanError: string | null = null;
+  public showPrivacyNote = false;
+
+  @ViewChild('scanFileInput') private scanFileInput!: ElementRef<HTMLInputElement>;
   public displayPrice$: Observable<number>;
   public pricePeriod: 'monthly' | 'quarterly' | 'yearly' = 'quarterly';
   private pricePeriodSubject = new BehaviorSubject<'monthly' | 'quarterly' | 'yearly'>('quarterly');
@@ -87,7 +93,9 @@ export class CarTaxFormComponent implements OnInit {
     private _rdwService: RdwService,
     @Inject(PLATFORM_ID) platformId: object,
     public i18n: I18nService,
-    private _analytics: AnalyticsService) {
+    private _analytics: AnalyticsService,
+    private _kentekenScan: KentekenScanService,
+    private _zone: NgZone) {
     this.isBrowser = isPlatformBrowser(platformId);
 
     this.fuelTypes = this._carTaxService.getFuelTypes();
@@ -201,11 +209,67 @@ export class CarTaxFormComponent implements OnInit {
     this.detectedFuelType = null;
     this.detectedWeight = null;
     this.vehicleNotFound = false;
+    this.scanState = 'idle';
+    this.scanError = null;
     this._router.navigate([], {
       relativeTo: this._activatedRoute,
       queryParams: { plate: null },
       queryParamsHandling: 'merge'
     });
+  }
+
+  triggerScan(): void {
+    if (!this.isBrowser || !this.scanFileInput?.nativeElement) return;
+    this.showPrivacyNote = true;
+    this._kentekenScan.preload();
+    this.scanFileInput.nativeElement.click();
+  }
+
+  async onFileSelected(event: Event): Promise<void> {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+    input.value = '';
+
+    this.scanState = this._kentekenScan.isLoaded ? 'processing' : 'loading';
+    this.scanError = null;
+    this._analytics.event('kenteken_scan_attempted');
+
+    try {
+      const candidates = await this._kentekenScan.scanImage(file);
+
+      if (!candidates.length) {
+        this._zone.run(() => {
+          this.scanState = 'error';
+          this.scanError = 'Kenteken niet herkend, probeer opnieuw';
+        });
+        return;
+      }
+
+      for (const candidate of candidates) {
+        const vehicle = await firstValueFrom(this._rdwService.lookupVehicle(candidate));
+        if (vehicle?.massa_ledig_voertuig) {
+          this._zone.run(() => {
+            this.plateInput = candidate;
+            this.scanState = 'idle';
+            this._analytics.event('kenteken_scan_success', { plate: candidate });
+            this.searchVehicle();
+          });
+          return;
+        }
+      }
+
+      this._zone.run(() => {
+        this.scanState = 'error';
+        this.scanError = 'Kenteken niet herkend, probeer opnieuw';
+      });
+
+    } catch {
+      this._zone.run(() => {
+        this.scanState = 'error';
+        this.scanError = 'Kenteken niet herkend, probeer opnieuw';
+      });
+    }
   }
 
   getFuelLabel(fuel: string): string {
