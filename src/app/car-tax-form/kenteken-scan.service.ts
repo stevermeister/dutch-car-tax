@@ -146,11 +146,14 @@ export class KentekenScanService {
     }
 
     const pad = Math.max(4, Math.round(h * 0.3));
-    const cx = Math.max(0, minX - pad);
+    // No left padding: the NL indicator strip sits immediately left of the
+    // yellow region. Including it creates a polarity-flipped zone (white "NL"
+    // on black) that breaks PSM.SINGLE_LINE OCR. 2px is enough for anti-alias.
+    const cx = Math.max(0, minX - 2);
     const cy = Math.max(0, minY - pad);
-    const cw = Math.min(width - cx, w + pad * 2);
+    const cw = Math.min(width - cx, maxX - cx + pad);
     const ch = Math.min(height - cy, h + pad * 2);
-    LOG(`cropYellow: cropping to ${cw}×${ch} at (${cx},${cy}) pad=${pad}`);
+    LOG(`cropYellow: cropping to ${cw}×${ch} at (${cx},${cy}) padLeft=2 pad=${pad}`);
 
     const crop = document.createElement('canvas');
     crop.width = cw;
@@ -213,12 +216,9 @@ export class KentekenScanService {
     const ctx = canvas.getContext('2d')!;
     const id  = ctx.getImageData(0, 0, canvas.width, canvas.height);
     const d   = id.data;
-    // Contrast-stretch grayscale [50, 210] → [0, 255].
-    // Soft stretch preserves edge detail and avoids the polarity inversion
-    // caused by hard binarization on the NL indicator strip.
     for (let i = 0; i < d.length; i += 4) {
       const gray = 0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2];
-      const v = Math.max(0, Math.min(255, Math.round((gray - 50) * 255 / 160)));
+      const v = gray > 128 ? 255 : 0;
       d[i] = d[i + 1] = d[i + 2] = v;
     }
     ctx.putImageData(id, 0, 0);
