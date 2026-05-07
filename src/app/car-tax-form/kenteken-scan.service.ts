@@ -50,8 +50,8 @@ export class KentekenScanService {
     return this._workerReady;
   }
 
-  async scanImage(file: File): Promise<string[]> {
-    if (!this.isBrowser) return [];
+  async scanImage(file: File): Promise<{ candidates: string[]; confidence: number }> {
+    if (!this.isBrowser) return { candidates: [], confidence: 0 };
     LOG(`scanImage: file="${file.name}" size=${(file.size / 1024).toFixed(0)}KB type=${file.type}`);
 
     const t0 = performance.now();
@@ -69,7 +69,7 @@ export class KentekenScanService {
 
     const candidates = this.extractPlateCandidates(text);
     LOG('candidates:', candidates);
-    return candidates;
+    return { candidates, confidence: confidence ?? 0 };
   }
 
   private prepareImage(file: File): Promise<Blob> {

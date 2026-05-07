@@ -236,12 +236,14 @@ export class CarTaxFormComponent implements OnInit {
     this._analytics.event('kenteken_scan_attempted');
 
     try {
-      const candidates = await this._kentekenScan.scanImage(file);
+      const { candidates, confidence } = await this._kentekenScan.scanImage(file);
 
       if (!candidates.length) {
         this._zone.run(() => {
           this.scanState = 'error';
-          this.scanError = 'Kenteken niet herkend, probeer opnieuw';
+          this.scanError = confidence < 30
+            ? 'Foto te onscherp — maak een scherpere foto van het kenteken'
+            : 'Kenteken niet herkend, probeer opnieuw';
         });
         return;
       }
