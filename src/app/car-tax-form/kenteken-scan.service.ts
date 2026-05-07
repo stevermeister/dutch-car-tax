@@ -2,11 +2,11 @@ import { Injectable, PLATFORM_ID, Inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { isValidDutchPlate } from './rdw.service';
 
-const OCR_MIN_WIDTH = 800; // upscale if narrower — characters need ~30px tall for Tesseract
+const OCR_MIN_WIDTH = 800;
+const LOG = (...a: any[]) => console.log('[KentekenScan]', ...a);
 
 @Injectable({ providedIn: 'root' })
 export class KentekenScanService {
-  // Worker is created once and kept alive; re-creating it re-downloads eng.traineddata (~4MB)
   private _workerReady: Promise<any> | null = null;
   private _worker: any = null;
   private readonly isBrowser: boolean;
@@ -21,18 +21,25 @@ export class KentekenScanService {
 
   preload(): void {
     if (this.isBrowser && !this._workerReady) {
+      LOG('preload: starting worker init');
       this._workerReady = this.createWorker();
     }
   }
 
   private async createWorker(): Promise<any> {
+    const t0 = performance.now();
+    LOG('worker: importing tesseract.js module…');
     const mod = await import('tesseract.js') as any;
+    LOG(`worker: module ready in ${(performance.now() - t0).toFixed(0)}ms — creating worker (downloads eng.traineddata ~4MB)…`);
+    const t1 = performance.now();
     const worker = await mod.createWorker('eng');
+    LOG(`worker: createWorker done in ${(performance.now() - t1).toFixed(0)}ms — setting params…`);
     await worker.setParameters({
       tessedit_char_whitelist: '0123456789ABCDEFGHJKLMNPRSTUVWXYZ-',
       tessedit_pageseg_mode: mod.PSM.SINGLE_LINE,
     });
     this._worker = worker;
+    LOG(`worker: fully ready — total ${(performance.now() - t0).toFixed(0)}ms`);
     return worker;
   }
 
@@ -45,17 +52,23 @@ export class KentekenScanService {
 
   async scanImage(file: File): Promise<string[]> {
     if (!this.isBrowser) return [];
+    LOG(`scanImage: file="${file.name}" size=${(file.size / 1024).toFixed(0)}KB type=${file.type}`);
 
-    // Prepare image and initialize worker in parallel — they're independent
+    const t0 = performance.now();
     const [processedBlob, worker] = await Promise.all([
       this.prepareImage(file),
       this.getWorker(),
     ]);
+    LOG(`prepareImage + getWorker done in ${(performance.now() - t0).toFixed(0)}ms — processedBlob size=${(processedBlob.size / 1024).toFixed(0)}KB`);
 
-    const { data: { text } } = await worker.recognize(processedBlob);
-    console.debug('[KentekenScan] OCR raw:', JSON.stringify(text));
+    LOG('OCR: recognize starting…');
+    const t1 = performance.now();
+    const { data: { text, confidence } } = await worker.recognize(processedBlob);
+    LOG(`OCR: done in ${(performance.now() - t1).toFixed(0)}ms  confidence=${confidence?.toFixed(1)}`);
+    LOG('OCR raw text:', JSON.stringify(text));
+
     const candidates = this.extractPlateCandidates(text);
-    console.debug('[KentekenScan] candidates:', candidates);
+    LOG('candidates:', candidates);
     return candidates;
   }
 
@@ -64,9 +77,15 @@ export class KentekenScanService {
       const img = new Image();
       const url = URL.createObjectURL(file);
 
-      img.onerror = () => { URL.revokeObjectURL(url); resolve(file); };
+      img.onerror = (e) => {
+        LOG('prepareImage: img.onerror — falling back to raw file', e);
+        URL.revokeObjectURL(url);
+        resolve(file);
+      };
+
       img.onload = () => {
         URL.revokeObjectURL(url);
+        LOG(`prepareImage: image loaded ${img.naturalWidth}×${img.naturalHeight}px`);
 
         const canvas = document.createElement('canvas');
         canvas.width = img.naturalWidth;
@@ -74,15 +93,19 @@ export class KentekenScanService {
         const ctx = canvas.getContext('2d')!;
         ctx.drawImage(img, 0, 0);
 
-        // Crop to yellow region; fall back to full image if not found
-        const plateCanvas = this.cropYellow(canvas) ?? canvas;
-        // Scale up so characters are tall enough for Tesseract (~30px minimum)
+        const cropped = this.cropYellow(canvas);
+        const plateCanvas = cropped ?? canvas;
+        if (!cropped) LOG('cropYellow: no yellow region found — using full image');
+
         const scaled = this.upscale(plateCanvas);
-        // Contrast-stretch grayscale — softer than binarization, works better
-        // with Tesseract LSTM and avoids NL-band polarity inversion issues
+        LOG(`after upscale: ${scaled.width}×${scaled.height}px`);
+
         this.enhance(scaled);
 
-        scaled.toBlob(b => resolve(b ?? file), 'image/png');
+        scaled.toBlob(b => {
+          LOG(`prepareImage: final blob ${((b?.size ?? 0) / 1024).toFixed(0)}KB`);
+          resolve(b ?? file);
+        }, 'image/png');
       };
 
       img.src = url;
@@ -96,7 +119,6 @@ export class KentekenScanService {
 
     for (let i = 0; i < data.length; i += 4) {
       const r = data[i], g = data[i + 1], b = data[i + 2];
-      // Dutch plate yellow (tolerant — JPEG compression shifts values)
       if (r > 180 && g > 140 && b < 80 && r > b + 100 && g > b + 80) {
         const px = (i / 4) % width;
         const py = Math.floor((i / 4) / width);
@@ -110,8 +132,12 @@ export class KentekenScanService {
 
     const w = maxX - minX;
     const h = maxY - minY;
-    // Require a plausible plate-shaped region (wider than tall, at least some pixels)
-    if (count < 50 || w < 20 || h < 4 || w < h) return null;
+    LOG(`cropYellow: yellowPixels=${count}  bbox=${w}×${h}  (minX=${minX} minY=${minY})`);
+
+    if (count < 50 || w < 20 || h < 4 || w < h) {
+      LOG(`cropYellow: rejected (count<50=${count<50} w<20=${w<20} h<4=${h<4} w<h=${w<h})`);
+      return null;
+    }
 
     const pad = Math.max(4, Math.round(h * 0.3));
     const cx = Math.max(0, minX - pad);
@@ -119,6 +145,7 @@ export class KentekenScanService {
     const cw = Math.min(width - cx, w + pad * 2);
     const ch = Math.min(height - cy, h + pad * 2);
 
+    LOG(`cropYellow: cropping to ${cw}×${ch} at (${cx},${cy}) with pad=${pad}`);
     const crop = document.createElement('canvas');
     crop.width = cw;
     crop.height = ch;
@@ -127,8 +154,12 @@ export class KentekenScanService {
   }
 
   private upscale(canvas: HTMLCanvasElement): HTMLCanvasElement {
-    if (canvas.width >= OCR_MIN_WIDTH) return canvas;
+    if (canvas.width >= OCR_MIN_WIDTH) {
+      LOG(`upscale: skipped (${canvas.width}px >= ${OCR_MIN_WIDTH}px)`);
+      return canvas;
+    }
     const scale = Math.ceil(OCR_MIN_WIDTH / canvas.width);
+    LOG(`upscale: ${canvas.width}×${canvas.height} → ×${scale}`);
     const out = document.createElement('canvas');
     out.width = canvas.width * scale;
     out.height = canvas.height * scale;
@@ -143,10 +174,6 @@ export class KentekenScanService {
     const ctx = canvas.getContext('2d')!;
     const id = ctx.getImageData(0, 0, canvas.width, canvas.height);
     const d = id.data;
-    // Contrast-stretch grayscale: map [50, 210] → [0, 255].
-    // Hard binarization hurts Tesseract LSTM and inverts polarity on the NL
-    // indicator strip (blue bg → black, white "NL" → white = opposite of plate).
-    // Soft stretching keeps edge detail and lets Tesseract decide boundaries.
     for (let i = 0; i < d.length; i += 4) {
       const gray = 0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2];
       const v = Math.max(0, Math.min(255, Math.round((gray - 50) * 255 / 160)));
@@ -160,11 +187,11 @@ export class KentekenScanService {
     const clean = text.toUpperCase().replace(/[^A-Z0-9]/g, '');
 
     const dashPatterns: [number, number][] = [
-      [2, 4], // 2-2-2  (sidecodes 1–6)
-      [2, 5], // 2-3-1  (sidecodes 7, 9)
-      [1, 4], // 1-3-2  (sidecodes 8, 10)
-      [3, 5], // 3-2-1  (sidecodes 11, 13)
-      [1, 3], // 1-2-3  (sidecode 12, 14)
+      [2, 4], // 2-2-2
+      [2, 5], // 2-3-1
+      [1, 4], // 1-3-2
+      [3, 5], // 3-2-1
+      [1, 3], // 1-2-3
     ];
 
     for (let i = 0; i <= clean.length - 6; i++) {
