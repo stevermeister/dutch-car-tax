@@ -59,7 +59,7 @@ export class KentekenScanService {
       this.prepareImage(file),
       this.getWorker(),
     ]);
-    LOG(`prepareImage + getWorker done in ${(performance.now() - t0).toFixed(0)}ms — processedBlob size=${(processedBlob.size / 1024).toFixed(0)}KB`);
+    LOG(`prepareImage + getWorker in ${(performance.now() - t0).toFixed(0)}ms — blob ${(processedBlob.size / 1024).toFixed(0)}KB`);
 
     LOG('OCR: recognize starting…');
     const t1 = performance.now();
@@ -78,7 +78,7 @@ export class KentekenScanService {
       const url = URL.createObjectURL(file);
 
       img.onerror = (e) => {
-        LOG('prepareImage: img.onerror — falling back to raw file', e);
+        LOG('prepareImage: img.onerror — using raw file', e);
         URL.revokeObjectURL(url);
         resolve(file);
       };
@@ -90,16 +90,19 @@ export class KentekenScanService {
         const canvas = document.createElement('canvas');
         canvas.width = img.naturalWidth;
         canvas.height = img.naturalHeight;
-        const ctx = canvas.getContext('2d')!;
-        ctx.drawImage(img, 0, 0);
+        canvas.getContext('2d')!.drawImage(img, 0, 0);
 
-        const cropped = this.cropYellow(canvas);
-        const plateCanvas = cropped ?? canvas;
-        if (!cropped) LOG('cropYellow: no yellow region found — using full image');
+        // 1. Try HSV-based yellow crop (handles pure yellow through amber/gold)
+        let plateCanvas = this.cropYellow(canvas);
+
+        // 2. Fallback: center-vertical strip — plates rarely appear at top/bottom edge
+        if (!plateCanvas) {
+          plateCanvas = this.cropCenterBand(canvas);
+          LOG('cropYellow failed — using center-band fallback');
+        }
 
         const scaled = this.upscale(plateCanvas);
         LOG(`after upscale: ${scaled.width}×${scaled.height}px`);
-
         this.enhance(scaled);
 
         scaled.toBlob(b => {
@@ -112,6 +115,9 @@ export class KentekenScanService {
     });
   }
 
+  // HSV yellow detection: robust across pure yellow (RAL1016) and gold/amber
+  // plates lit under various conditions. Hue 35–70° covers both without
+  // picking up skin tones (H ≈ 15–25°), orange (H ≈ 20–35°), or white/grey.
   private cropYellow(canvas: HTMLCanvasElement): HTMLCanvasElement | null {
     const ctx = canvas.getContext('2d')!;
     const { data, width, height } = ctx.getImageData(0, 0, canvas.width, canvas.height);
@@ -119,7 +125,7 @@ export class KentekenScanService {
 
     for (let i = 0; i < data.length; i += 4) {
       const r = data[i], g = data[i + 1], b = data[i + 2];
-      if (r > 180 && g > 140 && b < 80 && r > b + 100 && g > b + 80) {
+      if (this.isYellowHsv(r, g, b)) {
         const px = (i / 4) % width;
         const py = Math.floor((i / 4) / width);
         if (px < minX) minX = px;
@@ -135,7 +141,7 @@ export class KentekenScanService {
     LOG(`cropYellow: yellowPixels=${count}  bbox=${w}×${h}  (minX=${minX} minY=${minY})`);
 
     if (count < 50 || w < 20 || h < 4 || w < h) {
-      LOG(`cropYellow: rejected (count<50=${count<50} w<20=${w<20} h<4=${h<4} w<h=${w<h})`);
+      LOG(`cropYellow: rejected (count<50=${count < 50} w<20=${w < 20} h<4=${h < 4} w<h=${w < h})`);
       return null;
     }
 
@@ -144,12 +150,45 @@ export class KentekenScanService {
     const cy = Math.max(0, minY - pad);
     const cw = Math.min(width - cx, w + pad * 2);
     const ch = Math.min(height - cy, h + pad * 2);
+    LOG(`cropYellow: cropping to ${cw}×${ch} at (${cx},${cy}) pad=${pad}`);
 
-    LOG(`cropYellow: cropping to ${cw}×${ch} at (${cx},${cy}) with pad=${pad}`);
     const crop = document.createElement('canvas');
     crop.width = cw;
     crop.height = ch;
     crop.getContext('2d')!.drawImage(canvas, cx, cy, cw, ch, 0, 0, cw, ch);
+    return crop;
+  }
+
+  // Returns true for Dutch plate yellow through gold/amber (hue 35–70°).
+  // Skin tones are H ≈ 15–25°, orange ≈ 20–35°, so both are excluded.
+  private isYellowHsv(r: number, g: number, b: number): boolean {
+    const max = Math.max(r, g, b);
+    const min = Math.min(r, g, b);
+    const delta = max - min;
+    if (delta < 25 || max < 80) return false;          // unsaturated or too dark
+
+    let h: number;
+    if (max === r)      h = 60 * ((g - b) / delta);
+    else if (max === g) h = 60 * ((b - r) / delta) + 120;
+    else                h = 60 * ((r - g) / delta) + 240;
+    if (h < 0) h += 360;
+
+    const s = delta / max;   // saturation 0–1
+    const v = max / 255;     // value 0–1
+
+    return h >= 35 && h <= 70 && s >= 0.28 && v >= 0.45;
+  }
+
+  // When no yellow is found, take the middle 50% of the image height.
+  // In most car photos the plate occupies the horizontal center band.
+  private cropCenterBand(canvas: HTMLCanvasElement): HTMLCanvasElement {
+    const y0 = Math.floor(canvas.height * 0.25);
+    const h  = Math.floor(canvas.height * 0.50);
+    LOG(`cropCenterBand: y=${y0} h=${h} (full width ${canvas.width})`);
+    const crop = document.createElement('canvas');
+    crop.width = canvas.width;
+    crop.height = h;
+    crop.getContext('2d')!.drawImage(canvas, 0, y0, canvas.width, h, 0, 0, canvas.width, h);
     return crop;
   }
 
@@ -161,7 +200,7 @@ export class KentekenScanService {
     const scale = Math.ceil(OCR_MIN_WIDTH / canvas.width);
     LOG(`upscale: ${canvas.width}×${canvas.height} → ×${scale}`);
     const out = document.createElement('canvas');
-    out.width = canvas.width * scale;
+    out.width  = canvas.width  * scale;
     out.height = canvas.height * scale;
     const ctx = out.getContext('2d')!;
     ctx.imageSmoothingEnabled = true;
@@ -172,8 +211,11 @@ export class KentekenScanService {
 
   private enhance(canvas: HTMLCanvasElement): void {
     const ctx = canvas.getContext('2d')!;
-    const id = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    const d = id.data;
+    const id  = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const d   = id.data;
+    // Contrast-stretch grayscale [50, 210] → [0, 255].
+    // Soft stretch preserves edge detail and avoids the polarity inversion
+    // caused by hard binarization on the NL indicator strip.
     for (let i = 0; i < d.length; i += 4) {
       const gray = 0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2];
       const v = Math.max(0, Math.min(255, Math.round((gray - 50) * 255 / 160)));
