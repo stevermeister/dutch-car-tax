@@ -206,9 +206,8 @@ export class KentekenScanService {
     out.width  = canvas.width  * scale;
     out.height = canvas.height * scale;
     const ctx = out.getContext('2d')!;
-    // Nearest-neighbor keeps original pixel values intact so binary
-    // threshold gets clean edges rather than blurred interpolated colors.
-    ctx.imageSmoothingEnabled = false;
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
     ctx.drawImage(canvas, 0, 0, out.width, out.height);
     return out;
   }
@@ -217,20 +216,12 @@ export class KentekenScanService {
     const ctx = canvas.getContext('2d')!;
     const id  = ctx.getImageData(0, 0, canvas.width, canvas.height);
     const d   = id.data;
-    // Adaptive min/max stretch so JPEG-compressed plates (where "black"
-    // letters may be gray 80-150) still binarize cleanly.
-    let lo = 255, hi = 0;
+    // Contrast-stretch [50, 210] → [0, 255] — preserves smooth letter edges
+    // that Tesseract needs without hard-binarizing JPEG compression artifacts.
     for (let i = 0; i < d.length; i += 4) {
-      const g = 0.299 * d[i] + 0.587 * d[i+1] + 0.114 * d[i+2];
-      if (g < lo) lo = g;
-      if (g > hi) hi = g;
-    }
-    const range = Math.max(1, hi - lo);
-    LOG(`enhance: gray range [${lo.toFixed(0)}, ${hi.toFixed(0)}]`);
-    for (let i = 0; i < d.length; i += 4) {
-      const g = 0.299 * d[i] + 0.587 * d[i+1] + 0.114 * d[i+2];
-      const v = (g - lo) * 255 / range > 128 ? 255 : 0;
-      d[i] = d[i+1] = d[i+2] = v;
+      const gray = 0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2];
+      const v = Math.max(0, Math.min(255, Math.round((gray - 50) * 255 / 160)));
+      d[i] = d[i + 1] = d[i + 2] = v;
     }
     ctx.putImageData(id, 0, 0);
   }
