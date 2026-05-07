@@ -1,6 +1,6 @@
 import { concat, Observable, BehaviorSubject, combineLatest } from 'rxjs';
 import { map, delay, filter, take, debounceTime, shareReplay } from 'rxjs/operators';
-import { Component, OnInit, ViewChild, Inject, PLATFORM_ID, ElementRef, NgZone } from '@angular/core';
+import { Component, OnInit, ViewChild, Inject, PLATFORM_ID, ElementRef, NgZone, ChangeDetectorRef } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { MatSelect } from '@angular/material/select';
 import { FormGroup, FormBuilder } from '@angular/forms';
@@ -95,7 +95,8 @@ export class CarTaxFormComponent implements OnInit {
     public i18n: I18nService,
     private _analytics: AnalyticsService,
     private _kentekenScan: KentekenScanService,
-    private _zone: NgZone) {
+    private _zone: NgZone,
+    private _cdr: ChangeDetectorRef) {
     this.isBrowser = isPlatformBrowser(platformId);
 
     this.fuelTypes = this._carTaxService.getFuelTypes();
@@ -244,6 +245,7 @@ export class CarTaxFormComponent implements OnInit {
           this.scanError = confidence < 30
             ? 'Foto te onscherp — maak een scherpere foto van het kenteken'
             : 'Kenteken niet herkend, probeer opnieuw';
+          this._cdr.detectChanges();
         });
         return;
       }
@@ -254,6 +256,7 @@ export class CarTaxFormComponent implements OnInit {
         this.plateInput = candidates[0];
         this.scanState = 'idle';
         this._analytics.event('kenteken_scan_success', { plate: candidates[0] });
+        this._cdr.detectChanges();
         this.searchVehicle();
       });
 
@@ -261,6 +264,7 @@ export class CarTaxFormComponent implements OnInit {
       this._zone.run(() => {
         this.scanState = 'error';
         this.scanError = 'Kenteken niet herkend, probeer opnieuw';
+        this._cdr.detectChanges();
       });
     }
   }
