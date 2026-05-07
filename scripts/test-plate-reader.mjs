@@ -32,14 +32,16 @@ const PLATE_PATTERNS = [
 const isValidDutchPlate = p => PLATE_PATTERNS.some(r => r.test(p));
 
 // OCR commonly confuses these character pairs on license plates
-const CONFUSABLES = [['O','0'],['I','1'],['T','1'],['S','5'],['B','8'],['Z','2'],['G','6'],['L','1']];
+const CONFUSABLES = [['O','0'],['I','1'],['T','1'],['S','5'],['B','8'],['Z','2'],['G','6'],['L','1'],['C','G']];
 
 function extractCandidates(text) {
   const found = new Set();
   const dash = [[2,4],[2,5],[1,4],[3,5],[1,3]];
 
   function tryText(t) {
-    const clean = t.toUpperCase().replace(/[^A-Z0-9]/g, '');
+    // Map symbols that Tesseract commonly misreads as plate characters
+    const mapped = t.replace(/\)/g, 'J').replace(/\(/g, 'C').replace(/\|/g, 'I');
+    const clean = mapped.toUpperCase().replace(/[^A-Z0-9]/g, '');
     for (let i = 0; i <= clean.length - 6; i++) {
       const sub = clean.slice(i, i + 6);
       for (const [p1,p2] of dash) {
@@ -128,27 +130,39 @@ function findPlateRegion(data, width, height) {
 function hot(cells, thr) { return cells.reduce((n,v) => n + (v>=thr?1:0), 0) || 1; }
 
 // ── System tesseract OCR ──────────────────────────────────────────────────────
-const WL = "tessedit_char_whitelist='0123456789ABCDEFGHJKLMNPRSTUVWXYZ-'";
-
+// No whitelist — extractCandidates + plate validation acts as the filter.
+// The whitelist was found to drop 'L' (misread as ']') and 'G' (misread as 'C').
 function ocrFile(path, psm) {
   try {
     return execSync(
-      `tesseract "${path}" stdout --psm ${psm} -c ${WL} 2>/dev/null`,
+      `tesseract "${path}" stdout --psm ${psm} 2>/dev/null`,
       { encoding: 'utf8' }
     ).trim();
   } catch { return ''; }
 }
 
 function bestOcr(imgPath) {
-  // PSM 13 (raw line) usually beats PSM 7 for plate crops
   for (const psm of [13, 7, 11]) {
     const text = ocrFile(imgPath, psm);
     const candidates = extractCandidates(text);
     if (candidates.length) return { psm, text, candidates };
   }
-  // Return last attempt even if no candidates
   const text = ocrFile(imgPath, 7);
   return { psm: 7, text, candidates: [] };
+}
+
+// Find bottom of plate text (last row with >15% yellow pixels).
+// Cuts off dealer stickers that appear below the plate number area.
+function findStickerCutRow(data, width, height) {
+  for (let y = height - 1; y >= Math.floor(height * 0.4); y--) {
+    let yc = 0;
+    for (let x = 0; x < width; x++) {
+      const i = (y * width + x) * 4;
+      if (isYellowHsv(data[i], data[i+1], data[i+2])) yc++;
+    }
+    if (yc / width > 0.15) return y + 1;
+  }
+  return height;
 }
 
 // ── Per-image pipeline ────────────────────────────────────────────────────────
@@ -171,14 +185,23 @@ async function readPlate(imagePath) {
     console.log(`  plate region: fallback lower band`);
   }
 
+  // Trim sticker rows below the plate number (dealer stickers etc.)
+  const { data: cropData, info: cropInfo } = await sharp(imagePath)
+    .extract(cropRegion)
+    .ensureAlpha().raw().toBuffer({ resolveWithObject: true });
+  const cutRow = findStickerCutRow(cropData, cropInfo.width, cropInfo.height);
+  const trimmedRegion = { ...cropRegion, height: cutRow };
+  if (cutRow < cropInfo.height)
+    console.log(`  sticker trim: ${cropInfo.height} → ${cutRow}px`);
+
   // Scale so width ≥ 600px — keep colour (do NOT convert to greyscale)
-  const scale = cropRegion.width < 600 ? Math.ceil(600 / cropRegion.width) : 1;
-  const outW = cropRegion.width  * scale;
-  const outH = cropRegion.height * scale;
+  const scale = trimmedRegion.width < 600 ? Math.ceil(600 / trimmedRegion.width) : 1;
+  const outW = trimmedRegion.width  * scale;
+  const outH = trimmedRegion.height * scale;
 
   const tmp = join(TMP_DIR, `_plate_${name}.png`);
   await sharp(imagePath)
-    .extract(cropRegion)
+    .extract(trimmedRegion)
     .resize(outW, outH, { kernel: 'lanczos3' })
     .png()
     .toFile(tmp);

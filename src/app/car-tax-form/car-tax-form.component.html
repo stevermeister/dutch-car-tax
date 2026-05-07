@@ -22,7 +22,7 @@
 
     <div *ngIf="!vehicleInfo" class="plate-search-row">
       <div class="plate-wrapper">
-        <span class="plate-country">NL</span>
+        <span class="plate-country" (click)="onNlTap()">NL</span>
         <input
           class="plate-input"
           [(ngModel)]="plateInput"
@@ -42,7 +42,7 @@
       </button>
     </div>
 
-    <div *ngIf="!vehicleInfo" class="plate-scan-row">
+    <div *ngIf="!vehicleInfo && isScanEnabled" class="plate-scan-row">
       <button class="scan-btn" type="button"
               [disabled]="scanState === 'loading' || scanState === 'processing'"
               (click)="triggerScan()">
@@ -57,7 +57,7 @@
       </p>
     </div>
 
-    <div *ngIf="!vehicleInfo && scanState === 'error'" class="scan-error">
+    <div *ngIf="!vehicleInfo && isScanEnabled && scanState === 'error'" class="scan-error">
       <mat-icon>warning</mat-icon>
       {{ scanError }}
       <button class="retry-btn" type="button" (click)="triggerScan()">Opnieuw</button>

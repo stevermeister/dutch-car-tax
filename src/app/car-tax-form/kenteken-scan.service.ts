@@ -35,8 +35,10 @@ export class KentekenScanService {
     const worker = await mod.createWorker('eng');
     LOG(`worker: createWorker done in ${(performance.now() - t1).toFixed(0)}ms — setting params…`);
     await worker.setParameters({
-      tessedit_char_whitelist: '0123456789ABCDEFGHJKLMNPRSTUVWXYZ-',
-      tessedit_pageseg_mode: mod.PSM.SINGLE_LINE,
+      // No whitelist: Tesseract misreads L→] and G→C; the whitelist would
+      // silently drop those. extractPlateCandidates + RDW validation is the filter.
+      // PSM 13 (raw line) outperforms PSM 7 on plate crops in testing.
+      tessedit_pageseg_mode: '13',
     });
     this._worker = worker;
     LOG(`worker: fully ready — total ${(performance.now() - t0).toFixed(0)}ms`);
@@ -101,6 +103,9 @@ export class KentekenScanService {
           LOG('cropYellow failed — using center-band fallback');
         }
 
+        // 3. Trim dealer sticker rows that appear below the plate number area
+        plateCanvas = this.trimStickerRows(plateCanvas);
+
         const scaled = this.upscale(plateCanvas);
         LOG(`after upscale: ${scaled.width}×${scaled.height}px`);
         this.enhance(scaled);
@@ -115,50 +120,99 @@ export class KentekenScanService {
     });
   }
 
-  // HSV yellow detection: robust across pure yellow (RAL1016) and gold/amber
-  // plates lit under various conditions. Hue 35–70° covers both without
-  // picking up skin tones (H ≈ 15–25°), orange (H ≈ 20–35°), or white/grey.
-  private cropYellow(canvas: HTMLCanvasElement): HTMLCanvasElement | null {
-    const ctx = canvas.getContext('2d')!;
-    const { data, width, height } = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    let minX = width, maxX = 0, minY = height, maxY = 0, count = 0;
+  // Finds the densest yellow cluster using a grid → connected-components approach,
+  // then refines to a raw-pixel bounding box. Handles cars with scattered yellow
+  // reflections or trim that would fool a simple bounding-box scan.
+  private findPlateRegion(
+    data: Uint8ClampedArray, width: number, height: number
+  ): { left: number; top: number; width: number; height: number } | null {
+    const CELL = Math.max(10, Math.floor(Math.min(width, height) / 60));
+    const cols = Math.ceil(width / CELL);
+    const rows = Math.ceil(height / CELL);
+    const cells = new Int32Array(rows * cols);
 
     for (let i = 0; i < data.length; i += 4) {
-      const r = data[i], g = data[i + 1], b = data[i + 2];
-      if (this.isYellowHsv(r, g, b)) {
+      if (this.isYellowHsv(data[i], data[i + 1], data[i + 2])) {
         const px = (i / 4) % width;
         const py = Math.floor((i / 4) / width);
-        if (px < minX) minX = px;
-        if (px > maxX) maxX = px;
-        if (py < minY) minY = py;
-        if (py > maxY) maxY = py;
-        count++;
+        cells[Math.floor(py / CELL) * cols + Math.floor(px / CELL)]++;
       }
     }
 
-    const w = maxX - minX;
-    const h = maxY - minY;
-    LOG(`cropYellow: yellowPixels=${count}  bbox=${w}×${h}  (minX=${minX} minY=${minY})`);
+    const peak = Math.max(...cells);
+    if (peak < CELL * CELL * 0.08) return null;
+    const thr = peak * 0.25;
+    const visited = new Uint8Array(rows * cols);
+    let best: { minR: number; maxR: number; minC: number; maxC: number } | null = null;
+    let bestScore = -1;
+    const hotCount = cells.reduce((n, v) => n + (v >= thr ? 1 : 0), 0) || 1;
 
-    if (count < 50 || w < 20 || h < 4 || w < h) {
-      LOG(`cropYellow: rejected (count<50=${count < 50} w<20=${w < 20} h<4=${h < 4} w<h=${w < h})`);
-      return null;
+    for (let ri = 0; ri < rows; ri++) {
+      for (let ci = 0; ci < cols; ci++) {
+        if (cells[ri * cols + ci] < thr || visited[ri * cols + ci]) continue;
+        const q: { r: number; c: number }[] = [{ r: ri, c: ci }];
+        visited[ri * cols + ci] = 1;
+        const comp: { r: number; c: number }[] = [];
+        while (q.length) {
+          const { r, c } = q.shift()!;
+          comp.push({ r, c });
+          for (const [dr, dc] of [[-1, 0], [1, 0], [0, -1], [0, 1]] as [number, number][]) {
+            const nr = r + dr, nc = c + dc;
+            if (nr >= 0 && nr < rows && nc >= 0 && nc < cols &&
+                !visited[nr * cols + nc] && cells[nr * cols + nc] >= thr) {
+              visited[nr * cols + nc] = 1;
+              q.push({ r: nr, c: nc });
+            }
+          }
+        }
+        const minR = Math.min(...comp.map(p => p.r)), maxR = Math.max(...comp.map(p => p.r));
+        const minC = Math.min(...comp.map(p => p.c)), maxC = Math.max(...comp.map(p => p.c));
+        const aspect = (maxC - minC + 1) / Math.max(1, maxR - minR + 1);
+        if (aspect < 1.5) continue;
+        const cy = (minR + maxR) / 2 / rows;
+        const score = aspect * 0.4 + cy * 0.3 + comp.length / hotCount * 0.3;
+        if (score > bestScore) { bestScore = score; best = { minR, maxR, minC, maxC }; }
+      }
+    }
+    if (!best) return null;
+
+    // Refine to raw pixel bbox within the winning grid region
+    const gL = best.minC * CELL, gT = best.minR * CELL;
+    const gR = Math.min(width, (best.maxC + 1) * CELL);
+    const gB = Math.min(height, (best.maxR + 1) * CELL);
+    let x0 = gR, x1 = gL, y0 = gB, y1 = gT;
+    for (let y = gT; y < gB; y++) {
+      for (let x = gL; x < gR; x++) {
+        const i = (y * width + x) * 4;
+        if (this.isYellowHsv(data[i], data[i + 1], data[i + 2])) {
+          if (x < x0) x0 = x; if (x > x1) x1 = x;
+          if (y < y0) y0 = y; if (y > y1) y1 = y;
+        }
+      }
     }
 
-    const pad = Math.max(4, Math.round(h * 0.3));
-    // No left padding: the NL indicator strip sits immediately left of the
-    // yellow region. Including it creates a polarity-flipped zone (white "NL"
-    // on black) that breaks PSM.SINGLE_LINE OCR. 2px is enough for anti-alias.
-    const cx = Math.max(0, minX - 2);
-    const cy = Math.max(0, minY - pad);
-    const cw = Math.min(width - cx, maxX - cx + pad);
-    const ch = Math.min(height - cy, h + pad * 2);
-    LOG(`cropYellow: cropping to ${cw}×${ch} at (${cx},${cy}) padLeft=2 pad=${pad}`);
+    const pad = Math.max(3, Math.round((y1 - y0) * 0.15));
+    return {
+      left:   Math.max(0, x0 - 2),
+      top:    Math.max(0, y0 - pad),
+      width:  Math.min(width, x1 + pad) - Math.max(0, x0 - 2),
+      height: Math.min(height, y1 + pad * 2) - Math.max(0, y0 - pad),
+    };
+  }
 
+  private cropYellow(canvas: HTMLCanvasElement): HTMLCanvasElement | null {
+    const ctx = canvas.getContext('2d')!;
+    const { data, width, height } = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const region = this.findPlateRegion(data, width, height);
+    if (!region) {
+      LOG('cropYellow: no dense yellow cluster found');
+      return null;
+    }
+    LOG(`cropYellow: plate region ${region.width}×${region.height} at (${region.left},${region.top})`);
     const crop = document.createElement('canvas');
-    crop.width = cw;
-    crop.height = ch;
-    crop.getContext('2d')!.drawImage(canvas, cx, cy, cw, ch, 0, 0, cw, ch);
+    crop.width = region.width;
+    crop.height = region.height;
+    crop.getContext('2d')!.drawImage(canvas, region.left, region.top, region.width, region.height, 0, 0, region.width, region.height);
     return crop;
   }
 
@@ -195,6 +249,29 @@ export class KentekenScanService {
     return crop;
   }
 
+  // Finds the last row where >15% of pixels are yellow — everything below
+  // that is a dealer sticker or other noise and gets cropped off.
+  private trimStickerRows(canvas: HTMLCanvasElement): HTMLCanvasElement {
+    const ctx = canvas.getContext('2d')!;
+    const { data, width, height } = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    let cutRow = height;
+    for (let y = height - 1; y >= Math.floor(height * 0.4); y--) {
+      let yellowCount = 0;
+      for (let x = 0; x < width; x++) {
+        const i = (y * width + x) * 4;
+        if (this.isYellowHsv(data[i], data[i + 1], data[i + 2])) yellowCount++;
+      }
+      if (yellowCount / width > 0.15) { cutRow = y + 1; break; }
+    }
+    if (cutRow >= height) return canvas;
+    LOG(`trimStickerRows: ${height} → ${cutRow}px`);
+    const trimmed = document.createElement('canvas');
+    trimmed.width = width;
+    trimmed.height = cutRow;
+    trimmed.getContext('2d')!.drawImage(canvas, 0, 0);
+    return trimmed;
+  }
+
   private upscale(canvas: HTMLCanvasElement): HTMLCanvasElement {
     if (canvas.width >= OCR_MIN_WIDTH) {
       LOG(`upscale: skipped (${canvas.width}px >= ${OCR_MIN_WIDTH}px)`);
@@ -216,34 +293,45 @@ export class KentekenScanService {
     const ctx = canvas.getContext('2d')!;
     const id  = ctx.getImageData(0, 0, canvas.width, canvas.height);
     const d   = id.data;
-    // Contrast-stretch [50, 210] → [0, 255] — preserves smooth letter edges
-    // that Tesseract needs without hard-binarizing JPEG compression artifacts.
+    // Contrast-stretch each channel individually — keeps colour so Tesseract's
+    // internal Otsu threshold works on the yellow plate background correctly.
+    // Converting to greyscale here kills recognition quality on yellow plates.
     for (let i = 0; i < d.length; i += 4) {
-      const gray = 0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2];
-      const v = Math.max(0, Math.min(255, Math.round((gray - 50) * 255 / 160)));
-      d[i] = d[i + 1] = d[i + 2] = v;
+      d[i]     = Math.max(0, Math.min(255, Math.round((d[i]     - 50) * 255 / 160)));
+      d[i + 1] = Math.max(0, Math.min(255, Math.round((d[i + 1] - 50) * 255 / 160)));
+      d[i + 2] = Math.max(0, Math.min(255, Math.round((d[i + 2] - 50) * 255 / 160)));
     }
     ctx.putImageData(id, 0, 0);
   }
 
+  private static readonly CONFUSABLES: [string, string][] = [
+    ['O','0'],['I','1'],['T','1'],['S','5'],['B','8'],['Z','2'],['G','6'],['L','1'],['C','G'],
+  ];
+
   extractPlateCandidates(text: string): string[] {
     const found = new Set<string>();
-    const clean = text.toUpperCase().replace(/[^A-Z0-9]/g, '');
-
     const dashPatterns: [number, number][] = [
-      [2, 4], // 2-2-2
-      [2, 5], // 2-3-1
-      [1, 4], // 1-3-2
-      [3, 5], // 3-2-1
-      [1, 3], // 1-2-3
+      [2, 4], [2, 5], [1, 4], [3, 5], [1, 3],
     ];
 
-    for (let i = 0; i <= clean.length - 6; i++) {
-      const sub = clean.slice(i, i + 6);
-      for (const [p1, p2] of dashPatterns) {
-        const candidate = `${sub.slice(0, p1)}-${sub.slice(p1, p2)}-${sub.slice(p2)}`;
-        if (isValidDutchPlate(candidate)) found.add(candidate);
+    const tryText = (t: string) => {
+      // Map symbols Tesseract commonly misreads as plate characters
+      const mapped = t.replace(/\)/g, 'J').replace(/\(/g, 'C').replace(/\|/g, 'I');
+      const clean = mapped.toUpperCase().replace(/[^A-Z0-9]/g, '');
+      for (let i = 0; i <= clean.length - 6; i++) {
+        const sub = clean.slice(i, i + 6);
+        for (const [p1, p2] of dashPatterns) {
+          const candidate = `${sub.slice(0, p1)}-${sub.slice(p1, p2)}-${sub.slice(p2)}`;
+          if (isValidDutchPlate(candidate)) found.add(candidate);
+        }
       }
+    };
+
+    tryText(text);
+    for (const [a, b] of KentekenScanService.CONFUSABLES) {
+      const upper = text.toUpperCase();
+      if (upper.includes(a)) tryText(upper.replaceAll(a, b));
+      if (upper.includes(b)) tryText(upper.replaceAll(b, a));
     }
 
     return [...found];

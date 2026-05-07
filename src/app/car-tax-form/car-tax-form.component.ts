@@ -72,6 +72,7 @@ export class CarTaxFormComponent implements OnInit {
   public scanState: 'idle' | 'loading' | 'processing' | 'error' = 'idle';
   public scanError: string | null = null;
   public showPrivacyNote = false;
+  public isScanEnabled = false;
 
   @ViewChild('scanFileInput') private scanFileInput!: ElementRef<HTMLInputElement>;
   public displayPrice$: Observable<number>;
@@ -217,6 +218,19 @@ export class CarTaxFormComponent implements OnInit {
       queryParams: { plate: null },
       queryParamsHandling: 'merge'
     });
+  }
+
+  private _nlTapCount = 0;
+  private _nlTapTimer: any = null;
+
+  onNlTap(): void {
+    this._nlTapCount++;
+    clearTimeout(this._nlTapTimer);
+    this._nlTapTimer = setTimeout(() => { this._nlTapCount = 0; }, 600);
+    if (this._nlTapCount >= 3) {
+      this._nlTapCount = 0;
+      this.isScanEnabled = true;
+    }
   }
 
   triggerScan(): void {
