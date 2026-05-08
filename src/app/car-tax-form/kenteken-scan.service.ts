@@ -63,13 +63,25 @@ export class KentekenScanService {
     ]);
     LOG(`prepareImage + getWorker in ${(performance.now() - t0).toFixed(0)}ms — blob ${(processedBlob.size / 1024).toFixed(0)}KB`);
 
-    LOG('OCR: recognize starting…');
+    LOG('OCR: recognize starting (psm13 + psm7)…');
     const t1 = performance.now();
-    const { data: { text, confidence } } = await worker.recognize(processedBlob);
-    LOG(`OCR: done in ${(performance.now() - t1).toFixed(0)}ms  confidence=${confidence?.toFixed(1)}`);
-    LOG('OCR raw text:', JSON.stringify(text));
 
-    const candidates = this.extractPlateCandidates(text);
+    await worker.setParameters({ tessedit_pageseg_mode: '13' });
+    const { data: { text: text13, confidence } } = await worker.recognize(processedBlob);
+    LOG(`OCR psm13: done in ${(performance.now() - t1).toFixed(0)}ms  confidence=${confidence?.toFixed(1)}`);
+    LOG('OCR psm13 text:', JSON.stringify(text13));
+
+    await worker.setParameters({ tessedit_pageseg_mode: '7' });
+    const { data: { text: text7 } } = await worker.recognize(processedBlob);
+    LOG('OCR psm7 text:', JSON.stringify(text7));
+
+    // Merge candidates from both passes — PSM 13 leads, PSM 7 catches plates
+    // where PSM 13 produces wrong candidates (e.g. large bold fonts on close crops)
+    const seen = new Set<string>();
+    const candidates: string[] = [];
+    for (const c of [...this.extractPlateCandidates(text13), ...this.extractPlateCandidates(text7)]) {
+      if (!seen.has(c)) { seen.add(c); candidates.push(c); }
+    }
     LOG('candidates:', candidates);
     return { candidates, confidence: confidence ?? 0 };
   }
@@ -305,7 +317,7 @@ export class KentekenScanService {
   }
 
   private static readonly CONFUSABLES: [string, string][] = [
-    ['O','0'],['I','1'],['T','1'],['S','5'],['B','8'],['Z','2'],['G','6'],['L','1'],['C','G'],
+    ['O','0'],['I','1'],['T','1'],['S','5'],['B','8'],['Z','2'],['G','6'],['L','1'],['C','G'],['J','I'],
   ];
 
   extractPlateCandidates(text: string): string[] {

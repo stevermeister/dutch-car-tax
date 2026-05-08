@@ -32,7 +32,7 @@ const PLATE_PATTERNS = [
 const isValidDutchPlate = p => PLATE_PATTERNS.some(r => r.test(p));
 
 // OCR commonly confuses these character pairs on license plates
-const CONFUSABLES = [['O','0'],['I','1'],['T','1'],['S','5'],['B','8'],['Z','2'],['G','6'],['L','1'],['C','G']];
+const CONFUSABLES = [['O','0'],['I','1'],['T','1'],['S','5'],['B','8'],['Z','2'],['G','6'],['L','1'],['C','G'],['J','I']];
 
 function extractCandidates(text) {
   const found = new Set();
@@ -142,13 +142,19 @@ function ocrFile(path, psm) {
 }
 
 function bestOcr(imgPath) {
+  const seen = new Set();
+  const allCandidates = [];
+  let primaryText = '', primaryPsm = 7;
+
   for (const psm of [13, 7, 11]) {
     const text = ocrFile(imgPath, psm);
     const candidates = extractCandidates(text);
-    if (candidates.length) return { psm, text, candidates };
+    if (candidates.length && !primaryText) { primaryText = text; primaryPsm = psm; }
+    for (const c of candidates) { if (!seen.has(c)) { seen.add(c); allCandidates.push(c); } }
   }
-  const text = ocrFile(imgPath, 7);
-  return { psm: 7, text, candidates: [] };
+
+  if (!primaryText) primaryText = ocrFile(imgPath, 7);
+  return { psm: primaryPsm, text: primaryText, candidates: allCandidates };
 }
 
 // Find bottom of plate text (last row with >15% yellow pixels).
