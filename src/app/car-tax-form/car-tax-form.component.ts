@@ -1,6 +1,6 @@
 import { concat, Observable, BehaviorSubject, combineLatest } from 'rxjs';
 import { map, delay, filter, take, debounceTime, shareReplay } from 'rxjs/operators';
-import { Component, OnInit, ViewChild, Inject, PLATFORM_ID, ElementRef, NgZone, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ViewChild, Inject, PLATFORM_ID, NgZone, ChangeDetectorRef } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { MatSelect } from '@angular/material/select';
 import { FormGroup, FormBuilder } from '@angular/forms';
@@ -74,7 +74,6 @@ export class CarTaxFormComponent implements OnInit {
   public showPrivacyNote = false;
   public isScanEnabled = false;
 
-  @ViewChild('scanFileInput') private scanFileInput!: ElementRef<HTMLInputElement>;
   public displayPrice$: Observable<number>;
   public pricePeriod: 'monthly' | 'quarterly' | 'yearly' = 'quarterly';
   private pricePeriodSubject = new BehaviorSubject<'monthly' | 'quarterly' | 'yearly'>('quarterly');
@@ -233,11 +232,15 @@ export class CarTaxFormComponent implements OnInit {
     }
   }
 
-  triggerScan(): void {
-    if (!this.isBrowser || !this.scanFileInput?.nativeElement) return;
+  onScanLabelClick(event: Event): void {
+    if (this.scanState === 'loading' || this.scanState === 'processing') {
+      event.preventDefault();
+      return;
+    }
     this.showPrivacyNote = true;
     this._kentekenScan.preload();
-    this.scanFileInput.nativeElement.click();
+    // No programmatic .click() needed — the <label for="scanFileInput"> opens
+    // the file picker natively, which mobile browsers always trust as a user gesture.
   }
 
   async onFileSelected(event: Event): Promise<void> {

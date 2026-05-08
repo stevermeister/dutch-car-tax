@@ -146,9 +146,10 @@
     border-color: #3f51b5;
   }
 
-  &:disabled {
+  &:disabled, &.scan-btn-disabled {
     opacity: 0.65;
     cursor: default;
+    pointer-events: none;
   }
 }
 
