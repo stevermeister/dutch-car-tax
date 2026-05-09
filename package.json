@@ -10,7 +10,7 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "lint": "ng lint",
-    "publish": "ng build --configuration production --base-href='https://maximsemenov.github.io/dutch-car-tax/' && node ./publish.js",
+    "publish": "npm run build -- --configuration production --base-href='https://maximsemenov.github.io/dutch-car-tax/' && node ./publish.js",
     "serve:ssr:cartax": "node dist/server/server.mjs"
   },
   "private": true,
