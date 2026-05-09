@@ -16,8 +16,10 @@
 
   <!-- Plate lookup -->
   <div class="plate-section">
-    <!-- Hidden file input for camera scan — id used by label below -->
-    <input id="scanFileInput" type="file" accept="image/*"
+    <!-- Two inputs: one opens camera directly, one opens gallery -->
+    <input id="scanCameraInput" type="file" accept="image/*" capture="environment"
+           class="scan-file-input" (change)="onFileSelected($event)" aria-hidden="true">
+    <input id="scanGalleryInput" type="file" accept="image/*"
            class="scan-file-input" (change)="onFileSelected($event)" aria-hidden="true">
 
     <div *ngIf="!vehicleInfo" class="plate-search-row">
@@ -43,16 +45,20 @@
     </div>
 
     <div *ngIf="!vehicleInfo && isScanEnabled" class="plate-scan-row">
-      <!-- Use <label for> instead of programmatic .click() — mobile browsers trust label
-           clicks as a direct user gesture and will open the camera picker reliably. -->
-      <label for="scanFileInput" class="scan-btn"
+      <label for="scanCameraInput" class="scan-btn"
              [class.scan-btn-disabled]="scanState === 'loading' || scanState === 'processing'"
              (click)="onScanLabelClick($event)">
         <mat-spinner *ngIf="scanState === 'loading' || scanState === 'processing'"
                      [diameter]="14" class="scan-spinner"></mat-spinner>
-        <span *ngIf="scanState !== 'loading' && scanState !== 'processing'">📷 Scan kenteken</span>
+        <span *ngIf="scanState !== 'loading' && scanState !== 'processing'">📷 Foto maken</span>
         <span *ngIf="scanState === 'loading'">Scanner laden...</span>
         <span *ngIf="scanState === 'processing'">Kenteken herkennen...</span>
+      </label>
+      <label for="scanGalleryInput" class="scan-btn"
+             [class.scan-btn-disabled]="scanState === 'loading' || scanState === 'processing'"
+             (click)="onScanLabelClick($event)">
+        <span *ngIf="scanState !== 'loading' && scanState !== 'processing'">🖼 Uit galerij</span>
+        <span *ngIf="scanState === 'loading' || scanState === 'processing'">...</span>
       </label>
       <p *ngIf="showPrivacyNote" class="privacy-note">
         Foto blijft op je telefoon — herkenning gebeurt lokaal
@@ -62,7 +68,7 @@
     <div *ngIf="!vehicleInfo && isScanEnabled && scanState === 'error'" class="scan-error">
       <mat-icon>warning</mat-icon>
       {{ scanError }}
-      <label for="scanFileInput" class="retry-btn" (click)="onScanLabelClick($event)">Opnieuw</label>
+      <label for="scanCameraInput" class="retry-btn" (click)="onScanLabelClick($event)">Opnieuw</label>
     </div>
 
     <div *ngIf="plateInput.trim() && !isPlateValid" class="not-found">
