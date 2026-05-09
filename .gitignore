@@ -48,3 +48,12 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
+
+# Angular build cache
+.angular/cache/
+
+# Tesseract model (downloaded at runtime, ~4MB)
+eng.traineddata
+
+# Test images (local dev only)
+test-images/

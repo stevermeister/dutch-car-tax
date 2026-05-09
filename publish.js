@@ -1,1 +1,1 @@
-require('gh-pages').publish('dist', function (err) { });
+require('gh-pages').publish('dist', err => { if (err) console.error(err); });
