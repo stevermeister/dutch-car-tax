@@ -101,10 +101,15 @@ export class KentekenScanService {
         URL.revokeObjectURL(url);
         LOG(`prepareImage: image loaded ${img.naturalWidth}×${img.naturalHeight}px`);
 
+        // Cap input at 1500px — gallery photos from modern phones can be 12MP+,
+        // which blows the mobile browser memory budget when getImageData is called.
+        const MAX = 1500;
+        const scale = Math.min(1, MAX / Math.max(img.naturalWidth, img.naturalHeight));
         const canvas = document.createElement('canvas');
-        canvas.width = img.naturalWidth;
-        canvas.height = img.naturalHeight;
-        canvas.getContext('2d')!.drawImage(img, 0, 0);
+        canvas.width  = Math.round(img.naturalWidth  * scale);
+        canvas.height = Math.round(img.naturalHeight * scale);
+        canvas.getContext('2d')!.drawImage(img, 0, 0, canvas.width, canvas.height);
+        if (scale < 1) LOG(`prepareImage: downscaled ×${scale.toFixed(2)} → ${canvas.width}×${canvas.height}`);
 
         // 1. Try HSV-based yellow crop (handles pure yellow through amber/gold)
         let plateCanvas = this.cropYellow(canvas);
