@@ -17,7 +17,7 @@
   <!-- Plate lookup -->
   <div class="plate-section">
     <!-- Hidden file input for camera scan — id used by label below -->
-    <input id="scanFileInput" type="file" accept="image/*" capture="environment"
+    <input id="scanFileInput" type="file" accept="image/*"
            class="scan-file-input" (change)="onFileSelected($event)" aria-hidden="true">
 
     <div *ngIf="!vehicleInfo" class="plate-search-row">
