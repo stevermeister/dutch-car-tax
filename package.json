@@ -5,6 +5,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
+    "prebuild": "node -e \"require('fs').writeFileSync('src/build-time.ts', 'export const BUILD_TIME = \\'' + new Date().toISOString().slice(0,16).replace('T',' ') + '\\';\\n')\"",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",

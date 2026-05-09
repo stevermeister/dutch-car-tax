@@ -1,3 +1,4 @@
+import { BUILD_TIME } from '../../build-time';
 import { concat, Observable, BehaviorSubject, combineLatest } from 'rxjs';
 import { map, delay, filter, take, debounceTime, shareReplay } from 'rxjs/operators';
 import { Component, OnInit, ViewChild, Inject, PLATFORM_ID, NgZone, ChangeDetectorRef } from '@angular/core';
@@ -73,6 +74,7 @@ export class CarTaxFormComponent implements OnInit {
   public scanError: string | null = null;
   public showPrivacyNote = false;
   public isScanEnabled = false;
+  public readonly buildTime = BUILD_TIME;
 
   public displayPrice$: Observable<number>;
   public pricePeriod: 'monthly' | 'quarterly' | 'yearly' = 'quarterly';
@@ -277,7 +279,8 @@ export class CarTaxFormComponent implements OnInit {
         this.searchVehicle();
       });
 
-    } catch {
+    } catch (e) {
+      console.error('[KentekenScan] pipeline error:', e);
       this._zone.run(() => {
         this.scanState = 'error';
         this.scanError = 'Kenteken niet herkend, probeer opnieuw';
