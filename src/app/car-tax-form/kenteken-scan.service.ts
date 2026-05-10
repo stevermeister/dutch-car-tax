@@ -30,7 +30,10 @@ export class KentekenScanService {
   private async createWorker(): Promise<any> {
     const t0 = performance.now();
     LOG('worker: importing tesseract.js module…');
-    const { createWorker, PSM } = await import('tesseract.js');
+    // tesseract.js is CommonJS; esbuild wraps CJS exports under `.default` when
+    // loaded via dynamic import(), while Vite dev re-exports them as named exports.
+    const mod = await import('tesseract.js') as any;
+    const { createWorker, PSM } = mod.default ?? mod;
     this._PSM = PSM;
     LOG(`worker: module ready in ${(performance.now() - t0).toFixed(0)}ms — creating worker (downloads eng.traineddata ~4MB)…`);
     const t1 = performance.now();
