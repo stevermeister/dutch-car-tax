@@ -29,10 +29,10 @@ export class KentekenScanService {
   private async createWorker(): Promise<any> {
     const t0 = performance.now();
     LOG('worker: importing tesseract.js module…');
-    const mod = await import('tesseract.js') as any;
+    const { createWorker } = await import('tesseract.js');
     LOG(`worker: module ready in ${(performance.now() - t0).toFixed(0)}ms — creating worker (downloads eng.traineddata ~4MB)…`);
     const t1 = performance.now();
-    const worker = await mod.createWorker('eng');
+    const worker = await createWorker('eng');
     LOG(`worker: createWorker done in ${(performance.now() - t1).toFixed(0)}ms — setting params…`);
     await worker.setParameters({
       // No whitelist: Tesseract misreads L→] and G→C; the whitelist would
