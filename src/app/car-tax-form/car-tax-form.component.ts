@@ -1,5 +1,5 @@
 import { BUILD_TIME } from '../../build-time';
-import { concat, Observable, BehaviorSubject, combineLatest } from 'rxjs';
+import { concat, Observable, BehaviorSubject, combineLatest, firstValueFrom } from 'rxjs';
 import { map, delay, filter, take, debounceTime, shareReplay } from 'rxjs/operators';
 import { Component, OnInit, ViewChild, Inject, PLATFORM_ID, NgZone, ChangeDetectorRef } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
@@ -269,12 +269,22 @@ export class CarTaxFormComponent implements OnInit {
         return;
       }
 
-      // Fill with the best OCR candidate and let the existing search flow
-      // show vehicle info or "not found" — avoids a redundant extra RDW call
+      // Validate candidates against RDW — OCR can produce multiple valid-looking
+      // plates; the first one isn't always the real plate. Try each in order and
+      // use the first one that exists in the RDW registry.
+      let matchedPlate: string | null = null;
+      for (const candidate of candidates.slice(0, 6)) {
+        const vehicle = await firstValueFrom(this._rdwService.lookupVehicle(candidate));
+        if (vehicle?.massa_ledig_voertuig) {
+          matchedPlate = candidate;
+          break;
+        }
+      }
+
       this._zone.run(() => {
-        this.plateInput = candidates[0];
+        this.plateInput = matchedPlate ?? candidates[0];
         this.scanState = 'idle';
-        this._analytics.event('kenteken_scan_success', { plate: candidates[0] });
+        this._analytics.event('kenteken_scan_success', { plate: this.plateInput });
         this._cdr.detectChanges();
         this.searchVehicle();
       });
