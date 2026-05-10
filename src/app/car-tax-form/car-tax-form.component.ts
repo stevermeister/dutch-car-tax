@@ -269,17 +269,17 @@ export class CarTaxFormComponent implements OnInit {
         return;
       }
 
-      // Validate candidates against RDW — OCR can produce multiple valid-looking
-      // plates; the first one isn't always the real plate. Try each in order and
-      // use the first one that exists in the RDW registry.
-      let matchedPlate: string | null = null;
-      for (const candidate of candidates.slice(0, 6)) {
-        const vehicle = await firstValueFrom(this._rdwService.lookupVehicle(candidate));
-        if (vehicle?.massa_ledig_voertuig) {
-          matchedPlate = candidate;
-          break;
-        }
-      }
+      // Validate candidates against RDW in parallel — OCR produces multiple
+      // valid-looking plates; the first isn't always the real one.
+      const top = candidates.slice(0, 6);
+      console.log('[Scan] checking candidates against RDW:', top);
+      const results = await Promise.all(
+        top.map(c => firstValueFrom(this._rdwService.lookupVehicle(c)))
+      );
+      console.log('[Scan] RDW results:', results.map((v, i) => `${top[i]}:${v ? 'hit' : 'miss'}`));
+      const matchIndex = results.findIndex(v => v?.massa_ledig_voertuig);
+      const matchedPlate = matchIndex >= 0 ? top[matchIndex] : null;
+      console.log('[Scan] matched:', matchedPlate);
 
       this._zone.run(() => {
         this.plateInput = matchedPlate ?? candidates[0];
