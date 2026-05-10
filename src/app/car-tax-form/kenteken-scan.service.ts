@@ -9,6 +9,7 @@ const LOG = (...a: any[]) => console.log('[KentekenScan]', ...a);
 export class KentekenScanService {
   private _workerReady: Promise<any> | null = null;
   private _worker: any = null;
+  private _PSM: any = null;
   private readonly isBrowser: boolean;
 
   constructor(@Inject(PLATFORM_ID) platformId: object) {
@@ -29,7 +30,8 @@ export class KentekenScanService {
   private async createWorker(): Promise<any> {
     const t0 = performance.now();
     LOG('worker: importing tesseract.js module…');
-    const { createWorker } = await import('tesseract.js');
+    const { createWorker, PSM } = await import('tesseract.js');
+    this._PSM = PSM;
     LOG(`worker: module ready in ${(performance.now() - t0).toFixed(0)}ms — creating worker (downloads eng.traineddata ~4MB)…`);
     const t1 = performance.now();
     const worker = await createWorker('eng');
@@ -38,7 +40,7 @@ export class KentekenScanService {
       // No whitelist: Tesseract misreads L→] and G→C; the whitelist would
       // silently drop those. extractPlateCandidates + RDW validation is the filter.
       // PSM 13 (raw line) outperforms PSM 7 on plate crops in testing.
-      tessedit_pageseg_mode: '13',
+      tessedit_pageseg_mode: PSM.RAW_LINE,
     });
     this._worker = worker;
     LOG(`worker: fully ready — total ${(performance.now() - t0).toFixed(0)}ms`);
@@ -66,12 +68,12 @@ export class KentekenScanService {
     LOG('OCR: recognize starting (psm13 + psm7)…');
     const t1 = performance.now();
 
-    await worker.setParameters({ tessedit_pageseg_mode: '13' });
+    await worker.setParameters({ tessedit_pageseg_mode: this._PSM.RAW_LINE });
     const { data: { text: text13, confidence } } = await worker.recognize(processedBlob);
     LOG(`OCR psm13: done in ${(performance.now() - t1).toFixed(0)}ms  confidence=${confidence?.toFixed(1)}`);
     LOG('OCR psm13 text:', JSON.stringify(text13));
 
-    await worker.setParameters({ tessedit_pageseg_mode: '7' });
+    await worker.setParameters({ tessedit_pageseg_mode: this._PSM.SINGLE_LINE });
     const { data: { text: text7 } } = await worker.recognize(processedBlob);
     LOG('OCR psm7 text:', JSON.stringify(text7));
 
