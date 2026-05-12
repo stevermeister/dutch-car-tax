@@ -104,25 +104,46 @@ export class KentekenScanService {
 
       img.onload = () => {
         URL.revokeObjectURL(url);
-        LOG(`prepareImage: image loaded ${img.naturalWidth}×${img.naturalHeight}px`);
+        const W = img.naturalWidth, H = img.naturalHeight;
+        LOG(`prepareImage: image loaded ${W}×${H}px`);
 
-        // Cap input at 1500px — gallery photos from modern phones can be 12MP+,
-        // which blows the mobile browser memory budget when getImageData is called.
-        const MAX = 1500;
-        const scale = Math.min(1, MAX / Math.max(img.naturalWidth, img.naturalHeight));
-        const canvas = document.createElement('canvas');
-        canvas.width  = Math.round(img.naturalWidth  * scale);
-        canvas.height = Math.round(img.naturalHeight * scale);
-        canvas.getContext('2d')!.drawImage(img, 0, 0, canvas.width, canvas.height);
-        if (scale < 1) LOG(`prepareImage: downscaled ×${scale.toFixed(2)} → ${canvas.width}×${canvas.height}`);
+        // Phase 1: yellow detection on a memory-safe downscaled canvas.
+        // getImageData on a 12MP image costs ~48MB; 1500px costs ~6MB.
+        const MAX_DETECT = 1500;
+        const dScale = Math.min(1, MAX_DETECT / Math.max(W, H));
+        const dCanvas = document.createElement('canvas');
+        dCanvas.width  = Math.round(W * dScale);
+        dCanvas.height = Math.round(H * dScale);
+        dCanvas.getContext('2d')!.drawImage(img, 0, 0, dCanvas.width, dCanvas.height);
+        if (dScale < 1) LOG(`detect canvas: ×${dScale.toFixed(2)} → ${dCanvas.width}×${dCanvas.height}`);
 
-        // 1. Try HSV-based yellow crop (handles pure yellow through amber/gold)
-        let plateCanvas = this.cropYellow(canvas);
+        // Find the plate bounding box on the detection canvas.
+        const { data, width: dW, height: dH } = dCanvas.getContext('2d')!.getImageData(0, 0, dCanvas.width, dCanvas.height);
+        const region = this.findPlateRegion(data, dW, dH);
 
-        // 2. Fallback: center-vertical strip — plates rarely appear at top/bottom edge
-        if (!plateCanvas) {
-          plateCanvas = this.cropCenterBand(canvas);
+        let plateCanvas: HTMLCanvasElement;
+
+        if (region) {
+          LOG(`cropYellow: plate region ${region.width}×${region.height} at (${region.left},${region.top})`);
+          // Phase 2: scale region back to original image coordinates and crop
+          // directly from the full-resolution source via drawImage — no 48MB getImageData.
+          const inv = 1 / dScale;
+          const sx = Math.round(region.left   * inv);
+          const sy = Math.round(region.top    * inv);
+          const sw = Math.round(region.width  * inv);
+          const sh = Math.round(region.height * inv);
+          // Render at target OCR width (≥800px) so upscale() is a no-op or tiny.
+          const targetW = Math.max(OCR_MIN_WIDTH, sw);
+          const cropScale = targetW / sw;
+          plateCanvas = document.createElement('canvas');
+          plateCanvas.width  = Math.round(sw * cropScale);
+          plateCanvas.height = Math.round(sh * cropScale);
+          plateCanvas.getContext('2d')!.drawImage(img, sx, sy, sw, sh, 0, 0, plateCanvas.width, plateCanvas.height);
+          LOG(`plate crop from original: src ${sw}×${sh} → canvas ${plateCanvas.width}×${plateCanvas.height}`);
+        } else {
+          // Fallback: center-band on the detection canvas (no yellow found).
           LOG('cropYellow failed — using center-band fallback');
+          plateCanvas = this.cropCenterBand(dCanvas);
         }
 
         // 3. Trim dealer sticker rows that appear below the plate number area
