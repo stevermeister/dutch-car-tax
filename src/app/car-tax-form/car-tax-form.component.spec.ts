@@ -1,4 +1,4 @@
-import { calculatePrice, FUEL_CONFIG, FormValue } from './car-tax-form.component';
+import { calculatePrice, FUEL_CONFIG, FormValue, isOldtimerExempt } from './car-tax-form.component';
 import { GRID } from '../../assets/data/grid';
 
 describe('calculatePrice (2026 MRB rates)', () => {
@@ -95,5 +95,34 @@ describe('calculatePrice (2026 MRB rates)', () => {
     ['Benzine', 'Diesel', 'Elektrisch', 'LPG3', 'LPG', 'Hybride'].forEach(fuel => {
       expect(FUEL_CONFIG[fuel]).toBeDefined();
     });
+  });
+});
+
+describe('isOldtimerExempt (oldtimerregeling: 40 years or older = exempt)', () => {
+  const now = new Date(2026, 7, 5); // 2026-08-05, matches "today" during development
+
+  it('a car registered exactly 40 years ago today is exempt', () => {
+    expect(isOldtimerExempt('19860805', now)).toBe(true);
+  });
+
+  it('a car registered 41 years ago is exempt', () => {
+    expect(isOldtimerExempt('19850101', now)).toBe(true);
+  });
+
+  it('a car that turns 40 tomorrow is not yet exempt', () => {
+    expect(isOldtimerExempt('19860806', now)).toBe(false);
+  });
+
+  it('a car registered 10 years ago is not exempt', () => {
+    expect(isOldtimerExempt('20160101', now)).toBe(false);
+  });
+
+  it('missing registration date is not exempt', () => {
+    expect(isOldtimerExempt(undefined, now)).toBe(false);
+    expect(isOldtimerExempt('', now)).toBe(false);
+  });
+
+  it('malformed registration date is not exempt', () => {
+    expect(isOldtimerExempt('1986', now)).toBe(false);
   });
 });

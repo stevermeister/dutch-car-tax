@@ -255,6 +255,22 @@
   margin-top: 2px;
 }
 
+.oldtimer-badge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 4px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #2e7d32;
+
+  mat-icon {
+    font-size: 15px;
+    width: 15px;
+    height: 15px;
+  }
+}
+
 .clear-vehicle-btn {
   background: none;
   border: none;

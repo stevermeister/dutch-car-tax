@@ -29,6 +29,22 @@ export const FUEL_CONFIG: Record<string, { col: number; multiplier: number }> = 
   'Hybride':    { col: 1, multiplier: 1.00 },
 };
 
+// Oldtimerregeling: passenger cars 40 years or older are fully exempt from MRB.
+export const OLDTIMER_EXEMPT_AGE_YEARS = 40;
+
+export function isOldtimerExempt(datumEersteToelating: string | undefined | null, now: Date): boolean {
+  if (!datumEersteToelating || datumEersteToelating.length < 8) return false;
+  const year = +datumEersteToelating.substring(0, 4);
+  const month = +datumEersteToelating.substring(4, 6);
+  const day = +datumEersteToelating.substring(6, 8);
+  const firstRegistration = new Date(year, month - 1, day);
+  if (isNaN(firstRegistration.getTime())) return false;
+
+  const ageThreshold = new Date(firstRegistration);
+  ageThreshold.setFullYear(ageThreshold.getFullYear() + OLDTIMER_EXEMPT_AGE_YEARS);
+  return ageThreshold <= now;
+}
+
 export function calculatePrice(grid: Grid, value: FormValue): number {
   const { col, multiplier } = FUEL_CONFIG[value.fuelType] ?? { col: 1, multiplier: 1 };
 
@@ -67,6 +83,7 @@ export class CarTaxFormComponent implements OnInit {
   public vehicleInfo: RdwVehicle | null = null;
   public detectedFuelType: string | null = null;
   public detectedWeight: number | null = null;
+  public isOldtimerVehicle = false;
   public plateInput = '';
   public isLoadingVehicle = false;
   public vehicleNotFound = false;
@@ -214,11 +231,15 @@ export class CarTaxFormComponent implements OnInit {
     this.vehicleNotFound = false;
     this.scanState = 'idle';
     this.scanError = null;
+    this.isOldtimerVehicle = false;
     this._router.navigate([], {
       relativeTo: this._activatedRoute,
       queryParams: { plate: null },
       queryParamsHandling: 'merge'
     });
+    // Nothing else touches carTaxControl here, so force a recompute now that
+    // isOldtimerVehicle is reset — otherwise the €0 price would stick around.
+    this.carTaxControl.updateValueAndValidity();
   }
 
   private _nlTapCount = 0;
@@ -327,6 +348,7 @@ export class CarTaxFormComponent implements OnInit {
     this.vehicleInfo = null;
     this.detectedFuelType = null;
     this.detectedWeight = null;
+    this.isOldtimerVehicle = false;
 
     const plate = this.plateInput.trim().toUpperCase();
     this._analytics.event('plate_search', { plate });
@@ -335,6 +357,7 @@ export class CarTaxFormComponent implements OnInit {
       this.isLoadingVehicle = false;
       if (vehicle && vehicle.massa_ledig_voertuig) {
         this.vehicleInfo = vehicle;
+        this.isOldtimerVehicle = isOldtimerExempt(vehicle.datum_eerste_toelating, new Date());
         const weight = +vehicle.massa_ledig_voertuig;
         this.detectedWeight = weight;
         const patch: Partial<FormValue> = { volume: weight };
@@ -434,6 +457,7 @@ export class CarTaxFormComponent implements OnInit {
   }
 
   getPrice(value: FormValue): number {
+    if (this.isOldtimerVehicle) return 0;
     return calculatePrice(this.grid, value);
   }
 }

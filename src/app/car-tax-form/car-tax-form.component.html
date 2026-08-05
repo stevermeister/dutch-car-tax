@@ -89,6 +89,9 @@
         <div class="vehicle-stats">
           {{ getVehicleYear(vehicleInfo) }}<ng-container *ngIf="detectedFuelType"> · {{ getFuelLabel(detectedFuelType) }}</ng-container><ng-container *ngIf="detectedWeight"> · {{ detectedWeight }} kg</ng-container> · {{ getColorName(vehicleInfo.eerste_kleur) }}
         </div>
+        <div *ngIf="isOldtimerVehicle" class="oldtimer-badge">
+          <mat-icon>verified</mat-icon> {{ i18n.tr.oldtimerExempt }}
+        </div>
       </div>
       <button class="clear-vehicle-btn" (click)="clearVehicle()" title="Clear">
         <mat-icon>close</mat-icon>

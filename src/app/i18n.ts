@@ -17,6 +17,7 @@ export interface Translations {
   notFound: string;
   province: string;
   vehicleWeight: string;
+  oldtimerExempt: string;
   monthly: string;
   quarterly: string;
   yearly: string;
@@ -89,6 +90,7 @@ export const TRANSLATIONS: Record<Lang, Translations> = {
     notFound: 'Geen voertuig gevonden voor dit kenteken.',
     province: 'Provincie',
     vehicleWeight: 'Voertuiggewicht',
+    oldtimerExempt: 'Oldtimer — 40 jaar of ouder, vrijgesteld van MRB',
     monthly: 'Maand',
     quarterly: 'Kwartaal',
     yearly: 'Jaar',
@@ -164,6 +166,7 @@ export const TRANSLATIONS: Record<Lang, Translations> = {
     notFound: 'No vehicle found for this plate number.',
     province: 'Province',
     vehicleWeight: 'Vehicle weight',
+    oldtimerExempt: 'Classic car — 40 years or older, exempt from road tax',
     monthly: 'Monthly',
     quarterly: 'Quarterly',
     yearly: 'Yearly',
