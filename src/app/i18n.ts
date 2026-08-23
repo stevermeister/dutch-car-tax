@@ -17,6 +17,7 @@ export interface Translations {
   notFound: string;
   province: string;
   vehicleWeight: string;
+  weightBasisNote: string;
   oldtimerExempt: string;
   monthly: string;
   quarterly: string;
@@ -40,7 +41,7 @@ export const TRANSLATIONS: Record<Lang, Translations> = {
     intro:
       'Motorrijtuigenbelasting (MRB) is de belasting die je betaalt voor het rijden op de openbare weg ' +
       'in Nederland. Het bedrag hangt af van drie factoren: het gewicht van je voertuig ' +
-      '(massa ledig voertuig), het type brandstof, en de provincie waarin je woont — elke provincie ' +
+      '(massa rijklaar), het type brandstof, en de provincie waarin je woont — elke provincie ' +
       'heeft eigen opcenten die bovenop het rijkstarief komen.' +
       '\n\n' +
       'Per 1 januari 2026 zijn er belangrijke wijzigingen: plug-in hybrides (PHEV) verliezen hun ' +
@@ -89,7 +90,8 @@ export const TRANSLATIONS: Record<Lang, Translations> = {
     invalidPlate: 'Voer een geldig Nederlands kenteken in (bijv. AB-123-C).',
     notFound: 'Geen voertuig gevonden voor dit kenteken.',
     province: 'Provincie',
-    vehicleWeight: 'Voertuiggewicht',
+    vehicleWeight: 'Massa rijklaar',
+    weightBasisNote: 'Basis: massa rijklaar (sinds 1 juli 2026)',
     oldtimerExempt: 'Oldtimer — 40 jaar of ouder, vrijgesteld van MRB',
     monthly: 'Maand',
     quarterly: 'Kwartaal',
@@ -115,8 +117,8 @@ export const TRANSLATIONS: Record<Lang, Translations> = {
     canonicalUrl: `${BASE_URL}/en/`,
     intro:
       'Dutch road tax (motorrijtuigenbelasting, MRB) is the tax you pay to drive on public roads in ' +
-      'the Netherlands. The amount depends on three factors: your vehicle\'s unladen weight ' +
-      '(massa ledig voertuig), fuel type, and the province you live in — each province adds its own ' +
+      'the Netherlands. The amount depends on three factors: your vehicle\'s kerb weight ' +
+      '(massa rijklaar), fuel type, and the province you live in — each province adds its own ' +
       'surcharge (opcenten) on top of the national base rate.' +
       '\n\n' +
       'From 1 January 2026, significant changes apply: plug-in hybrids (PHEVs) lose their MRB ' +
@@ -134,8 +136,8 @@ export const TRANSLATIONS: Record<Lang, Translations> = {
       {
         q: 'What is Dutch road tax (MRB)?',
         a: 'Motorrijtuigenbelasting (MRB) is a quarterly tax you pay for using a motor vehicle on ' +
-           'public roads in the Netherlands. The rate depends on the vehicle\'s unladen weight, fuel ' +
-           'type, and the province where you live.',
+           'public roads in the Netherlands. The rate depends on the vehicle\'s kerb weight (massa ' +
+           'rijklaar), fuel type, and the province where you live.',
       },
       {
         q: 'How often do I pay MRB?',
@@ -165,7 +167,8 @@ export const TRANSLATIONS: Record<Lang, Translations> = {
     invalidPlate: 'Enter a valid Dutch plate (e.g. AB-123-C).',
     notFound: 'No vehicle found for this plate number.',
     province: 'Province',
-    vehicleWeight: 'Vehicle weight',
+    vehicleWeight: 'Kerb weight (massa rijklaar)',
+    weightBasisNote: 'Basis: kerb weight / massa rijklaar (as of 1 July 2026)',
     oldtimerExempt: 'Classic car — 40 years or older, exempt from road tax',
     monthly: 'Monthly',
     quarterly: 'Quarterly',

@@ -7,7 +7,7 @@ import { MatSelect } from '@angular/material/select';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { CarTaxService, FuelTypes, Grid, Provinces } from './car-tax.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { RdwService, RdwVehicle, isValidDutchPlate } from './rdw.service';
+import { RdwService, RdwVehicle, isValidDutchPlate, getEffectiveWeight } from './rdw.service';
 import { I18nService } from '../i18n.service';
 import { AnalyticsService } from '../analytics.service';
 import { KentekenScanService } from './kenteken-scan.service';
@@ -45,15 +45,17 @@ export function isOldtimerExempt(datumEersteToelating: string | undefined | null
   return ageThreshold <= now;
 }
 
+// Weight brackets are on a massa rijklaar basis (since 1 July 2026); bracket lower
+// bounds are 100 kg higher than the old massa ledig voertuig grid (101/651/751/... vs 1/551/651/...).
 export function calculatePrice(grid: Grid, value: FormValue): number {
   const { col, multiplier } = FUEL_CONFIG[value.fuelType] ?? { col: 1, multiplier: 1 };
 
-  if (value.volume < 551) {
+  if (value.volume < 651) {
     return Math.floor(+grid[value.provinceKey][0].split('#')[col] * multiplier);
   }
 
   const provinceGrid = grid[value.provinceKey];
-  const index = Math.floor(value.volume / 100 - 4);
+  const index = Math.floor(value.volume / 100 - 5);
   const weight = +provinceGrid[index].split('#')[0];
   const row = value.volume < weight ? index - 1 : index;
 
@@ -224,7 +226,7 @@ export class CarTaxFormComponent implements OnInit {
   }
 
   clearVehicle(): void {
-    this._analytics.event('plate_clear', { plate: this.plateInput.trim().toUpperCase() });
+    this._analytics.event('plate_clear');
     this.vehicleInfo = null;
     this.detectedFuelType = null;
     this.detectedWeight = null;
@@ -298,14 +300,14 @@ export class CarTaxFormComponent implements OnInit {
         top.map(c => firstValueFrom(this._rdwService.lookupVehicle(c)))
       );
       console.log('[Scan] RDW results:', results.map((v, i) => `${top[i]}:${v ? 'hit' : 'miss'}`));
-      const matchIndex = results.findIndex(v => v?.massa_ledig_voertuig);
+      const matchIndex = results.findIndex(v => v && getEffectiveWeight(v) !== null);
       const matchedPlate = matchIndex >= 0 ? top[matchIndex] : null;
       console.log('[Scan] matched:', matchedPlate);
 
       this._zone.run(() => {
         this.plateInput = matchedPlate ?? candidates[0];
         this.scanState = 'idle';
-        this._analytics.event('kenteken_scan_success', { plate: this.plateInput });
+        this._analytics.event('kenteken_scan_success');
         this._cdr.detectChanges();
         this.searchVehicle();
       });
@@ -350,15 +352,14 @@ export class CarTaxFormComponent implements OnInit {
     this.detectedWeight = null;
     this.isOldtimerVehicle = false;
 
-    const plate = this.plateInput.trim().toUpperCase();
-    this._analytics.event('plate_search', { plate });
+    this._analytics.event('plate_search');
 
     this._rdwService.lookupVehicle(this.plateInput).subscribe(vehicle => {
       this.isLoadingVehicle = false;
-      if (vehicle && vehicle.massa_ledig_voertuig) {
+      const weight = vehicle ? getEffectiveWeight(vehicle) : null;
+      if (vehicle && weight !== null) {
         this.vehicleInfo = vehicle;
         this.isOldtimerVehicle = isOldtimerExempt(vehicle.datum_eerste_toelating, new Date());
-        const weight = +vehicle.massa_ledig_voertuig;
         this.detectedWeight = weight;
         const patch: Partial<FormValue> = { volume: weight };
         const fuelType = this.mapRdwFuelType(vehicle.brandstof_types, vehicle);
@@ -368,10 +369,10 @@ export class CarTaxFormComponent implements OnInit {
         }
         this.carTaxControl.patchValue(patch);
         this.sliderValue = weight;
-        this._analytics.event('plate_found', { plate, fuel_type: fuelType, weight_kg: weight });
+        this._analytics.event('plate_found', { fuel_type: fuelType, weight_kg: weight });
       } else {
         this.vehicleNotFound = true;
-        this._analytics.event('plate_not_found', { plate });
+        this._analytics.event('plate_not_found');
       }
     });
   }

@@ -1,93 +1,101 @@
 import { calculatePrice, FUEL_CONFIG, FormValue, isOldtimerExempt } from './car-tax-form.component';
 import { GRID } from '../../assets/data/grid';
 
-describe('calculatePrice (2026 MRB rates)', () => {
+describe('calculatePrice (2026 MRB rates, massa rijklaar basis since 1 July 2026)', () => {
 
   function price(provinceKey: string, fuelType: string, volume: number): number {
     return calculatePrice(GRID, { provinceKey, fuelType, volume } as FormValue);
   }
 
-  // Reference: official belastingdienst.nl 2026 JS tariff file
-  // NH benzine 1551–1650 kg = €280 (NH has the lowest opcenten: 82.1%)
-  it('NH Benzine 1551 = 280 (reference from belastingdienst.nl 2026)', () => {
-    expect(price('NH', 'Benzine', 1551)).toBe(280);
+  // Reference: official belastingdienst.nl 2026 JS tariff file (massa ledig voertuig basis).
+  // Bracket lower bounds are 100 kg higher on the massa rijklaar basis, so the reference
+  // 1551 kg bracket now starts at 1651 kg.
+  // NH benzine 1651–1750 kg = €280 (NH has the lowest opcenten: 82.1%)
+  it('NH Benzine 1651 = 280 (reference from belastingdienst.nl 2026)', () => {
+    expect(price('NH', 'Benzine', 1651)).toBe(280);
   });
 
-  it('DR Benzine 1551 = 291 (2026 official rate)', () => {
-    expect(price('DR', 'Benzine', 1551)).toBe(291);
+  it('DR Benzine 1651 = 291 (2026 official rate)', () => {
+    expect(price('DR', 'Benzine', 1651)).toBe(291);
   });
 
-  it('DR Benzine 1600 = 291 (same bracket as 1551)', () => {
-    expect(price('DR', 'Benzine', 1600)).toBe(291);
+  it('DR Benzine 1700 = 291 (same bracket as 1651)', () => {
+    expect(price('DR', 'Benzine', 1700)).toBe(291);
   });
 
-  it('DR Benzine 1650 = 291 (top of bracket)', () => {
-    expect(price('DR', 'Benzine', 1650)).toBe(291);
+  it('DR Benzine 1750 = 291 (top of bracket)', () => {
+    expect(price('DR', 'Benzine', 1750)).toBe(291);
   });
 
-  it('DR Benzine 1651 moves to next bracket', () => {
-    expect(price('DR', 'Benzine', 1651)).toBeGreaterThan(291);
+  it('DR Benzine 1751 moves to next bracket', () => {
+    expect(price('DR', 'Benzine', 1751)).toBeGreaterThan(291);
   });
 
-  // Bracket below 551
-  it('NH Benzine 500 uses the lowest bracket', () => {
-    expect(price('NH', 'Benzine', 500)).toBe(33);
+  // Bracket below 651
+  it('NH Benzine 600 uses the lowest bracket', () => {
+    expect(price('NH', 'Benzine', 600)).toBe(33);
   });
 
   it('NH Benzine 1 uses the lowest bracket', () => {
     expect(price('NH', 'Benzine', 1)).toBe(33);
   });
 
-  // Bracket boundary at 551
-  it('NH Benzine 550 still in lowest bracket', () => {
-    expect(price('NH', 'Benzine', 550)).toBe(33);
+  // Bracket boundary at 651
+  it('NH Benzine 650 still in lowest bracket', () => {
+    expect(price('NH', 'Benzine', 650)).toBe(33);
   });
 
-  it('NH Benzine 551 enters the 551–650 bracket', () => {
-    expect(price('NH', 'Benzine', 551)).toBeGreaterThan(33);
+  it('NH Benzine 651 enters the 651–750 bracket', () => {
+    expect(price('NH', 'Benzine', 651)).toBeGreaterThan(33);
   });
 
-  // Bracket boundary: 1550 vs 1551
-  it('NH Benzine 1550 is in the 1451–1550 bracket', () => {
-    const at1550 = price('NH', 'Benzine', 1550);
-    const at1551 = price('NH', 'Benzine', 1551);
-    expect(at1551).toBeGreaterThan(at1550);
+  // Bracket boundary: 1650 vs 1651
+  it('NH Benzine 1650 is in the 1551–1650 bracket', () => {
+    const at1650 = price('NH', 'Benzine', 1650);
+    const at1651 = price('NH', 'Benzine', 1651);
+    expect(at1651).toBeGreaterThan(at1650);
   });
 
-  // All fuel types for NH at 1551
-  it('NH Diesel 1551 matches grid', () => {
-    expect(price('NH', 'Diesel', 1551)).toBe(549);
+  // All fuel types for NH at 1651
+  it('NH Diesel 1651 matches grid', () => {
+    expect(price('NH', 'Diesel', 1651)).toBe(549);
   });
 
-  it('NH LPG3 1551 matches grid', () => {
-    expect(price('NH', 'LPG3', 1551)).toBe(432);
+  it('NH LPG3 1651 matches grid', () => {
+    expect(price('NH', 'LPG3', 1651)).toBe(432);
   });
 
-  it('NH LPG 1551 matches grid', () => {
-    expect(price('NH', 'LPG', 1551)).toBe(579);
+  it('NH LPG 1651 matches grid', () => {
+    expect(price('NH', 'LPG', 1651)).toBe(579);
   });
 
-  it('NH Elektrisch 1551 = 70% of Benzine (floored, matching belastingdienst.nl)', () => {
-    const benzine = price('NH', 'Benzine', 1551);
-    const electric = price('NH', 'Elektrisch', 1551);
+  it('NH Elektrisch 1651 = 70% of Benzine (floored, matching belastingdienst.nl)', () => {
+    const benzine = price('NH', 'Benzine', 1651);
+    const electric = price('NH', 'Elektrisch', 1651);
     expect(electric).toBe(Math.floor(benzine * 0.70));
   });
 
   // Legacy Hybride maps to same as Benzine
   it('Hybride and Benzine return the same price', () => {
-    expect(price('NH', 'Hybride', 1551)).toBe(price('NH', 'Benzine', 1551));
+    expect(price('NH', 'Hybride', 1651)).toBe(price('NH', 'Benzine', 1651));
   });
 
-  // Province spread at the 1551 bracket: NH has lowest, ZH highest
-  it('ZH Benzine 1551 > DR Benzine 1551 (ZH has highest opcenten)', () => {
-    expect(price('ZH', 'Benzine', 1551)).toBeGreaterThan(price('DR', 'Benzine', 1551));
+  // Province spread at the 1651 bracket: NH has lowest, ZH highest
+  it('ZH Benzine 1651 > DR Benzine 1651 (ZH has highest opcenten)', () => {
+    expect(price('ZH', 'Benzine', 1651)).toBeGreaterThan(price('DR', 'Benzine', 1651));
   });
 
-  it('NH Benzine 1551 <= all other provinces (NH has lowest opcenten)', () => {
-    const nhPrice = price('NH', 'Benzine', 1551);
+  it('NH Benzine 1651 <= all other provinces (NH has lowest opcenten)', () => {
+    const nhPrice = price('NH', 'Benzine', 1651);
     ['DR', 'FL', 'FR', 'GL', 'GR', 'LI', 'NB', 'OV', 'UT', 'ZL', 'ZH'].forEach(p => {
-      expect(price(p, 'Benzine', 1551)).toBeGreaterThanOrEqual(nhPrice);
+      expect(price(p, 'Benzine', 1651)).toBeGreaterThanOrEqual(nhPrice);
     });
+  });
+
+  // Weight basis migration (effective 1 July 2026): massa_rijklaar is ~100 kg above the old
+  // massa_ledig_voertuig basis, so the same physical vehicle must produce the same euro amount.
+  it('NH Benzine 1100 kg rijklaar returns the same quarterly amount as 1000 kg did before the change', () => {
+    expect(price('NH', 'Benzine', 1100)).toBe(119);
   });
 
   // FUEL_CONFIG sanity
