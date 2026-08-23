@@ -64,9 +64,8 @@ h4 {
 
 .mat-mdc-slider .mdc-slider__thumb::before {
     visibility: visible;
-    content: "\f1b9";
-    font-family: "Font Awesome 5 Free";
-    font-weight: 900;
+    content: "directions_car";
+    font-family: "Material Icons";
     font-size: var(--thumb-icon-size, 26px);
     color: #3f51b5;
     display: block;
@@ -79,15 +78,15 @@ h4 {
 }
 
 .motorcycle.mat-mdc-slider .mdc-slider__thumb::before {
-    content: "\f21c";
+    content: "motorcycle";
 }
 
 .lightTruck.mat-mdc-slider .mdc-slider__thumb::before {
-    content: "\f0d1";
+    content: "local_shipping";
 }
 
 .heavyTruck.mat-mdc-slider .mdc-slider__thumb::before {
-    content: "\f4df";
+    content: "directions_bus";
 }
 
 .cdk-overlay-pane {
