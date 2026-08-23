@@ -9,22 +9,16 @@
 
   <!-- Page title + subtitle -->
   <div class="page-title">
-    <i class="fas fa-car" aria-hidden="true"></i>
+    <mat-icon aria-hidden="true">directions_car</mat-icon>
     <h1>{{ i18n.tr.h1 }}</h1>
   </div>
   <p class="page-subtitle">{{ i18n.tr.subtitle }}</p>
 
   <!-- Plate lookup -->
   <div class="plate-section">
-    <!-- Two inputs: one opens camera directly, one opens gallery -->
-    <input id="scanCameraInput" type="file" accept="image/*" capture="environment"
-           class="scan-file-input" (change)="onFileSelected($event)" aria-hidden="true">
-    <input id="scanGalleryInput" type="file" accept="image/*"
-           class="scan-file-input" (change)="onFileSelected($event)" aria-hidden="true">
-
     <div *ngIf="!vehicleInfo" class="plate-search-row">
       <div class="plate-wrapper">
-        <span class="plate-country" (click)="onNlTap()">NL</span>
+        <span class="plate-country">NL</span>
         <input
           class="plate-input"
           [(ngModel)]="plateInput"
@@ -42,33 +36,6 @@
         <mat-icon *ngIf="!isLoadingVehicle">search</mat-icon>
         {{ i18n.tr.searchBtn }}
       </button>
-    </div>
-
-    <div *ngIf="!vehicleInfo && isScanEnabled" class="plate-scan-row">
-      <label for="scanCameraInput" class="scan-btn"
-             [class.scan-btn-disabled]="scanState === 'loading' || scanState === 'processing'"
-             (click)="onScanLabelClick($event)">
-        <mat-spinner *ngIf="scanState === 'loading' || scanState === 'processing'"
-                     [diameter]="14" class="scan-spinner"></mat-spinner>
-        <span *ngIf="scanState !== 'loading' && scanState !== 'processing'">📷 Foto maken</span>
-        <span *ngIf="scanState === 'loading'">Scanner laden...</span>
-        <span *ngIf="scanState === 'processing'">Kenteken herkennen...</span>
-      </label>
-      <label for="scanGalleryInput" class="scan-btn"
-             [class.scan-btn-disabled]="scanState === 'loading' || scanState === 'processing'"
-             (click)="onScanLabelClick($event)">
-        <span *ngIf="scanState !== 'loading' && scanState !== 'processing'">🖼 Uit galerij</span>
-        <span *ngIf="scanState === 'loading' || scanState === 'processing'">...</span>
-      </label>
-      <p *ngIf="showPrivacyNote" class="privacy-note">
-        Foto blijft op je telefoon — herkenning gebeurt lokaal
-      </p>
-    </div>
-
-    <div *ngIf="!vehicleInfo && isScanEnabled && scanState === 'error'" class="scan-error">
-      <mat-icon>warning</mat-icon>
-      {{ scanError }}
-      <label for="scanCameraInput" class="retry-btn" (click)="onScanLabelClick($event)">Opnieuw</label>
     </div>
 
     <div *ngIf="plateInput.trim() && !isPlateValid" class="not-found">
@@ -120,7 +87,7 @@
     <div class="fuel-row">
       <mat-button-toggle-group formControlName="fuelType" hideSingleSelectionIndicator>
         <mat-button-toggle *ngFor="let fuel of fuelTypes" [value]="fuel" #b>
-          <i class="fas" [ngClass]="[getFuelIcon(fuel), b.checked ? 'fa-lg' : '']" aria-hidden="true"></i>
+          <mat-icon [class.icon-lg]="b.checked" aria-hidden="true">{{ getFuelIcon(fuel) }}</mat-icon>
           {{ getFuelLabel(fuel) }}
         </mat-button-toggle>
       </mat-button-toggle-group>
@@ -142,7 +109,7 @@
 
     <div class="price-section">
       <div class="price-row">
-        <div class="price-currency"><i class="fas fa-euro-sign" aria-hidden="true"></i></div>
+        <div class="price-currency">€</div>
         <div class="price-amount" aria-live="polite">{{ displayPrice$ | async }}</div>
       </div>
       <div class="period-toggle">

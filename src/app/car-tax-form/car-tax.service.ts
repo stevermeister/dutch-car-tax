@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { PROVINCES } from '../../assets/data/provinces';
 import { GRID } from '../../assets/data/grid';
 
@@ -39,8 +38,6 @@ export class CarTaxService {
     'LPG',
   ];
 
-  constructor(private _http: HttpClient) {
-  }
 
   getFuelTypes(): FuelTypes {
 

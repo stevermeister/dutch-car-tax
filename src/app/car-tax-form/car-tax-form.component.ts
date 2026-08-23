@@ -1,7 +1,7 @@
 import { BUILD_TIME } from '../../build-time';
-import { concat, Observable, BehaviorSubject, combineLatest, firstValueFrom } from 'rxjs';
+import { concat, Observable, BehaviorSubject, combineLatest } from 'rxjs';
 import { map, delay, filter, take, debounceTime, shareReplay } from 'rxjs/operators';
-import { Component, OnInit, ViewChild, Inject, PLATFORM_ID, NgZone, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ViewChild, Inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { MatSelect } from '@angular/material/select';
 import { FormGroup, FormBuilder } from '@angular/forms';
@@ -10,7 +10,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { RdwService, RdwVehicle, isValidDutchPlate, getEffectiveWeight } from './rdw.service';
 import { I18nService } from '../i18n.service';
 import { AnalyticsService } from '../analytics.service';
-import { KentekenScanService } from './kenteken-scan.service';
 
 export type FormValue = {
   'provinceKey': string;
@@ -89,10 +88,6 @@ export class CarTaxFormComponent implements OnInit {
   public plateInput = '';
   public isLoadingVehicle = false;
   public vehicleNotFound = false;
-  public scanState: 'idle' | 'loading' | 'processing' | 'error' = 'idle';
-  public scanError: string | null = null;
-  public showPrivacyNote = false;
-  public isScanEnabled = false;
   public readonly buildTime = BUILD_TIME;
 
   public displayPrice$: Observable<number>;
@@ -114,10 +109,7 @@ export class CarTaxFormComponent implements OnInit {
     private _rdwService: RdwService,
     @Inject(PLATFORM_ID) platformId: object,
     public i18n: I18nService,
-    private _analytics: AnalyticsService,
-    private _kentekenScan: KentekenScanService,
-    private _zone: NgZone,
-    private _cdr: ChangeDetectorRef) {
+    private _analytics: AnalyticsService) {
     this.isBrowser = isPlatformBrowser(platformId);
 
     this.fuelTypes = this._carTaxService.getFuelTypes();
@@ -231,8 +223,6 @@ export class CarTaxFormComponent implements OnInit {
     this.detectedFuelType = null;
     this.detectedWeight = null;
     this.vehicleNotFound = false;
-    this.scanState = 'idle';
-    this.scanError = null;
     this.isOldtimerVehicle = false;
     this._router.navigate([], {
       relativeTo: this._activatedRoute,
@@ -242,84 +232,6 @@ export class CarTaxFormComponent implements OnInit {
     // Nothing else touches carTaxControl here, so force a recompute now that
     // isOldtimerVehicle is reset — otherwise the €0 price would stick around.
     this.carTaxControl.updateValueAndValidity();
-  }
-
-  private _nlTapCount = 0;
-  private _nlTapTimer: any = null;
-
-  onNlTap(): void {
-    this._nlTapCount++;
-    clearTimeout(this._nlTapTimer);
-    this._nlTapTimer = setTimeout(() => { this._nlTapCount = 0; }, 600);
-    if (this._nlTapCount >= 3) {
-      this._nlTapCount = 0;
-      this.isScanEnabled = true;
-    }
-  }
-
-  onScanLabelClick(event: Event): void {
-    if (this.scanState === 'loading' || this.scanState === 'processing') {
-      event.preventDefault();
-      return;
-    }
-    this.showPrivacyNote = true;
-    this._kentekenScan.preload();
-    // No programmatic .click() needed — the <label for="scanFileInput"> opens
-    // the file picker natively, which mobile browsers always trust as a user gesture.
-  }
-
-  async onFileSelected(event: Event): Promise<void> {
-    const input = event.target as HTMLInputElement;
-    const file = input.files?.[0];
-    if (!file) return;
-    input.value = '';
-
-    this.scanState = this._kentekenScan.isLoaded ? 'processing' : 'loading';
-    this.scanError = null;
-    this._analytics.event('kenteken_scan_attempted');
-
-    try {
-      const { candidates, confidence } = await this._kentekenScan.scanImage(file);
-
-      if (!candidates.length) {
-        this._zone.run(() => {
-          this.scanState = 'error';
-          this.scanError = confidence < 30
-            ? 'Foto te onscherp — maak een scherpere foto van het kenteken'
-            : 'Kenteken niet herkend, probeer opnieuw';
-          this._cdr.detectChanges();
-        });
-        return;
-      }
-
-      // Validate candidates against RDW in parallel — OCR produces multiple
-      // valid-looking plates; the first isn't always the real one.
-      const top = candidates.slice(0, 6);
-      console.log('[Scan] checking candidates against RDW:', top);
-      const results = await Promise.all(
-        top.map(c => firstValueFrom(this._rdwService.lookupVehicle(c)))
-      );
-      console.log('[Scan] RDW results:', results.map((v, i) => `${top[i]}:${v ? 'hit' : 'miss'}`));
-      const matchIndex = results.findIndex(v => v && getEffectiveWeight(v) !== null);
-      const matchedPlate = matchIndex >= 0 ? top[matchIndex] : null;
-      console.log('[Scan] matched:', matchedPlate);
-
-      this._zone.run(() => {
-        this.plateInput = matchedPlate ?? candidates[0];
-        this.scanState = 'idle';
-        this._analytics.event('kenteken_scan_success');
-        this._cdr.detectChanges();
-        this.searchVehicle();
-      });
-
-    } catch (e) {
-      console.error('[KentekenScan] pipeline error:', e);
-      this._zone.run(() => {
-        this.scanState = 'error';
-        this.scanError = 'Kenteken niet herkend, probeer opnieuw';
-        this._cdr.detectChanges();
-      });
-    }
   }
 
   getFuelLabel(fuel: string): string {
@@ -423,13 +335,13 @@ export class CarTaxFormComponent implements OnInit {
 
   getFuelIcon(fuel: string): string {
     const icons: Record<string, string> = {
-      'Benzine':    'fa-gas-pump',
-      'Diesel':     'fa-tint',
-      'Elektrisch': 'fa-bolt',
-      'LPG3':       'fa-fire',
-      'LPG':        'fa-fire',
+      'Benzine':    'local_gas_station',
+      'Diesel':     'opacity',
+      'Elektrisch': 'flash_on',
+      'LPG3':       'whatshot',
+      'LPG':        'whatshot',
     };
-    return icons[fuel] ?? 'fa-gas-pump';
+    return icons[fuel] ?? 'local_gas_station';
   }
 
   getColorName(rdwColor: string): string {

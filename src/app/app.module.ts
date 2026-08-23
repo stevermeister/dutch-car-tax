@@ -4,12 +4,9 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
-import { MatCardModule } from '@angular/material/card';
-import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSliderModule } from '@angular/material/slider';
-import { MatMenuModule } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
 
 import { NgModule } from '@angular/core';
@@ -41,9 +38,6 @@ const routes: Routes = [
     FormsModule,
     MatIconModule,
     MatButtonModule,
-    MatCardModule,
-    MatMenuModule,
-    MatInputModule,
     MatProgressSpinnerModule,
     RouterModule.forRoot(routes)
   ],
