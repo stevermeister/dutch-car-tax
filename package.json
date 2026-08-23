@@ -9,9 +9,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "lint": "ng lint",
-    "publish": "npm run build -- --configuration production --base-href='https://maximsemenov.github.io/dutch-car-tax/' && node ./publish.js",
-    "serve:ssr:cartax": "node dist/server/server.mjs"
+    "lint": "ng lint"
   },
   "private": true,
   "dependencies": {
@@ -27,10 +25,8 @@
     "@angular/platform-server": "^21.2.10",
     "@angular/router": "^21.2.10",
     "@angular/ssr": "^21.2.8",
-    "express": "^5.1.0",
     "license-plate": "^2.2.1",
     "rxjs": "~7.8.0",
-    "tesseract.js": "^7.0.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.16.0"
   },
@@ -43,17 +39,14 @@
     "@angular-eslint/template-parser": "^21.3.1",
     "@angular/cli": "^21.2.8",
     "@angular/compiler-cli": "^21.2.10",
-    "@types/express": "^5.0.1",
     "@types/jasmine": "~5.1.0",
     "@types/node": "^20.17.19",
-    "gh-pages": "^6.3.0",
     "jasmine-core": "~5.1.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.2.0",
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
-    "sharp": "^0.34.5",
     "typescript": "~5.9.0"
   }
 }
