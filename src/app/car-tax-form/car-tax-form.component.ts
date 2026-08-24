@@ -5,61 +5,12 @@ import { Component, OnInit, ViewChild, Inject, PLATFORM_ID } from '@angular/core
 import { isPlatformBrowser } from '@angular/common';
 import { MatSelect } from '@angular/material/select';
 import { FormGroup, FormBuilder } from '@angular/forms';
-import { CarTaxService, FuelTypes, Grid, Provinces } from './car-tax.service';
+import { CarTaxService, FuelTypes, Grid, Province } from './car-tax.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RdwService, RdwVehicle, isValidDutchPlate, getEffectiveWeight } from './rdw.service';
 import { I18nService } from '../i18n.service';
 import { AnalyticsService } from '../analytics.service';
-
-export type FormValue = {
-  'provinceKey': string;
-  'fuelType': string;
-  'volume': number;
-};
-
-// Grid columns: weight#benzine#diesel#lpg3#lpg
-// 2026 MRB rates: electric = 70% of benzine, hybrid/PHEV = 100% of benzine (discount abolished)
-export const FUEL_CONFIG: Record<string, { col: number; multiplier: number }> = {
-  'Benzine':    { col: 1, multiplier: 1.00 },
-  'Diesel':     { col: 2, multiplier: 1.00 },
-  'Elektrisch': { col: 1, multiplier: 0.70 },
-  'LPG3':       { col: 3, multiplier: 1.00 },
-  'LPG':        { col: 4, multiplier: 1.00 },
-  'Hybride':    { col: 1, multiplier: 1.00 },
-};
-
-// Oldtimerregeling: passenger cars 40 years or older are fully exempt from MRB.
-export const OLDTIMER_EXEMPT_AGE_YEARS = 40;
-
-export function isOldtimerExempt(datumEersteToelating: string | undefined | null, now: Date): boolean {
-  if (!datumEersteToelating || datumEersteToelating.length < 8) return false;
-  const year = +datumEersteToelating.substring(0, 4);
-  const month = +datumEersteToelating.substring(4, 6);
-  const day = +datumEersteToelating.substring(6, 8);
-  const firstRegistration = new Date(year, month - 1, day);
-  if (isNaN(firstRegistration.getTime())) return false;
-
-  const ageThreshold = new Date(firstRegistration);
-  ageThreshold.setFullYear(ageThreshold.getFullYear() + OLDTIMER_EXEMPT_AGE_YEARS);
-  return ageThreshold <= now;
-}
-
-// Weight brackets are on a massa rijklaar basis (since 1 July 2026); bracket lower
-// bounds are 100 kg higher than the old massa ledig voertuig grid (101/651/751/... vs 1/551/651/...).
-export function calculatePrice(grid: Grid, value: FormValue): number {
-  const { col, multiplier } = FUEL_CONFIG[value.fuelType] ?? { col: 1, multiplier: 1 };
-
-  if (value.volume < 651) {
-    return Math.floor(+grid[value.provinceKey][0].split('#')[col] * multiplier);
-  }
-
-  const provinceGrid = grid[value.provinceKey];
-  const index = Math.floor(value.volume / 100 - 5);
-  const weight = +provinceGrid[index].split('#')[0];
-  const row = value.volume < weight ? index - 1 : index;
-
-  return Math.floor(+provinceGrid[row].split('#')[col] * multiplier);
-}
+import { FormValue, calculatePrice, isOldtimerExempt } from 'dutch-car-tax-core';
 
 @Component({
   standalone: false,
@@ -71,7 +22,7 @@ export class CarTaxFormComponent implements OnInit {
 
   public carTaxControl: FormGroup;
   public fuelTypes: FuelTypes;
-  public provinces: Provinces[];
+  public provinces: Province[];
   public grid: Grid;
   public motorcycleWeight = 701;
   public lightTruckWeight = 3500;
@@ -330,8 +281,6 @@ export class CarTaxFormComponent implements OnInit {
     };
     return map[colorName] || '#9e9e9e';
   }
-
-  private readonly FUEL_CONFIG = FUEL_CONFIG;
 
   getFuelIcon(fuel: string): string {
     const icons: Record<string, string> = {

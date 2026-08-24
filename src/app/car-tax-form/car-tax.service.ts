@@ -1,33 +1,9 @@
 import { Injectable } from '@angular/core';
-import { PROVINCES } from '../../assets/data/provinces';
-import { GRID } from '../../assets/data/grid';
+import { GRID, PROVINCES, FuelTypes, Grid, Province } from 'dutch-car-tax-core';
 
-
-export type FuelTypes = string[];
-export type Provinces = {
-  'key': string;
-  'title': string;
-};
-
-export type Grid = {
-  'DR': string[],
-  'FL': string[],
-  'FR': string[],
-  'GL': string[],
-  'GR': string[],
-  'LI': string[],
-  'NB': string[],
-  'NH': string[],
-  'OV': string[],
-  'UT': string[],
-  'ZL': string[],
-  'ZH': string[]
-};
-
-
+export type { FuelTypes, Grid, Province };
 
 @Injectable()
-
 export class CarTaxService {
 
   private _fuelTypes: FuelTypes = [
@@ -38,23 +14,16 @@ export class CarTaxService {
     'LPG',
   ];
 
-
   getFuelTypes(): FuelTypes {
-
     return this._fuelTypes;
   }
 
-
-  getProvinces(): Provinces[] {
-
+  getProvinces(): Province[] {
     return PROVINCES;
   }
 
-
   getTaxGrid(): Grid {
-
     return GRID;
   }
-
 
 }
