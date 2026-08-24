@@ -10,7 +10,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { RdwService, RdwVehicle, isValidDutchPlate, getEffectiveWeight } from './rdw.service';
 import { I18nService } from '../i18n.service';
 import { AnalyticsService } from '../analytics.service';
-import { FormValue, calculatePrice, isOldtimerExempt } from 'dutch-car-tax-core';
+import { FormValue, calculatePrice, isOldtimerExempt, mapRdwFuelType } from 'dutch-car-tax-core';
 
 @Component({
   standalone: false,
@@ -225,7 +225,7 @@ export class CarTaxFormComponent implements OnInit {
         this.isOldtimerVehicle = isOldtimerExempt(vehicle.datum_eerste_toelating, new Date());
         this.detectedWeight = weight;
         const patch: Partial<FormValue> = { volume: weight };
-        const fuelType = this.mapRdwFuelType(vehicle.brandstof_types, vehicle);
+        const fuelType = mapRdwFuelType(vehicle.brandstof_types, vehicle.cilinderinhoud);
         if (fuelType) {
           patch.fuelType = fuelType;
           this.detectedFuelType = fuelType;
@@ -238,21 +238,6 @@ export class CarTaxFormComponent implements OnInit {
         this._analytics.event('plate_not_found');
       }
     });
-  }
-
-  private mapRdwFuelType(fuels: string[] | undefined, vehicle?: RdwVehicle | null): string | null {
-    if (!fuels || fuels.length === 0) return null;
-    const hasElectric = fuels.includes('Elektriciteit');
-    const hasNonElectric = fuels.some(f => f !== 'Elektriciteit');
-    // Hybrid (incl. self-charging) → same rate as Benzine since 2026, map to Benzine
-    if (hasElectric && hasNonElectric) return 'Benzine';
-    if (hasElectric && vehicle?.cilinderinhoud && +vehicle.cilinderinhoud > 0) return 'Benzine';
-    if (hasElectric) return 'Elektrisch';
-    if (fuels.includes('Benzine')) return 'Benzine';
-    if (fuels.includes('Diesel')) return 'Diesel';
-    if (fuels.includes('LPG')) return 'LPG3';
-    if (fuels.some(f => /waterstof/i.test(f))) return 'Elektrisch';
-    return null;
   }
 
   getVehicleYear(vehicle: RdwVehicle): string {
