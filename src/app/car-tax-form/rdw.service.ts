@@ -5,24 +5,12 @@ import { Observable, of, forkJoin } from 'rxjs';
 import { map, catchError, switchMap } from 'rxjs/operators';
 
 import LicensePlate from 'license-plate';
+import { getEffectiveWeight } from 'dutch-car-tax-core';
+
+export { getEffectiveWeight };
 
 export function isValidDutchPlate(plate: string): boolean {
   return new LicensePlate(plate).valid();
-}
-
-// MRB weight basis switched from massa ledig voertuig to massa rijklaar on 1 July 2026.
-// massa_rijklaar is ~100 kg above massa_ledig_voertuig (fuel, fluids, driver); fall back
-// to that approximation when RDW hasn't published massa_rijklaar for a vehicle.
-export function getEffectiveWeight(vehicle: RdwVehicle): number | null {
-  const rijklaar = +vehicle.massa_rijklaar;
-  if (vehicle.massa_rijklaar && !isNaN(rijklaar) && rijklaar > 0) {
-    return rijklaar;
-  }
-  const ledig = +vehicle.massa_ledig_voertuig;
-  if (vehicle.massa_ledig_voertuig && !isNaN(ledig) && ledig > 0) {
-    return ledig + 100;
-  }
-  return null;
 }
 
 export interface RdwVehicle {
